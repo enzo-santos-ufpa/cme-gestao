@@ -41,19 +41,20 @@ function main() {
     for (let i = 0; i < models.length; i++) {
         const model = models[i];
 
-        const p = document.createElement("p")
-        p.innerText = model.label
-        p.style.gridRow = `${i + 2}`
-        p.style.gridColumn = "2"
-        form.appendChild(p)
+        const label = document.createElement("p")
+        label.innerText = model.label
+        label.style.gridRow = `${i + 2}`
+        label.style.gridColumn = "2"
+        form.appendChild(label)
 
-        const input = document.createElement("input")
-        input.id = `form.${model.id}`
-        input.type = model.type
-        input.required = model.required;
-        input.style.gridRow = `${i + 2}`
-        input.style.gridColumn = "3"
-        form.appendChild(input)
+        const field = document.createElement("input")
+        field.id = `form.${model.id}`
+        field.type = model.type
+        field.required = model.required;
+        field.style.gridRow = `${i + 2}`
+        field.style.gridColumn = "3"
+
+        form.appendChild(field)
     }
 
     const button = document.getElementById("save-button")
@@ -77,6 +78,8 @@ function main() {
 
         const obj = new Map(matrix.map(([model, text]) => [model.id, text]));
         const data = SchoolData.fromObject(Object.fromEntries(obj));
+        alert("Escola salva com sucesso!")
+        history.back();
     }
 }
 

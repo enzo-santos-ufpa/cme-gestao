@@ -1,0 +1,40 @@
+.form-container {
+    font-family: "Bodoni MT", sans-serif;
+    font-size: 20px;
+
+    grid-column: span 2;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 1fr;
+    grid-template-rows: 50px 50px 50px 100px 50px 50px;
+
+    gap: 10px;
+}
+
+.page-info {
+    grid-row: 1;
+    grid-column-start: 2;
+    grid-column-end: span 2;
+    font-family: "Bodoni MT", sans-serif;
+    font-size: 15px;
+}
+
+.footer {
+    grid-row: 2;
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: repeat(5, 2fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    max-width: 300px;
+    background: #fff;
+    border: 1px solid #a0a0a0;
+    border-radius: 4px;
+    padding-left: 0.5rem;
+    overflow: hidden;
+    font-family: sans-serif;
+}
