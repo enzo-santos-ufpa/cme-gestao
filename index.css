@@ -1,0 +1,6 @@
+.drawer {
+    width: auto;
+    height: auto;
+    background-color: black;
+    overflow:auto;
+}
