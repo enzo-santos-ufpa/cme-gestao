@@ -10,7 +10,7 @@
 <p class="header title-label">Sistema de Gestão CME</p>
 <form id="school-form" class="container" style="grid-template-columns: 300px 1fr 300px">
     <div style="background-color: #F5F5F5"></div>
-    <div style="background-color: white; display: flex; padding: 20px; flex-direction: column">
+    <div style="background-color: white; box-shadow: 5px 10px 10px black; display: flex; padding: 20px; flex-direction: column">
         <p class="page-info ">Você está em Home > Cadastrar escola</p>
         <div style="display: flex; flex-direction: row; align-items: center">
             <h2>Identificação</h2>
@@ -129,8 +129,83 @@
         </div>
         <div class="row-divisor"></div>
         <h2>Informações técnicas</h2>
-    </div>
+        <div class="row">
+            <div class="field" style="flex-grow: 1">
+                <p class="label">Código INEP</p>
+                <div class="input">
+                    <label for="school-inep-code"></label>
+                    <input id="school-inep-code"/>
+                </div>
+            </div>
+            <div class="field-divisor" style="flex-grow: 0"></div>
+            <div class="field" style="flex-grow: 10">
+                <p class="label">Modalidades de ensino básico</p>
+                <div class="input">
+                    <label for="school-modality"></label>
+                    <input id="school-modality"/>
+                </div>
+            </div>
+        </div>
+        <div class="row-divisor"></div>
+        <div class="row">
+            <div class="field" style="flex-grow: 1">
+                <p class="label">Processo atual</p>
+                <div class="input">
+                    <label for="current-process"></label>
+                    <input id="current-process"/>
+                </div>
+            </div>
+            <div class="field-divisor" style="flex-grow: 0"></div>
+            <div class="field" style="flex-grow: 1">
+                <p class="label">Resolução</p>
+                <div class="input">
+                    <label for="current-resolution"></label>
+                    <input id="current-resolution"/>
+                </div>
+            </div>
+        </div>
+        <div class="row-divisor"></div>
+        <h2>Vigência</h2>
+        <div class="row" style="flex-wrap: wrap">
+            <div class="field" style="flex-grow: 1">
+                <p class="label">Data de início</p>
+                <div class="input">
+                    <label for="validity-start-date"></label>
+                    <input id="validity-start-date"/>
+                </div>
+            </div>
+            <div class="field-divisor" style="flex-grow: 0"></div>
+            <div class="field" style="flex-grow: 1">
+                <p class="label">Duração</p>
+                <div class="input">
+                    <label for="validity-duration"></label>
+                    <input id="validity-duration"/>
+                </div>
+            </div>
+        </div>
+        <div class="row-divisor"></div>
+        <div class="row">
+            <div class="field" style="flex-grow: 1">
+                <p class="label">Situação</p>
+                <div class="input">
+                    <label for="validity-status"></label>
+                    <select id="validity-status" style="flex-grow: 1">
+                        <option value="authorized">Sem pendências</option>
+                        <option value="refused">Não autorizado</option>
+                        <option value="authorized-pending">Autorizado com pendências</option>
+                    </select>
+                </div>
+            </div>
 
+        </div>
+        <div class="row-divisor"></div>
+        <div class="row-divisor"></div>
+        <div class="row-divisor"></div>
+
+        <div class="row" style="justify-content: center">
+            <button style="padding: 20px 40px">CADASTRAR</button>
+        </div>
+    </div>
     <div style="background-color: #F5F5F5"></div>
 </form>
 
