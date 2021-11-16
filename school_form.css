@@ -1,40 +1,41 @@
-.form-container {
-    font-family: "Bodoni MT", sans-serif;
-    font-size: 20px;
-
-    grid-column: span 2;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr 2fr 1fr;
-    grid-template-rows: 50px 50px 50px 100px 50px 50px;
-
-    gap: 10px;
+h2 {
+    font-family: "Sitka Subheading", sans-serif;
+    font-size: 25px;
 }
 
 .page-info {
-    grid-row: 1;
-    grid-column-start: 2;
-    grid-column-end: span 2;
-    font-family: "Bodoni MT", sans-serif;
-    font-size: 15px;
+    font-family: "Arial", sans-serif;
+    font-size: 16px;
 }
 
-.footer {
-    grid-row: 2;
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: repeat(5, 2fr);
-    grid-template-rows: repeat(4, 1fr);
-}
-
-.input-box {
+.row {
     display: flex;
-    align-items: center;
-    max-width: 300px;
-    background: #fff;
-    border: 1px solid #a0a0a0;
-    border-radius: 4px;
-    padding-left: 0.5rem;
-    overflow: hidden;
-    font-family: sans-serif;
+}
+
+.row-divisor {
+    height: 30px;
+}
+
+.field-divisor {
+    width: 50px;
+}
+
+.field {
+    display: flex;
+    flex-grow: 1;
+}
+
+.field .label {
+    font-family: "Roboto Thin", sans-serif;
+    font-size: 20px;
+    padding-right: 50px
+}
+
+.field .input {
+    display: flex;
+    flex-grow: 3;
+}
+
+.field input {
+    flex: 1;
 }

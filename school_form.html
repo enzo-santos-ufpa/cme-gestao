@@ -8,14 +8,131 @@
 </head>
 <body>
 <p class="header title-label">Sistema de Gestão CME</p>
-<div class="container">
-    <form class="form-container" id="form-container">
-        <p class="page-info">Você está em Home > Cadastrar escola</p>
-    </form>
-    <div class="footer">
-        <button id="save-button" style="grid-row: 1; grid-column: 4">SALVAR</button>
+<form id="school-form" class="container" style="grid-template-columns: 300px 1fr 300px">
+    <div style="background-color: #F5F5F5"></div>
+    <div style="background-color: white; display: flex; padding: 20px; flex-direction: column">
+        <p class="page-info ">Você está em Home > Cadastrar escola</p>
+        <div style="display: flex; flex-direction: row; align-items: center">
+            <h2>Identificação</h2>
+            <div class="field-divisor"></div>
+            <div style="display: flex; flex-direction: row; font-family: 'Arial', sans-serif; font-size: 16px">
+                <input type="radio" checked="checked" id="school-type-public" name="school-type" value="public">
+                <label for="school-type-public">Escola pública</label>
+                <div class="field-divisor"></div>
+                <input type="radio" id="school-type-private" name="school-type" value="private">
+                <label for="school-type-private">Escola privada</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="field" style="flex-grow: 5">
+                <p class="label">Nome da escola</p>
+                <div class="input">
+                    <label for="school-acronym"></label>
+                    <select id="school-acronym" style="flex-grow: 1">
+                        <option value="emei">EMEI</option>
+                        <option value="emeif">EMEIF</option>
+                        <option value="emef">EMEF</option>
+                        <option value="uei">UEI</option>
+                    </select>
+                    <label for="school-name"></label>
+                    <input id="school-name" style="flex-grow: 9"/>
+                </div>
+            </div>
+            <div class="field-divisor"></div>
+            <div class="field">
+                <p class="label">Data de criação</p>
+                <div class="input">
+                    <label for="school-creation-date"></label>
+                    <input id="school-creation-date"/>
+                </div>
+            </div>
+        </div>
+        <div class="row-divisor"></div>
+        <div class="row">
+            <div class="field">
+                <p class="label">Nome da entidade mantenedora</p>
+                <div class="field-divisor"></div>
+                <div class="input">
+                    <label for="maintainer-name"></label>
+                    <input id="maintainer-name"/>
+                </div>
+            </div>
+        </div>
+        <div class="row-divisor"></div>
+        <div class="row">
+            <div class="field" style="flex-grow: 5">
+                <p class="label">Endereço</p>
+                <div class="input">
+                    <label for="school-address"></label>
+                    <input id="school-address"/>
+                </div>
+            </div>
+        </div>
+        <div class="row-divisor"></div>
+        <div class="row">
+            <div class="field" style="flex-grow: 4">
+                <p class="label">Cidade</p>
+                <div class="input">
+                    <label for="school-city"></label>
+                    <input id="school-city"/>
+                </div>
+            </div>
+            <div class="field-divisor"></div>
+            <div class="field" style="flex-grow: 1">
+                <p class="label">Distrito</p>
+                <div class="input">
+                    <label for="school-district"></label>
+                    <select id="school-district" style="flex-grow: 1">
+                        <option value="dabel">DABEL</option>
+                        <option value="daben">DABEN</option>
+                        <option value="dagua">DAGUA</option>
+                        <option value="daico">DAICO</option>
+                        <option value="daout">DAOUT</option>
+                        <option value="damos">DAMOS</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field-divisor"></div>
+            <div class="field" style="flex-grow: 3">
+                <p class="label">CEP</p>
+                <div class="input">
+                    <label for="school-zip-code"></label>
+                    <input id="school-zip-code"/>
+                </div>
+            </div>
+        </div>
+        <div class="row-divisor"></div>
+        <div class="row">
+            <div class="field" style="flex-grow: 1">
+                <p class="label">Email</p>
+                <div class="input">
+                    <label for="email"></label>
+                    <input id="email"/>
+                </div>
+            </div>
+            <div class="field-divisor" style="flex-grow: 0"></div>
+            <div class="field">
+                <p class="label">Telefone</p>
+                <div class="input">
+                    <label for="phone-number"></label>
+                    <input id="phone-number"/>
+                </div>
+            </div>
+            <div class="field-divisor" style="flex-grow: 0"></div>
+            <div class="field">
+                <p class="label">WhatsApp</p>
+                <div class="input">
+                    <label for="whatsapp"></label>
+                    <input id="whatsapp"/>
+                </div>
+            </div>
+        </div>
+        <div class="row-divisor"></div>
+        <h2>Informações técnicas</h2>
     </div>
-</div>
+
+    <div style="background-color: #F5F5F5"></div>
+</form>
 
 <script src="school_form.js"></script>
 </body>
