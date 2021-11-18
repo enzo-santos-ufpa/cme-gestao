@@ -11030,7 +11030,7 @@
          *      } );
          *    } );
          */
-        sNext: "Next",
+        sNext: "Próximo",
 
         /**
          * Text to use for the 'previous' pagination button (to take the user to
@@ -11052,7 +11052,7 @@
          *      } );
          *    } );
          */
-        sPrevious: "Previous",
+        sPrevious: "Anterior",
       },
 
       /**
@@ -11106,7 +11106,7 @@
        *      } );
        *    } );
        */
-      sInfo: "Showing _START_ to _END_ of _TOTAL_ entries",
+      sInfo: "Mostrando _START_ de _END_ de _TOTAL_ registros",
 
       /**
        * Display information string for when the table is empty. Typically the
@@ -11261,7 +11261,7 @@
        *      } );
        *    } );
        */
-      sLengthMenu: "Show _MENU_ entries",
+      sLengthMenu: "Mostrar _MENU_ registros",
 
       /**
        * When using Ajax sourced data and during the first draw when DataTables is
@@ -11338,7 +11338,7 @@
        *      } );
        *    } );
        */
-      sSearch: "Search:",
+      sSearch: "Pesquisa:",
 
       /**
        * Assign a `placeholder` attribute to the search `input` element
