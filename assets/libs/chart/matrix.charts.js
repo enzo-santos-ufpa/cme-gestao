@@ -214,6 +214,29 @@ function bar(selector, data) {
         .attr("width", xSubgroup.bandwidth())
         .attr("height", d => height - y(d.value))
         .attr("fill", d => color(d.key));
+
+    const x0 = 250;
+    const y0 = 10;
+
+    svg.selectAll("myDots")
+        .data(subgroups)
+        .enter()
+        .append("circle")
+        .attr("cx", x0)
+        .attr("cy", (_, i) => y0 + i * 25)
+        .attr("r", 7)
+        .style("fill", d => color(d));
+
+    svg.selectAll("myLabels")
+        .data(subgroups)
+        .enter()
+        .append("text")
+        .attr("x", x0 + 20)
+        .attr("y", (d, i) => y0 + i * 25)
+        .style("fill", "black")
+        .text(d => d)
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle");
 }
 
 maruti = {
