@@ -115,15 +115,22 @@ $(function () {
 });
 
 function pie(selector, data) {
-    const width = 450, height = 450, margin = 100;
+    const element = document.querySelector(selector)
+    const info = element.getBoundingClientRect();
+    const boxWidth = Math.round(info.width);
+    const boxHeight = Math.round(info.height);
+
+    const margin = 50;
+    const width = boxWidth - margin;
+    const height = boxHeight - margin;
     const radius = Math.min(width, height) / 2 - margin;
 
     const svg = d3.select(selector)
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("preserveAspectRatio", "xMidYMid meet")
+        .attr("viewBox", `0 0 ${width + margin} ${height + margin}`)
         .append("g")
-        .attr("transform", `translate(${width * 0.6}, ${height / 2})`);
+        .attr("transform", `translate(${width * .6}, ${height * .7})`);
 
     const color = d3.scaleOrdinal().domain(data).range(d3["schemeSet1"]);
     const pie = d3.pie().value(d => d.value);
@@ -171,17 +178,22 @@ function pie(selector, data) {
 }
 
 function bar(selector, data) {
-    const margin = {top: 10, right: 30, bottom: 20, left: 50},
-        width = 460 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
+    const element = document.querySelector(selector)
+    const info = element.getBoundingClientRect();
+    const boxWidth = Math.round(info.width);
+    const boxHeight = Math.round(info.height);
+
+    const margin = {top: boxHeight * .1, right: boxWidth * .1, bottom: boxHeight * .1, left: boxWidth * .1};
+    const width = boxWidth - margin.left - margin.right;
+    const height = boxHeight - margin.top - margin.bottom;
 
     const subgroups = data.labels;
     const groups = d3.map(data.groups, group => group.name).keys();
 
     const svg = d3.select(selector)
         .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("preserveAspectRatio", "none")
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
         .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
