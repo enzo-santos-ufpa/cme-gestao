@@ -453,41 +453,52 @@
               <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">Quantidade de escolas</h5>
-                  <div class="school-quantity" style="height: 400px"></div>
+                  <div id="school-quantity" style="height: 400px"></div>
                 </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">Quantidades de Escolas por Distrito</h5>
+                  <h5 class="card-title">Situação das Escolas da SME</h5>
+                  <div id="school-status" style="height: 400px"></div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- Chart-2 -->
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Quantidades de Escolas por Distrito</h5>
+                    <div id="school-quantity-per-district" style="height: 400px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="row">
             <div class="col-md-12">
               <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">Situação de Regularidade do SME por Distrito</h5>
+                  <div id="authorization-status-per-district" style="height: 400px"></div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- End Chart-2 -->
           <div class="row">
             <div class="col-md-6">
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">Situação das Escolas da SME</h5>
+                  <h5 class="card-title">Situação de Autorização da SME</h5>
+                  <div id="authorization-status" style="height: 400px"></div>
                 </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">Situação de Autorização da SME</h5>
+                  <h5 class="card-title">Situação de Autorização (OSCs) da SME</h5>
                 </div>
               </div>
             </div>
@@ -528,6 +539,7 @@
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
+    <script src="https://d3js.org/d3.v5.js"></script>
     <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
