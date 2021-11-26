@@ -45,12 +45,12 @@ class HomeScreen extends React.Component {
                     backgroundImage: `url(${bg})`,
                 }}>
                 <div style={{
-                    padding: "0px 200px",
+                    padding: "0px 100px",
                     height: "100%",
                     alignItems: "center",
                     justifyContent: "center",
                     display: "grid",
-                    gap: "0px 150px",
+                    gap: "0px 50px",
                     gridTemplateColumns: Array(cols).fill("1fr").join(" "),
                 }}>{tiles}</div>
             </div>

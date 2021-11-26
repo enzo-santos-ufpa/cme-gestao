@@ -12,7 +12,7 @@ export class HomeScreenTile extends React.Component<HomeScreenTileProps, {}> {
             <div className="HomeScreenTile-bg">
                 <div className="HomeScreenTile-fg">
                     <p className="HomeScreenTile-label">{this.props.name}</p>
-                    <img style={{height: "150px", width: undefined}} src={this.props.icon}/>
+                    <img style={{height: "100px", width: undefined}} src={this.props.icon}/>
                 </div>
             </div>
         </div>;
