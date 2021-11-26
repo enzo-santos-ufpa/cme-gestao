@@ -22,3 +22,12 @@ body {
     padding: 20px;
     background-color: lightblue;
 }
+
+.HomeScreen-grid {
+    padding: 0 100px;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    display: grid;
+    gap: 0 50px;
+}
