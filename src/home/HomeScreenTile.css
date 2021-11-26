@@ -1,0 +1,26 @@
+.HomeScreenTile {
+    cursor: pointer;
+}
+
+.HomeScreenTile-bg {
+    background-color: #90bcef;
+    border-radius: 15px;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.HomeScreenTile-fg {
+    padding: 10px 5px;
+    margin: 0 -5px;
+    border-radius: 15px;
+    background: linear-gradient(30deg, rgba(133, 182, 238, 1) 0%, rgba(220, 240, 247, 1) 100%);
+}
+
+.HomeScreenTile-label {
+    white-space: pre-wrap;
+    color: #000000;
+    font-weight: bold;
+    font-size: 2vw;
+    line-height: 1em;
+    max-height: 2em;
+}
