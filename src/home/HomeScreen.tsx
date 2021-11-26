@@ -4,38 +4,31 @@ import icCalendar from '../assets/calendar-icon.png';
 import icChat from '../assets/chat-icon.png';
 import icChart from '../assets/chart-icon.png';
 import icCheck from '../assets/check-icon.png';
-import icMagnifier from '../assets/magnifier-icon.png';
+import icSearch from '../assets/magnifier-icon.png';
 import icPeople from '../assets/people-icon.png';
 import './HomeScreen.css';
 import {HomeScreenTile, HomeScreenTileProps} from "./HomeScreenTile";
 
-class HomeScreenTileProperty implements HomeScreenTileProps {
-    name: string;
-    icon: string;
-
-    constructor(name: string, icon: string) {
-        this.name = name;
-        this.icon = icon;
-    }
-}
 
 class HomeScreen extends React.Component {
-    // from #85b6ee to #dcf0f7
+    private static readonly cols = 3;
+    private static readonly tiles: Array<HomeScreenTileProps> = [
+        {name: "Cadastro de\nUsuários", icon: icPeople},
+        {name: "Consulta de\nInstituições", icon: icSearch, route: "/consultaEscola"},
+        {name: "Tabelas e\nGráficos", icon: icChart},
+        {name: "Instituições com\nValidade Vencida", icon: icCalendar},
+        {name: "Avaliação de\nSituação de Regularização", icon: icCheck},
+        {name: "Atendimento de\nChamados", icon: icChat},
+    ];
+
     render() {
-        const cols = 3;
-        const tiles = [
-            new HomeScreenTileProperty("Cadastro de\nUsuários", icPeople),
-            new HomeScreenTileProperty("Consulta de\nInstituições", icMagnifier),
-            new HomeScreenTileProperty("Tabelas e\nGráficos", icChart),
-            new HomeScreenTileProperty("Instituições com\nValidade Vencida", icCalendar),
-            new HomeScreenTileProperty("Avaliação de\nSituação de Regularização", icCheck),
-            new HomeScreenTileProperty("Atendimento de\nChamados", icChat),
-        ].map((property, i) => {
+        const cols = HomeScreen.cols;
+        const tiles = HomeScreen.tiles.map((property, i) => {
             return <div key={i} style={{
                 gridRow: (i / cols) + 1,
                 gridColumn: (i % cols) + 1
             }}>
-                <HomeScreenTile name={property.name} icon={property.icon}/>
+                <HomeScreenTile name={property.name} icon={property.icon} route={property.route}/>
             </div>
         });
         return (
