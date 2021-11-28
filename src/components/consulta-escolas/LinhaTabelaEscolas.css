@@ -1,0 +1,26 @@
+.LinhaTabelaEscolas-titulo {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.LinhaTabelaEscolas-subtitulo {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.LinhaChaveValor {
+    display: flex;
+    flex-direction: row;
+}
+
+.LinhaChaveValor-chave {
+    font-weight: bold;
+    color: black;
+    font-size: 16px;
+}
+
+.LinhaChaveValor-valor {
+    font-weight: bold;
+    color: gray;
+    font-size: 16px;
+}

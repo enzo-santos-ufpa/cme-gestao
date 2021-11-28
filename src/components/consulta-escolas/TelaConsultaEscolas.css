@@ -1,0 +1,62 @@
+p {
+    margin: 0;
+}
+
+body {
+    margin: 0;
+}
+
+.TelaConsultaEscolas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: url(../../assets/background-telas-internas.jpg);
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.TelaConsultaEscolas-divisor {
+    border-top: 2px solid black;
+}
+
+.TelaConsultaEscolas-linhaCabecalho {
+    flex-direction: row;
+    display: flex;
+}
+
+.TelaConsultaEscolas-colunaCabecalho {
+    padding: 0;
+    flex-direction: column;
+    flex: 0.5;
+    display: flex;
+}
+
+.TelaConsultaEscolas-titulo {
+    font-size: 32px;
+    font-weight: bold;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.TelaConsultaEscolas-caixaTexto {
+    padding: 10px;
+    background-position: right;
+    background-repeat: no-repeat;
+    background-color: lightgray;
+    background-image: url(../../assets/magnifier-icon.png);
+    background-size: contain;
+    background-origin: content-box;
+    border: 0;
+}
+
+.TelaConsultaEscolas-caixaTexto::placeholder {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.TelaConsultaEscolas-tabela {
+    padding-top: 20px;
+}
