@@ -40,8 +40,16 @@ function divideElementos(elementos: JSX.Element[], divisor: JSX.Element): JSX.El
     return resultado;
 }
 
-type EstadoTelaConsultaEscolas = {
-    escolas?: Escola[]
+
+type _Estado = _EstadoCarregando | _EstadoCarregado;
+
+type _EstadoCarregando = {
+    escolas?: undefined
+};
+
+type _EstadoCarregado = {
+    escolas: Escola[],
+    escolasAtuais: Escola[],
 }
 
 async function retornaEscolas(): Promise<Escola[]> {
@@ -49,15 +57,33 @@ async function retornaEscolas(): Promise<Escola[]> {
     return Array(6).fill(escolaPadrao);
 }
 
-class TelaConsultaEscolas extends React.Component<{}, EstadoTelaConsultaEscolas> {
-    state: EstadoTelaConsultaEscolas = {}
+class TelaConsultaEscolas extends React.Component<{}, _Estado> {
+    state: _EstadoCarregando = {}
 
     componentDidMount() {
-        retornaEscolas().then((escolas) => this.setState({escolas: escolas}));
+        retornaEscolas().then((escolas) => {
+            const novoEstado: _EstadoCarregado = {escolas: escolas, escolasAtuais: escolas};
+            this.setState(novoEstado);
+        });
     }
 
-    private static renderTabela(escolas?: Escola[]): JSX.Element {
-        if (escolas == null) return <p>Carregando...</p>;
+    onSearch(text: string) {
+        let estadoAtual: _Estado = this.state;
+        if (estadoAtual.escolas == null) return;
+
+        estadoAtual = estadoAtual as _EstadoCarregado;
+        const estadoNovo: _EstadoCarregado = {
+            ...estadoAtual,
+            escolasAtuais: estadoAtual.escolas.filter(escola => escola.nome.toLowerCase().includes(text.toLowerCase()))
+        };
+        this.setState(estadoNovo);
+    }
+
+    private static renderTabela(estado: _Estado): JSX.Element {
+        if (estado.escolas == null) return <p>Carregando...</p>;
+
+        const escolas = (estado as _EstadoCarregado).escolasAtuais;
+        if (!escolas.length) return <p>Nenhuma escola encontrada.</p>;
         return <div className="TelaConsultaEscolas-tabela">
             {divideElementos(
                 escolas.map((escola) => <LinhaTabelaEscolas escola={escola}/>),
@@ -74,10 +100,11 @@ class TelaConsultaEscolas extends React.Component<{}, EstadoTelaConsultaEscolas>
                     <div className="TelaConsultaEscolas-colunaCabecalho">
                         <p className="TelaConsultaEscolas-titulo">Consulta de Instituições</p>
                         <input className="TelaConsultaEscolas-caixaTexto" type="text"
-                               placeholder="Digite o nome de uma instituição"/>
+                               placeholder="Digite o nome de uma instituição"
+                               onChange={(e) => this.onSearch(e.target.value.trim())}/>
                     </div>
                 </div>
-                {TelaConsultaEscolas.renderTabela(this.state.escolas)}
+                {TelaConsultaEscolas.renderTabela(this.state)}
             </div>
         );
     }
