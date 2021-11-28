@@ -40,7 +40,33 @@ function divideElementos(elementos: JSX.Element[], divisor: JSX.Element): JSX.El
     return resultado;
 }
 
-class TelaConsultaEscolas extends React.Component {
+type EstadoTelaConsultaEscolas = {
+    escolas?: Escola[]
+}
+
+async function retornaEscolas(): Promise<Escola[]> {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    return Array(6).fill(escolaPadrao);
+}
+
+class TelaConsultaEscolas extends React.Component<{}, EstadoTelaConsultaEscolas> {
+    state: EstadoTelaConsultaEscolas = {}
+
+    componentDidMount() {
+        retornaEscolas().then((escolas) => this.setState({escolas: escolas}));
+    }
+
+    private static renderTabela(escolas?: Escola[]): JSX.Element {
+        if (escolas == null) return <p>Carregando...</p>;
+        return <div className="TelaConsultaEscolas-tabela">
+            {divideElementos(
+                escolas.map((escola) => <LinhaTabelaEscolas escola={escola}/>),
+                <hr className="TelaConsultaEscolas-divisor"/>,
+            )}
+        </div>
+
+    }
+
     render() {
         return (
             <div className="TelaConsultaEscolas">
@@ -51,12 +77,7 @@ class TelaConsultaEscolas extends React.Component {
                                placeholder="Digite o nome de uma instituição"/>
                     </div>
                 </div>
-                <div className="TelaConsultaEscolas-tabela">
-                    {divideElementos(
-                        Array(6).fill(<LinhaTabelaEscolas escola={escolaPadrao}/>),
-                        <hr className="TelaConsultaEscolas-divisor"/>,
-                    )}
-                </div>
+                {TelaConsultaEscolas.renderTabela(this.state.escolas)}
             </div>
         );
     }
