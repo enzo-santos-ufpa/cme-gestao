@@ -1,15 +1,15 @@
 import React from 'react';
 import './App.css';
-import HomeScreen from "./home/HomeScreen";
+import TelaInicial from "./components/tela-inicial/TelaInicial";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import SchoolsTable from "./schools-table/SchoolsTable";
+import TelaConsultaEscolas from "./components/consulta-escolas/TelaConsultaEscolas";
 
 class App extends React.Component {
     render() {
         return <BrowserRouter>
             <Routes>
-                <Route path="/" element={<HomeScreen/>}/>
-                <Route path="/consultaEscola" element={<SchoolsTable/>}/>
+                <Route path="/" element={<TelaInicial/>}/>
+                <Route path="/consultaEscola" element={<TelaConsultaEscolas/>}/>
             </Routes>
         </BrowserRouter>;
     }

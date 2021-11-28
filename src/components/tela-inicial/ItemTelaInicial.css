@@ -1,22 +1,22 @@
-.HomeScreenTile {
+.ItemTelaInicial {
     cursor: pointer;
 }
 
-.HomeScreenTile-bg {
+.ItemTelaInicial-bg {
     background-color: #90bcef;
     border-radius: 15px;
     padding: 10px 0;
     text-align: center;
 }
 
-.HomeScreenTile-fg {
+.ItemTelaInicial-fg {
     padding: 10px 5px;
     margin: 0 -5px;
     border-radius: 15px;
     background: linear-gradient(30deg, rgba(133, 182, 238, 1) 0%, rgba(220, 240, 247, 1) 100%);
 }
 
-.HomeScreenTile-label {
+.ItemTelaInicial-legenda {
     white-space: pre-wrap;
     color: #000000;
     font-weight: bold;
