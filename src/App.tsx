@@ -9,7 +9,8 @@ class App extends React.Component {
         return <BrowserRouter>
             <Routes>
                 <Route path="/" element={<TelaInicial/>}/>
-                <Route path="/consultaEscola" element={<TelaConsultaEscolas/>}/>
+                <Route path="/consulta-escolas" element={<TelaConsultaEscolas titulo="Consulta de Instituições" mostraStatus={false}/>}/>
+                <Route path="/valida-escolas" element={<TelaConsultaEscolas titulo="Validação de Instituições" mostraStatus={true}/>}/>
             </Routes>
         </BrowserRouter>;
     }

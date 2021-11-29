@@ -13,9 +13,9 @@ class TelaInicial extends React.Component {
     private static readonly colunas = 3;
     private static readonly itens: Array<ItemTelaInicialProps> = [
         {nome: "Cadastro de\nUsuários", caminhoIcone: icPeople},
-        {nome: "Consulta de\nInstituições", caminhoIcone: icSearch, caminhoRota: "/consultaEscola"},
+        {nome: "Consulta de\nInstituições", caminhoIcone: icSearch, caminhoRota: "/consulta-escolas"},
         {nome: "Tabelas e\nGráficos", caminhoIcone: icChart},
-        {nome: "Instituições com\nValidade Vencida", caminhoIcone: icCalendar},
+        {nome: "Instituições com\nValidade Vencida", caminhoIcone: icCalendar, caminhoRota: "/valida-escolas"},
         {nome: "Avaliação de\nSituação de Regularização", caminhoIcone: icCheck},
         {nome: "Atendimento de\nChamados", caminhoIcone: icChat},
     ];
