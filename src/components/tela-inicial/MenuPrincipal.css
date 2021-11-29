@@ -1,0 +1,30 @@
+.MenuPrincipal {
+    display: grid;
+}
+
+.MenuPrincipal-bg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: url(../../assets/background-painel.png);
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.MenuPrincipal-cabecalho {
+    grid-row: 1;
+    grid-column: span 3;
+    margin: 0;
+    padding: 20px;
+    background-color: lightblue;
+}
+
+.MenuPrincipal-grade {
+    padding: 0 100px;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    display: grid;
+    gap: 0 50px;
+}

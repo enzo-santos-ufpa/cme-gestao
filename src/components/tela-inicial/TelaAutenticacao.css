@@ -1,0 +1,62 @@
+.TelaAutenticacao {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.TelaAutenticacao-bg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: url(../../assets/background-login.jpg);
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.TelaAutenticacao-grade {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+.TelaAutenticacao-container {
+    display: flex;
+    flex-direction: column;
+
+    padding-top: 5%;
+    padding-bottom: 5%;
+    align-items: center;
+    background-color: whitesmoke;
+    border: #90bcef solid 5px;
+}
+
+.TelaAutenticacao-logo {
+    width: 200px;
+    height: 200px;
+}
+
+.TelaAutenticacao-caixaTexto {
+    width: 60%;
+    background-color: whitesmoke;
+    border-width: 0 0 2px 0;
+    padding: 15px;
+}
+
+.TelaAutenticacao-botoes {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: left;
+}
+
+.TelaAutenticacao-botao {
+    padding: 10px 15px;
+    font-weight: bold;
+    font-size: 20px;
+    background-color: lightblue;
+}
