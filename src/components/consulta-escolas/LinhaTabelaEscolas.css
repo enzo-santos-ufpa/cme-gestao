@@ -1,3 +1,12 @@
+.LinhaTabelaEscolas {
+    display: flex;
+}
+
+.LinhaTabelaEscolas-status {
+    width: 1%;
+    margin-right: 10px;
+}
+
 .LinhaTabelaEscolas-titulo {
     font-weight: bold;
     font-size: 18px;
