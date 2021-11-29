@@ -33,6 +33,8 @@ class MenuPrincipal extends React.Component<PropsAutenticador, {}> {
         });
         return (
             <div className="MenuPrincipal-bg">
+                <p className="MenuPrincipal-botaoSair"
+                   onClick={(_) => this.props.autenticador.logout()}>Sair</p>
                 <div className="MenuPrincipal-grade"
                      style={{
                          gridTemplateColumns: Array(numCols).fill("1fr").join(" "),

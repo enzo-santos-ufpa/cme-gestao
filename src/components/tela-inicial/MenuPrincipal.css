@@ -28,3 +28,10 @@
     display: grid;
     gap: 0 50px;
 }
+
+.MenuPrincipal-botaoSair {
+    position: absolute;
+    cursor: pointer;
+    color: darkslateblue;
+    padding: 20px;
+}
