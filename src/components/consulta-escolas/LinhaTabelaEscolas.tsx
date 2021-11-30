@@ -49,9 +49,9 @@ class LinhaTabelaEscolas extends React.Component<LinhaTabelaEscolasProps, {}> {
     }
 
     private static mapeiaCor(diasRestantes: number): string {
-        if (diasRestantes > 120) return "#7ED957";
-        if (diasRestantes > 100) return "#FFDE59";
-        if (diasRestantes > 90) return "#FFA500";
+        if (diasRestantes >= 120) return "#7ED957";
+        if (diasRestantes >= 100) return "#FFDE59";
+        if (diasRestantes >= 60) return "#FFA500";
         return "#FF1616";
     }
 
