@@ -48,7 +48,7 @@ export class Processo {
     }
 
     get diasRestantes(): number {
-        const diffTime = Math.abs(this.dataInicio.getTime() - new Date().getTime());
+        const diffTime = this.dataFim.getTime() - new Date().getTime();
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     }
 }
