@@ -3,6 +3,7 @@ import './TelaConsultaEscolas.css';
 import LinhaTabelaEscolas from "./LinhaTabelaEscolas";
 import Escola from "../../models/Escola";
 import {DistritoAdmnistrativo, Processo, SetorEscola} from "../../models/tipos";
+import {escolas} from "../../lib/api";
 
 const escolaPadrao: Escola = {
     bairro: "CARANANDUBA - MOSQUEIRO",
@@ -54,8 +55,7 @@ type _EstadoCarregado = {
 }
 
 async function retornaEscolas(): Promise<Escola[]> {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    return Array(6).fill(escolaPadrao);
+    return await escolas.read();
 }
 
 class TelaConsultaEscolas extends React.Component<_Props, _Estado> {
