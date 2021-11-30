@@ -1,7 +1,9 @@
 import React, {ChangeEvent, FormEvent} from "react";
 import './TelaCadastroEscolas.css';
+import '../common/Tela.css';
 import Formulario from "../../models/form";
 import {escolas} from "../../lib/api";
+import PlanoFundo, {bg} from "../common/PlanoFundo";
 
 type _Estado = Formulario.Tipo<"nome" | "processoAtual" | "resolucao" | "tempoVigencia" | "dataInicio">;
 
@@ -71,44 +73,61 @@ class TelaCadastroEscola extends React.Component<{}, _Estado> {
 
     render() {
         return (
-            <div>
-                <form onSubmit={this.onSubmit}>
-                    <div style={{display: "flex", flexDirection: "column"}}>
-                        <label>
-                            Nome da instituição:
-                            <input type="text"
-                                   value={this.state.nome.texto}
-                                   onChange={(e) => this.atualizaCampo(e, "nome")}/>
-                            <p>{this.state.nome.erro}</p>
-                        </label>
-                        <label>
-                            Processo atual:
-                            <input type="text" value={this.state.processoAtual.texto}
-                                   onChange={(e) => this.atualizaCampo(e, "processoAtual")}/>
-                            <p>{this.state.processoAtual.erro}</p>
-                        </label>
-                        <label>
-                            Resolução:
-                            <input type="text" value={this.state.resolucao.texto}
-                                   onChange={(e) => this.atualizaCampo(e, "resolucao")}/>
-                            <p>{this.state.resolucao.erro}</p>
-                        </label>
-                        <label>
-                            Data de início de vigência:
-                            <input type="text" value={this.state.dataInicio.texto}
-                                   onChange={(e) => this.atualizaCampo(e, "dataInicio")}/>
-                            <p>{this.state.dataInicio.erro}</p>
-                        </label>
-                        <label>
-                            Tempo de vigência:
-                            <input type="text" value={this.state.tempoVigencia.texto}
-                                   onChange={(e) => this.atualizaCampo(e, "tempoVigencia")}/>
-                            <p>{this.state.tempoVigencia.erro}</p>
-                        </label>
-                    </div>
-                    <input type="submit" value="Cadastrar"/>
-                </form>
-            </div>
+            <PlanoFundo bg={bg.tela}>
+                <div className="TelaCadastroEscolas">
+                    <p className="Tela-titulo">Cadastrar escola</p>
+                    <form onSubmit={this.onSubmit}>
+                        <div className="TelaCadastroEscolas-formulario">
+                            <label className="TelaCadastroEscolas-campo">
+                                Nome da instituição:
+                                <div className="TelaCadastroEscolas-divisorCampo"/>
+                                <input type="text"
+                                       className="TelaCadastroEscolas-caixaTexto"
+                                       value={this.state.nome.texto}
+                                       onChange={(e) => this.atualizaCampo(e, "nome")}/>
+                                <p>{this.state.nome.erro}</p>
+                            </label>
+                            <label className="TelaCadastroEscolas-campo">
+                                Processo atual:
+                                <div className="TelaCadastroEscolas-divisorCampo"/>
+                                <input type="text"
+                                       value={this.state.processoAtual.texto}
+                                       className="TelaCadastroEscolas-caixaTexto"
+                                       onChange={(e) => this.atualizaCampo(e, "processoAtual")}/>
+                                <p>{this.state.processoAtual.erro}</p>
+                            </label>
+                            <label className="TelaCadastroEscolas-campo">
+                                Resolução:
+                                <div className="TelaCadastroEscolas-divisorCampo"/>
+                                <input type="text"
+                                       value={this.state.resolucao.texto}
+                                       className="TelaCadastroEscolas-caixaTexto"
+                                       onChange={(e) => this.atualizaCampo(e, "resolucao")}/>
+                                <p>{this.state.resolucao.erro}</p>
+                            </label>
+                            <label className="TelaCadastroEscolas-campo">
+                                Início de vigência (DD/MM/YYYY):
+                                <div className="TelaCadastroEscolas-divisorCampo"/>
+                                <input type="text"
+                                       value={this.state.dataInicio.texto}
+                                       className="TelaCadastroEscolas-caixaTexto"
+                                       onChange={(e) => this.atualizaCampo(e, "dataInicio")}/>
+                                <p>{this.state.dataInicio.erro}</p>
+                            </label>
+                            <label className="TelaCadastroEscolas-campo">
+                                Tempo de vigência (anos):
+                                <div className="TelaCadastroEscolas-divisorCampo"/>
+                                <input type="text"
+                                       value={this.state.tempoVigencia.texto}
+                                       className="TelaCadastroEscolas-caixaTexto"
+                                       onChange={(e) => this.atualizaCampo(e, "tempoVigencia")}/>
+                                <p>{this.state.tempoVigencia.erro}</p>
+                            </label>
+                        </div>
+                        <input type="submit" value="Cadastrar"/>
+                    </form>
+                </div>
+            </PlanoFundo>
         );
     }
 }
