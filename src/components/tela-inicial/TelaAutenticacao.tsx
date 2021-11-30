@@ -23,7 +23,7 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, EstadoAutentic
                 <div className="TelaAutenticacao">
                     <div className="TelaAutenticacao-grade">
                         <div className="TelaAutenticacao-container">
-                            <img className="TelaAutenticacao-logo" src={logo}/>
+                            <img className="TelaAutenticacao-logo" src={logo} alt="Logo do sistema de gestão CME"/>
                             <input className="TelaAutenticacao-caixaTexto"
                                    type="text"
                                    placeholder="insira seu e-mail"

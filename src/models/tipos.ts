@@ -54,3 +54,5 @@ export class Processo {
 }
 
 export type ModeloBD<T> = T & { id: number };
+
+export type ValorAlt<T> = { valor: T, alt: string };
