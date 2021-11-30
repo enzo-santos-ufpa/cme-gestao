@@ -8,6 +8,7 @@ import icCalendar from "../../assets/calendar-icon.png";
 import icCheck from "../../assets/check-icon.png";
 import icChat from "../../assets/chat-icon.png";
 import {PropsAutenticador} from "./TelaInicial";
+import PlanoFundo, {bg} from "../common/PlanoFundo";
 
 class MenuPrincipal extends React.Component<PropsAutenticador, {}> {
     private static readonly colunas = 3;
@@ -31,14 +32,14 @@ class MenuPrincipal extends React.Component<PropsAutenticador, {}> {
             </div>
         });
         return (
-            <div className="MenuPrincipal-bg">
+            <PlanoFundo bg={bg.menu}>
                 <p className="MenuPrincipal-botaoSair"
                    onClick={(_) => this.props.autenticador.logout()}>Sair</p>
                 <div className="MenuPrincipal-grade"
                      style={{
                          gridTemplateColumns: Array(numCols).fill("1fr").join(" "),
                      }}>{itens}</div>
-            </div>
+            </PlanoFundo>
         );
     }
 }

@@ -4,6 +4,7 @@ import LinhaTabelaEscolas from "./LinhaTabelaEscolas";
 import Escola from "../../models/Escola";
 import {DistritoAdmnistrativo, Processo, SetorEscola} from "../../models/tipos";
 import {escolas} from "../../lib/api";
+import PlanoFundo, {bg} from "../common/PlanoFundo";
 
 const escolaPadrao: Escola = {
     bairro: "CARANANDUBA - MOSQUEIRO",
@@ -106,17 +107,19 @@ class TelaConsultaEscolas extends React.Component<_Props, _Estado> {
 
     render() {
         return (
-            <div className="TelaConsultaEscolas">
-                <div className="TelaConsultaEscolas-linhaCabecalho">
-                    <div className="TelaConsultaEscolas-colunaCabecalho">
-                        <p className="TelaConsultaEscolas-titulo">{this.props.titulo}</p>
-                        <input className="TelaConsultaEscolas-caixaTexto" type="text"
-                               placeholder="Digite o nome de uma instituição"
-                               onChange={(e) => this.onBusca(e.target.value.trim())}/>
+            <PlanoFundo bg={bg.tela}>
+                <div className="TelaConsultaEscolas">
+                    <div className="TelaConsultaEscolas-linhaCabecalho">
+                        <div className="TelaConsultaEscolas-colunaCabecalho">
+                            <p className="TelaConsultaEscolas-titulo">{this.props.titulo}</p>
+                            <input className="TelaConsultaEscolas-caixaTexto" type="text"
+                                   placeholder="Digite o nome de uma instituição"
+                                   onChange={(e) => this.onBusca(e.target.value.trim())}/>
+                        </div>
                     </div>
+                    {this.renderizaTabela()}
                 </div>
-                {this.renderizaTabela()}
-            </div>
+            </PlanoFundo>
         );
     }
 }
