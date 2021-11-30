@@ -88,7 +88,16 @@ class TelaConsultaEscolas extends React.Component<_Props, _Estado> {
         if (!escolas.length) return <p>Nenhuma escola encontrada.</p>;
         return <div className="TelaConsultaEscolas-tabela">
             {divideElementos(
-                escolas.map((escola) => <LinhaTabelaEscolas escola={escola} mostraStatus={this.props.mostraStatus}/>),
+                escolas
+                    .sort((e0, e1): number => {
+                        const p0 = e0.processoAtual;
+                        const p1 = e1.processoAtual;
+                        if (p0 === undefined && p1 === undefined) return 0;
+                        if (p0 === undefined) return 1;
+                        if (p1 === undefined) return -1;
+                        return p0.dataFim.getTime() - p1.dataFim.getTime();
+                    })
+                    .map((escola) => <LinhaTabelaEscolas escola={escola} mostraStatus={this.props.mostraStatus}/>),
                 <hr className="TelaConsultaEscolas-divisor"/>,
             )}
         </div>
