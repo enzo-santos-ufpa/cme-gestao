@@ -12,8 +12,7 @@ class App extends React.Component {
         return <BrowserRouter>
             <Routes>
                 <Route path="/" element={<TelaInicial autenticador={App.autenticador}/>}/>
-                <Route path="/consulta-escolas" element={<TelaConsultaEscolas titulo="Consulta de Instituições" mostraStatus={false}/>}/>
-                <Route path="/valida-escolas" element={<TelaConsultaEscolas titulo="Validação de Instituições" mostraStatus={true}/>}/>
+                <Route path="/consulta-escolas" element={<TelaConsultaEscolas titulo="Consulta de Instituições" mostraStatus={true}/>}/>
                 <Route path="/cadastro-escola" element={<TelaCadastroEscola/>}/>
             </Routes>
         </BrowserRouter>;

@@ -12,12 +12,11 @@ import {PropsAutenticador} from "./TelaInicial";
 class MenuPrincipal extends React.Component<PropsAutenticador, {}> {
     private static readonly colunas = 3;
     private static readonly itens: Array<ItemTelaInicialProps> = [
-        {nome: "Cadastro de\nUsuários", caminhoIcone: icPeople},
+        {nome: "Cadastro\nde Usuário", caminhoIcone: icPeople},
         {nome: "Consulta de\nInstituições", caminhoIcone: icSearch, caminhoRota: "/consulta-escolas"},
         {nome: "Tabelas e\nGráficos", caminhoIcone: icChart},
-        {nome: "Instituições com\nValidade Vencida", caminhoIcone: icCalendar, caminhoRota: "/valida-escolas"},
-        {nome: "Avaliação de\nSituação de Regularização", caminhoIcone: icCheck},
-        {nome: "Atendimento de\nChamados", caminhoIcone: icChat},
+        {nome: "Autorização\nde Cadastro", caminhoIcone: icCheck},
+        {nome: "Consultar\nrelatórios", caminhoIcone: icChart},
     ];
 
     render() {
