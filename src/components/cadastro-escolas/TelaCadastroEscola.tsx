@@ -1,11 +1,11 @@
 import React, {ChangeEvent, FormEvent} from "react";
 import './TelaCadastroEscolas.css';
 import '../common/Tela.css';
-import Formulario from "../../models/form";
+import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
 
-type _Estado = Formulario.Tipo<"nome" | "processoAtual" | "resolucao" | "tempoVigencia" | "dataInicio">;
+type _Estado = Forms.Formulario<"nome" | "processoAtual" | "resolucao" | "tempoVigencia" | "dataInicio">;
 
 function parseDate(value: string): Date {
     const tokens = value.split("/");
@@ -41,14 +41,14 @@ class TelaCadastroEscola extends React.Component<{}, _Estado> {
 
     private static valida(estado: _Estado): _Estado | null {
         const novoEstado = {...estado};
-        Formulario.defineErro(novoEstado.nome, "Insira o nome da instituição.", (v) => /^.+$/.test(v));
-        Formulario.defineErro(novoEstado.processoAtual, "Insira o nome do processo atual.", (v) => /^.+$/.test(v));
-        Formulario.defineErro(novoEstado.resolucao, "Insira a resolução.", (v) => /^.+$/.test(v));
-        Formulario.defineErro(novoEstado.dataInicio, "Insira a data de início.", (v) => /^.+$/.test(v));
-        Formulario.defineErro(novoEstado.tempoVigencia, "Insira o tempo de vigência.", (v) => /^.+$/.test(v));
-        Formulario.defineErro(novoEstado.dataInicio, "A data deve estar no formado DD/MM/YYYY.", (v) => /^\d{2}\/\d{2}\/\d{4}$/.test(v));
-        Formulario.defineErro(novoEstado.tempoVigencia, "O tempo de vigência fornecido é inválido.", (v) => /^\d+$/.test(v));
-        return Formulario.possuiErro(novoEstado) ? novoEstado : null;
+        Forms.defineErro(novoEstado.nome, "Insira o nome da instituição.", (v) => /^.+$/.test(v));
+        Forms.defineErro(novoEstado.processoAtual, "Insira o nome do processo atual.", (v) => /^.+$/.test(v));
+        Forms.defineErro(novoEstado.resolucao, "Insira a resolução.", (v) => /^.+$/.test(v));
+        Forms.defineErro(novoEstado.dataInicio, "Insira a data de início.", (v) => /^.+$/.test(v));
+        Forms.defineErro(novoEstado.tempoVigencia, "Insira o tempo de vigência.", (v) => /^.+$/.test(v));
+        Forms.defineErro(novoEstado.dataInicio, "A data deve estar no formado DD/MM/YYYY.", (v) => /^\d{2}\/\d{2}\/\d{4}$/.test(v));
+        Forms.defineErro(novoEstado.tempoVigencia, "O tempo de vigência fornecido é inválido.", (v) => /^\d+$/.test(v));
+        return Forms.possuiErro(novoEstado) ? novoEstado : null;
     }
 
     private async onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -57,7 +57,7 @@ class TelaCadastroEscola extends React.Component<{}, _Estado> {
         if (novoEstado !== null) {
             this.setState(novoEstado);
         } else {
-            const json = Formulario.json(this.state);
+            const json = Forms.json(this.state);
 
             await escolas.create(
                 json["nome"],

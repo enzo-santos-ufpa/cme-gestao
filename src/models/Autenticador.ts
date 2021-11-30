@@ -1,8 +1,8 @@
-import Formulario from "./form";
+import Forms from "./form";
 
 type EstadoAutenticacaoListener = ((autenticado: boolean) => void);
 
-export type EstadoAutenticacao = Formulario.Tipo<"email" | "senha">;
+export type EstadoAutenticacao = Forms.Formulario<"email" | "senha">;
 
 type Conta = { email: string, senha: string };
 

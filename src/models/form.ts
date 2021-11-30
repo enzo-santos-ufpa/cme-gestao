@@ -1,16 +1,29 @@
-namespace Formulario {
-    type Estado = { [k: string]: EstadoCampo };
+import {ChangeEvent} from "react";
 
-    export type EstadoCampo = { texto: string, erro?: string };
 
-    export type Tipo<T extends string> = Record<T, EstadoCampo>;
+namespace Forms {
+    type EventoCampo = ChangeEvent<HTMLInputElement>;
 
-    export function json(estado: Estado): { [k: keyof Estado]: string } {
-        const chaves: (keyof Estado)[] = Object.keys(estado);
-        return Object.fromEntries(chaves.map(chave => [chave, estado[chave].texto]));
+    export type Campo = { texto: string, erro?: string };
+
+    export type Formulario<T extends string> = Record<T, Campo>;
+
+    type _Formulario = Formulario<string>;
+
+    export function json(form: _Formulario): { [k: string]: string } {
+        const chaves: (keyof _Formulario)[] = Object.keys(form);
+        return Object.fromEntries(chaves.map(chave => [chave, form[chave].texto]));
     }
 
-    export function defineErro(campo: EstadoCampo, erro: string, esperado: (texto: string) => boolean) {
+    export function atualizaCampo<T extends _Formulario>(form: T, nomeCampo: keyof T, callback?: (novoForm: T) => void) {
+        return (e: EventoCampo) => {
+            const novoForm = {...form};
+            novoForm[nomeCampo] = {...novoForm[nomeCampo], texto: e.target.value};
+            if (callback != null) callback(novoForm);
+        };
+    }
+
+    export function defineErro(campo: Campo, erro: string, esperado: (texto: string) => boolean) {
         if (esperado(campo.texto)) {
             campo.erro = undefined;
         } else if (campo.erro === undefined) {
@@ -18,10 +31,10 @@ namespace Formulario {
         }
     }
 
-    export function possuiErro(estado: Estado): boolean {
-        const itens: EstadoCampo[] = Object.values(estado);
-        return itens.some(item => item.erro !== undefined);
+    export function possuiErro(form: _Formulario): boolean {
+        const campos: Campo[] = Object.values(form);
+        return campos.some(campo => campo.erro !== undefined);
     }
 }
 
-export default Formulario;
+export default Forms;
