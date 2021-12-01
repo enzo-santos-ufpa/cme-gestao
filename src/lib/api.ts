@@ -4,7 +4,7 @@ import {DistritoAdmnistrativo, Processo, SetorEscola} from "../models/tipos";
 
 class APIEscola {
     async create(nome: string, processoAtual: string, resolucao: string, tempoVigencia: number, dataInicioVigencia: Date) {
-        return await fetch("/api/escolas", {
+        return await fetch("http://localhost:3030/api/escolas", {
             method: 'POST',
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify({nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia}),
@@ -13,7 +13,7 @@ class APIEscola {
     }
 
     async read(): Promise<Escola[]> {
-        return await fetch("/api/escolas")
+        return await fetch("http://localhost:3030/api/escolas")
             .then(response => response.json())
             .then(json => json as any[])
             .then(json => json.map(child => {

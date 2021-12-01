@@ -11,7 +11,7 @@ app.use(express.json({type: 'application/vnd.api+json'}));
 app.use(cors());
 
 app.use((() => {
-    const router = express_promise_router();
+    const router = express();
     router.get("/api", index.info);
     return router;
 })());

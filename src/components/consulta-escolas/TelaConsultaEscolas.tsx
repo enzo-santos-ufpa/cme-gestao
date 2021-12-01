@@ -54,7 +54,7 @@ type _EstadoCarregado = {
     escolasAtuais: Escola[],
 }
 
-async function retornaEscolas(): Promise<Escola[]> {
+async function retornaEscolas() {
     return await escolas.read();
 }
 

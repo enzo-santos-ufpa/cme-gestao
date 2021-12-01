@@ -1,8 +1,9 @@
-import {Pool} from "pg";
+import pg from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
 
+const {Pool} = pg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
 pool.query(
     "CREATE TABLE IF NOT EXISTS escola (" +
@@ -20,5 +21,5 @@ pool.on('connect', () => {
 });
 
 export const db = {
-    query: pool.query,
+    pool: pool,
 };
