@@ -19,7 +19,7 @@ namespace Forms {
         return (e: EventoCampo) => {
             const novoForm = {...form};
             novoForm[nomeCampo] = {...novoForm[nomeCampo], texto: e.target.value};
-            if (callback != null) callback(novoForm);
+            if (callback !== undefined) callback(novoForm);
         };
     }
 

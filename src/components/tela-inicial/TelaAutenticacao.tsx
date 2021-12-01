@@ -20,14 +20,14 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, EstadoAutentic
                                    type="text"
                                    placeholder="insira seu e-mail"
                                    value={this.state.email.texto}
-                                   onChange={Forms.atualizaCampo(this.state, "email", this.setState)}/>
+                                   onChange={Forms.atualizaCampo(this.state, "email", (novoEstado) => this.setState(novoEstado))}/>
                             <span style={{color: "red"}}>{this.state.email.erro}</span>
                             <div style={{height: "10px"}}/>
                             <input className="TelaAutenticacao-caixaTexto"
                                    type="text"
                                    placeholder="insira sua senha"
                                    value={this.state.senha.texto}
-                                   onChange={Forms.atualizaCampo(this.state, "senha", this.setState)}/>
+                                   onChange={Forms.atualizaCampo(this.state, "senha", (novoEstado) => this.setState(novoEstado))}/>
                             <span style={{color: "red"}}>{this.state.senha.erro}</span>
                             <div style={{height: "20px"}}/>
                             <div className="TelaAutenticacao-botoes">

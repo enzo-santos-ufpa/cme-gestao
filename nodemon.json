@@ -1,0 +1,5 @@
+{
+  "execMap": {
+    "ts": "node --loader ts-node/esm --experimental-specifier-resolution=node --es-module-specifier-resolution=node --experimental-modules"
+  }
+}

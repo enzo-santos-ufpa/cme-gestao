@@ -4,18 +4,16 @@ import {DistritoAdmnistrativo, Processo, SetorEscola} from "../models/tipos";
 
 class APIEscola {
     async create(nome: string, processoAtual: string, resolucao: string, tempoVigencia: number, dataInicioVigencia: Date) {
-        return await fetch("http://localhost:8080/api/escolas", {
+        return await fetch("http://localhost:3030/api/escolas", {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
+            headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify({nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia}),
+        }).catch(_ => {
         });
     }
 
     async read(): Promise<Escola[]> {
-        return await fetch("http://localhost:8080/api/escolas")
+        return await fetch("http://localhost:3030/api/escolas")
             .then(response => response.json())
             .then(json => json as any[])
             .then(json => json.map(child => {
@@ -49,9 +47,9 @@ class APIEscola {
                     modalidadeEnsino: {nome: "Infantil", etapa: {nome: "Pré-escola"}},
                     vigenciaConselho: "5"
                 };
-            }));
+            }))
+            .catch(_ => []);
     }
 }
 
 export const escolas = new APIEscola();
-
