@@ -1,10 +1,11 @@
 version: '3'
 services:
-  cmegestao:
-    container_name: cmegestao
+  cme-server:
+    container_name: cme-server
+    command: bash -c "npm run server"
     build: .
     ports:
-      - 3000:3000
+      - "3030:3030"
     environment:
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
 
@@ -13,11 +14,18 @@ services:
     links:
       - postgres
 
+  cme-client:
+    container_name: cme-client
+    command: bash -c "npm run client"
+    build: .
+    ports:
+      - "3000:3000"
+
   postgres:
     container_name: postgres
     restart: always
     image: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: postgres
