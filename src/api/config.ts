@@ -1,7 +1,4 @@
 import pg from "pg";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const {Pool} = pg;
 const pool = new Pool({connectionString: process.env.DATABASE_URL});
@@ -14,7 +11,7 @@ pool.query(
     "   TempoVigencia INTEGER NOT NULL," +
     "   DataInicioVigencia DATE NOT NULL" +
     ");"
-);
+).then((_) => console.log("backend: Tabelas inicializadas"));
 
 pool.on('connect', () => {
     console.log('backend: Conexão feita ao banco');
