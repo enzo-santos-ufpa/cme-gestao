@@ -1,10 +1,22 @@
 import Escola from "../models/Escola";
 import {DistritoAdmnistrativo, Processo, SetorEscola} from "../models/tipos";
+import {networkInterfaces} from "os";
 
 
 class APIEscola {
+    private static url(caminho: string): string {
+        const address = Object.values(networkInterfaces())
+            .flatMap(child => child)
+            .find(network => network.family === "IPv4" && !network.internal)
+            ?.address || "localhost";
+
+        const result = `http://${address}:3030/${caminho}`;
+        console.log(`Conectando a ${result}`)
+        return result;
+    }
+
     async create(nome: string, processoAtual: string, resolucao: string, tempoVigencia: number, dataInicioVigencia: Date) {
-        return await fetch("http://localhost:3030/api/escolas", {
+        return await fetch(APIEscola.url("api/escolas"), {
             method: 'POST',
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify({nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia}),
@@ -13,7 +25,7 @@ class APIEscola {
     }
 
     async read(): Promise<Escola[]> {
-        return await fetch("http://localhost:3030/api/escolas")
+        return await fetch(APIEscola.url("api/escolas"))
             .then(response => response.json())
             .then(json => json as any[])
             .then(json => json.map(child => {
