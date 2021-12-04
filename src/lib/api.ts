@@ -1,9 +1,31 @@
 import Escola from "../models/Escola";
-import {DistritoAdmnistrativo, Processo, SetorEscola} from "../models/tipos";
+import {
+    DistritoAdmnistrativo,
+    FiltroEscolasBD,
+    ModeloBD,
+    Processo,
+    RespostaCadastro,
+    SetorEscola
+} from "../models/tipos";
 import {networkInterfaces} from "os";
-
+import {logger} from "./utils";
 
 class APIEscola {
+    private static async post(caminho: string, object: any): Promise<void> {
+        await fetch(APIEscola.url(caminho), {
+            method: 'POST',
+            headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+            body: JSON.stringify(object),
+        });
+    }
+
+    private static async get(caminho: string, object: any) {
+        const log = logger.client.at("APIEscola#get").log;
+        const url = APIEscola.url(caminho) + "?" + new URLSearchParams(object);
+        log(`Getting ${url}`)
+        return await fetch(url);
+    }
+
     private static url(caminho: string): string {
         const address = Object.values(networkInterfaces())
             .flatMap(child => child)
@@ -15,22 +37,24 @@ class APIEscola {
         return result;
     }
 
-    async create(nome: string, processoAtual: string, resolucao: string, tempoVigencia: number, dataInicioVigencia: Date) {
-        return await fetch(APIEscola.url("api/escolas"), {
-            method: 'POST',
-            headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-            body: JSON.stringify({nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia}),
-        }).catch(_ => {
+    async create(nome: string, processoAtual: string, resolucao: string, tempoVigencia: number, dataInicioVigencia: Date): Promise<void> {
+        await APIEscola.post(
+            "api/escolas",
+            {nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia},
+        ).catch(_ => {
         });
     }
 
-    async read(): Promise<Escola[]> {
-        return await fetch(APIEscola.url("api/escolas"))
+    async read(filtro?: FiltroEscolasBD): Promise<ModeloBD<Escola>[]> {
+        const log = logger.client.at("APIEscola#read").log;
+        log(`Filtrando por ${filtro}`)
+        return APIEscola.get("api/escolas", filtro)
             .then(response => response.json())
             .then(json => json as any[])
             .then(json => json.map(child => {
-                const {nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia} = child;
+                const {id, nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia} = child;
                 return {
+                    id: id,
                     nome: nome,
                     processoAtual: new Processo(
                         processoAtual,
@@ -61,6 +85,10 @@ class APIEscola {
                 };
             }))
             .catch(_ => []);
+    }
+
+    async answer(escola: ModeloBD<Escola>, resposta: RespostaCadastro): Promise<void> {
+        await APIEscola.post("api/escolas/responderCadastro", {idEscola: escola.id, resposta});
     }
 }
 

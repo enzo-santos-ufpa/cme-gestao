@@ -1,3 +1,10 @@
+export type RespostaCadastro = "accept" | "refuse";
+
+export type FiltroEscolasBD = {
+    cadastro: "only-authorized" | "only-pending" | "all",
+};
+
+
 export enum DistritoAdmnistrativo { DABEL, DABEN, DAGUA, DAICO, DAOUT, DAMOS }
 
 export enum SetorEscola { publico, privado}
@@ -16,16 +23,16 @@ export type ConvenioSEMEC = {
 
 export type TipoEscola = {
     setor: SetorEscola,
-    nome: string,
+    nome: string, // EMEIF, EMEF, EMEI
 }
 
 export type EtapaEnsino = {
-    nome: string,
+    nome: string, // Educação infantil, Ensino fundamental (CF), Ensino fundamental (EJA)
 }
 
 export type ModalidadeEnsino = {
     etapa: EtapaEnsino,
-    nome: string,
+    nome: string, // Creche, Pré-escola, CF I
 }
 
 export class Processo {

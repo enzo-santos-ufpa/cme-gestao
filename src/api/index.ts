@@ -21,6 +21,7 @@ app.use("/api/", (() => {
     router.post("/escolas", escolas.create);
     router.get("/escolas", escolas.read)
     router.put("/escolas/:id", escolas.update);
+    router.post("/escolas/responderCadastro", escolas.answerSchool);
     return router;
 })());
 
