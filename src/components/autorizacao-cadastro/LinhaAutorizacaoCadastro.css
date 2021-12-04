@@ -1,0 +1,29 @@
+.LinhaAutorizacaoCadastro {
+    display: flex;
+    align-items: center;
+}
+
+.LinhaAutorizacaoCadastro-status {
+    width: 1%;
+    margin-right: 10px;
+}
+
+.LinhaAutorizacaoCadastro-titulo {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.LinhaAutorizacaoCadastro-subtitulo {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.BotaoResposta {
+    flex-basis: auto;
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+.BotaoResposta:hover {
+    background-color: #00000011;
+}
