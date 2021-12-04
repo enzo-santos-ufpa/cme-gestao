@@ -5,14 +5,17 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 import TelaConsultaEscolas from "./components/consulta-escolas/TelaConsultaEscolas";
 import Autenticador from "./models/Autenticador";
 import TelaCadastroEscola from "./components/cadastro-escolas/TelaCadastroEscola";
+import TelaAutorizacaoCadastro from "./components/autorizacao-cadastro/TelaAutorizacaoCadastro";
 
 class App extends React.Component {
     private static autenticador = new Autenticador();
+
     render() {
         return <BrowserRouter>
             <Routes>
                 <Route path="/" element={<TelaInicial autenticador={App.autenticador}/>}/>
-                <Route path="/consulta-escolas" element={<TelaConsultaEscolas titulo="Consulta de Instituições" mostraStatus={true}/>}/>
+                <Route path="/consulta-escolas" element={<TelaConsultaEscolas/>}/>
+                <Route path="/autoriza-cadastro" element={<TelaAutorizacaoCadastro/>}/>
                 <Route path="/cadastro-escola" element={<TelaCadastroEscola/>}/>
             </Routes>
         </BrowserRouter>;

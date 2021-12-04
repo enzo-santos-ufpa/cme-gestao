@@ -26,7 +26,8 @@ class MenuPrincipal extends React.Component<PropsAutenticador, {}> {
         },
         {
             nome: "Autorização\nde Cadastro",
-            icone: {valor: icCheck, alt: "Ícone de verificação"}
+            icone: {valor: icCheck, alt: "Ícone de verificação"},
+            caminhoRota: "/autoriza-cadastro"
         },
         {
             nome: "Consultar\nrelatórios",
