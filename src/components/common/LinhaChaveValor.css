@@ -1,0 +1,17 @@
+
+.LinhaChaveValor {
+    display: flex;
+    flex-direction: row;
+}
+
+.LinhaChaveValor-chave {
+    font-weight: bold;
+    color: black;
+    font-size: 16px;
+}
+
+.LinhaChaveValor-valor {
+    font-weight: bold;
+    color: gray;
+    font-size: 16px;
+}
