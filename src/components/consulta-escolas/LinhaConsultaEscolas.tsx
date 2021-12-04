@@ -1,22 +1,12 @@
 import React from "react";
-import './LinhaTabelaEscolas.css';
+import './LinhaConsultaEscolas.css';
 import Escola from "../../models/Escola";
 import {Processo} from "../../models/tipos";
+import LinhaChaveValor from "../common/LinhaChaveValor";
 
-type LinhaChaveValorProps = { chave: string, valor: string }
+type _Props = { escola: Escola, mostraStatus: boolean }
 
-type LinhaTabelaEscolasProps = { escola: Escola, mostraStatus: boolean }
-
-class LinhaChaveValor extends React.Component<LinhaChaveValorProps, {}> {
-    render() {
-        return <div className="LinhaChaveValor">
-            <p style={{whiteSpace: "pre-wrap"}} className="LinhaChaveValor-chave">{this.props.chave + ": "}</p>
-            <p className="LinhaChaveValor-valor">{this.props.valor}</p>
-        </div>
-    }
-}
-
-class LinhaTabelaEscolas extends React.Component<LinhaTabelaEscolasProps, {}> {
+class LinhaConsultaEscolas extends React.Component<_Props, {}> {
     private static renderizaDescricaoProcesso(processo?: Processo): JSX.Element | null {
         if (processo == null) return null;
         return <div style={{display: "flex"}}>
@@ -44,8 +34,8 @@ class LinhaTabelaEscolas extends React.Component<LinhaTabelaEscolasProps, {}> {
     private renderizaStatus(processo?: Processo): JSX.Element | null {
         if (processo == null) return null;
         if (!this.props.mostraStatus) return null;
-        const cor = LinhaTabelaEscolas.mapeiaCor(processo.diasRestantes);
-        return <div className="LinhaTabelaEscolas-status" style={{backgroundColor: cor}}/>
+        const cor = LinhaConsultaEscolas.mapeiaCor(processo.diasRestantes);
+        return <div className="LinhaConsultaEscolas-status" style={{backgroundColor: cor}}/>
     }
 
     private static mapeiaCor(diasRestantes: number): string {
@@ -57,16 +47,17 @@ class LinhaTabelaEscolas extends React.Component<LinhaTabelaEscolasProps, {}> {
 
     render() {
         const processoAtual = this.props.escola.processoAtual;
+        console.log(JSON.stringify(processoAtual));
         return (
-            <div className="LinhaTabelaEscolas">
+            <div className="LinhaConsultaEscolas">
                 {this.renderizaStatus(processoAtual)}
                 <div>
-                    <p className="LinhaTabelaEscolas-titulo">{this.props.escola.nome}</p>
-                    {LinhaTabelaEscolas.renderizaDescricaoProcesso(processoAtual)}
+                    <p className="LinhaConsultaEscolas-titulo">{this.props.escola.nome}</p>
+                    {LinhaConsultaEscolas.renderizaDescricaoProcesso(processoAtual)}
                 </div>
             </div>
         );
     }
 }
 
-export default LinhaTabelaEscolas;
+export default LinhaConsultaEscolas;

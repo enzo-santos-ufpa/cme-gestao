@@ -1,0 +1,18 @@
+.LinhaConsultaEscolas {
+    display: flex;
+}
+
+.LinhaConsultaEscolas-status {
+    width: 1%;
+    margin-right: 10px;
+}
+
+.LinhaConsultaEscolas-titulo {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.LinhaConsultaEscolas-subtitulo {
+    font-weight: bold;
+    font-size: 16px;
+}

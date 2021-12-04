@@ -1,0 +1,51 @@
+p {
+    margin: 0;
+}
+
+body {
+    margin: 0;
+}
+
+.TelaEscolas {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.TelaEscolas-divisor {
+    border-top: 2px solid black;
+}
+
+.TelaEscolas-linhaCabecalho {
+    flex-direction: row;
+    display: flex;
+}
+
+.TelaEscolas-colunaCabecalho {
+    padding: 0;
+    flex-direction: column;
+    flex: 0.5;
+    display: flex;
+}
+
+.TelaEscolas-titulo {
+    font-size: 32px;
+    font-weight: bold;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.TelaEscolas-caixaTexto {
+    padding: 10px;
+    background-position: right;
+    background-repeat: no-repeat;
+    background-color: lightgray;
+    background-image: url(../../assets/magnifier-icon.png);
+    background-size: contain;
+    background-origin: content-box;
+    border: 0;
+}
+
+.TelaEscolas-caixaTexto::placeholder {
+    font-weight: bold;
+    font-style: italic;
+}
