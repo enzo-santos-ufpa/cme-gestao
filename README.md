@@ -54,6 +54,4 @@ docker-compose --version
    acesse o link `http://localhost:3000/` para visualizar o projeto.
    
 Para encerrar a execução do projeto, basta apertar CTRL + C no terminal com o comando em execução
-ou fechar o terminal. Para executar o projeto novamente, basta executar `docker-compose up`. Caso
-modificações sejam feitas no código-fonte, é preciso executar `docker-compose up --build` para que
-essas modificações sejam refletidas no projeto.
+ou fechar o terminal.
