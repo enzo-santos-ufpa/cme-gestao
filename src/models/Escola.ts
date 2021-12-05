@@ -1,7 +1,7 @@
 import {
     ContatoServidor,
-    ConvenioSEMEC,
-    DistritoAdmnistrativo,
+    ConvenioSEMEC, DadosCadastro,
+    DistritoAdministrativo,
     ModalidadeEnsino,
     Processo,
     TipoEscola
@@ -15,7 +15,7 @@ type Escola = {
     cnpj: string,
     cnpjConselho: string,
     vigenciaConselho: string,
-    distrito: DistritoAdmnistrativo,
+    distrito: DistritoAdministrativo,
     endereco: string,
     cidade: string,
     uf: string,
@@ -30,8 +30,11 @@ type Escola = {
     convenioSemec?: ConvenioSEMEC,
     processoAtual?: Processo,
     filiais: Escola[],
+    nomeEntidadeMantenedora: string,
 }
 
-export type EscolaPrivada = Escola & { nomeEntidadeMantenedora: string }
+
+export type EscolaBase = Pick<Escola, "nome" | "processoAtual">;
+export type EscolaPendente = Escola & { cadastro: DadosCadastro }
 
 export default Escola;

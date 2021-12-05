@@ -1,7 +1,5 @@
 import {db} from "./config";
 import express from "express";
-import {FiltroEscolasBD} from "../models/tipos";
-import {logger} from "../lib/utils";
 
 export namespace index {
     export function info(req: express.Request, res: express.Response) {
@@ -10,61 +8,50 @@ export namespace index {
 }
 
 export namespace escolas {
-    export async function create(req: express.Request, res: express.Response) {
-        const log = logger.server.at("escolas#create").log;
-
+    export async function criar(req: express.Request, res: express.Response) {
         const {nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia} = req.body;
-        log(`Criando escola ${nome}`);
-
-        const consulta = await db.pool.query("INSERT INTO " +
-            "Escola (Nome, ProcessoAtual, Resolucao, TempoVigencia, DataInicioVigencia) " +
-            "VALUES ($1, $2, $3, $4, $5) " +
-            "RETURNING Id",
+        const consulta = await db.pool.query(`INSERT INTO 
+            Escola (Nome, ProcessoAtual, Resolucao, TempoVigencia, DataInicioVigencia) 
+            VALUES ($1, $2, $3, $4, $5) 
+            RETURNING Id`,
             [nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia],
         );
-        log(`Inserção em Escola: ${JSON.stringify(consulta)}`)
 
         for (const row of consulta.rows) {
             const idEscola = row["id"];
-            const consulta = await db.pool.query("INSERT INTO " +
-                "TriagemEscola (IdEscola, DataInsercao) " +
-                "VALUES ($1, $2)",
+            await db.pool.query(`INSERT INTO 
+                TriagemEscola (IdEscola, DataInsercao)
+                VALUES ($1, $2)`,
                 [idEscola, new Date()],
             );
-            log(`Inserção em TriagemEscola: ${JSON.stringify(consulta)}`)
         }
 
         res.status(201).send({message: "Escola adicionada com sucesso!", body: {escola: req.body}});
     }
 
-    export async function read(req: express.Request, res: express.Response) {
-        const log = logger.server.at("escolas#read").log;
+    export async function pendentes(req: express.Request, res: express.Response) {
+        const consulta = await db.pool.query(`SELECT * FROM Escola A
+            RIGHT JOIN TriagemEscola B
+            ON A.Id = B.IdEscola`);
 
-        const params = req.query as (FiltroEscolasBD | {});
-        log(`Lendo escolas com filtro ${JSON.stringify(params)}`)
+        res.status(200).send(consulta.rows.map(row => {
+            return {
+                dataInicioVigencia: row["datainiciovigencia"],
+                id: row["idescola"],
+                nome: row["nome"],
+                processoAtual: row["processoatual"],
+                resolucao: row["resolucao"],
+                tempoVigencia: row["tempovigencia"],
+                dataInsercao: row["datainsercao"]
+            };
+        }));
+    }
 
-        const consultaTexto: string = (() => {
-            if (!Object.keys(params).length) return "SELECT * FROM escola";
-            const filtro = params as FiltroEscolasBD;
-            switch (filtro.cadastro) {
-                case "all":
-                    return "SELECT * FROM Escola";
-                case "only-authorized":
-                    return "SELECT * FROM Escola A " +
-                        "LEFT JOIN TriagemEscola B " +
-                        "ON A.Id = B.IdEscola " +
-                        "WHERE B.IdEscola IS NULL";
-                case "only-pending":
-                    return "SELECT * " +
-                        "FROM Escola A " +
-                        "RIGHT JOIN TriagemEscola B " +
-                        "ON A.Id = B.IdEscola";
-            }
-        })();
-        log(`Calcula consulta ${consultaTexto}`);
-
-        const consulta = await db.pool.query(consultaTexto);
-        log(`Consulta em Escola: ${consulta}`);
+    export async function autorizadas(req: express.Request, res: express.Response) {
+        const consulta = await db.pool.query(`SELECT * FROM Escola A 
+            LEFT JOIN TriagemEscola B 
+            ON A.Id = B.IdEscola 
+            WHERE B.IdEscola IS NULL`);
 
         res.status(200).send(consulta.rows.map(row => {
             return {
@@ -78,17 +65,16 @@ export namespace escolas {
         }));
     }
 
-    export async function answerSchool(req: express.Request, res: express.Response) {
-        const {idEscola, answer} = req.params;
-
+    export async function responderTriagem(req: express.Request, res: express.Response) {
+        const {idEscola, resposta} = req.body;
         await db.pool.query("DELETE FROM TriagemEscola WHERE IdEscola = $1", [idEscola]);
-        if (answer === "refuse") {
+        if (resposta === "refuse") {
             await db.pool.query("DELETE FROM Escola WHERE Id = $1", [idEscola]);
         }
         res.status(201).send({message: "Escola respondida com sucesso!", body: {escola: req.body}});
     }
 
-    export async function update(req: express.Request, res: express.Response) {
+    export async function atualizar(req: express.Request, res: express.Response) {
         const idEscola = parseInt(req.params.id);
         console.log(`backend/escolas: Atualizando escola de ID ${idEscola}`)
 

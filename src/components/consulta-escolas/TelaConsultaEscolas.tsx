@@ -14,7 +14,7 @@ class TelaConsultaEscolas extends React.Component {
     render() {
         return (
             <TelaEscolas titulo="Consulta de Instituições"
-                         construtorEscolas={() => escolas.read({cadastro: "only-authorized"})}
+                         construtorEscolas={() => escolas.autorizadas()}
                          construtorTabela={(escolas) => <div className="TelaConsultaEscolas-tabela">
                              {divideElementos(
                                  escolas

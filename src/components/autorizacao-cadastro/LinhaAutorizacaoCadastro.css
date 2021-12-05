@@ -18,12 +18,19 @@
     font-size: 16px;
 }
 
-.BotaoResposta {
+.LinhaAutorizacaoCadastro-opcoes {
+    display: flex;
+    align-items: center;
+}
+
+.LinhaAutorizacaoCadastro-BotaoResposta {
+    padding-left: 10px;
+    padding-right: 10px;
     flex-basis: auto;
     flex-grow: 1;
     cursor: pointer;
 }
 
-.BotaoResposta:hover {
+.LinhaAutorizacaoCadastro-BotaoResposta:hover {
     background-color: #00000011;
 }

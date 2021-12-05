@@ -59,7 +59,7 @@ class TelaCadastroEscola extends React.Component<{}, _Estado> {
         } else {
             const json = Forms.json(this.state);
 
-            await escolas.create(
+            await escolas.criar(
                 json["nome"],
                 json["processoAtual"],
                 json["resolucao"],

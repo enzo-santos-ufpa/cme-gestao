@@ -3,7 +3,6 @@ import './TelaEscolas.css';
 import Escola from "../../models/Escola";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
 import {ModeloBD} from "../../models/tipos";
-import {logger} from "../../lib/utils";
 
 type _Props = {
     titulo: string,
@@ -27,9 +26,7 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
     state: _EstadoCarregando = {}
 
     componentDidMount() {
-        const log = logger.client.at("TelaEscolas#componentDidMount").log;
         this.props.construtorEscolas().then((escolas) => {
-            log(escolas);
             const novoEstado: _EstadoCarregado = {escolas: escolas, escolasAtuais: escolas};
             this.setState(novoEstado);
         });

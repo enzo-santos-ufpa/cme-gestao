@@ -1,11 +1,12 @@
+export type DadosCadastro = { dataInsercao: Date }
+
 export type RespostaCadastro = "accept" | "refuse";
 
 export type FiltroEscolasBD = {
     cadastro: "only-authorized" | "only-pending" | "all",
 };
 
-
-export enum DistritoAdmnistrativo { DABEL, DABEN, DAGUA, DAICO, DAOUT, DAMOS }
+export enum DistritoAdministrativo { DABEL, DABEN, DAGUA, DAICO, DAOUT, DAMOS }
 
 export enum SetorEscola { publico, privado}
 
