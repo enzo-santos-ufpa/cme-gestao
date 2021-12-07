@@ -19,7 +19,7 @@ export default class Autenticador {
 
     private onLogin(estado: EstadoAutenticacao) {
         this.listeners.forEach(listener => listener(true));
-        localStorage.setItem("currentUser", JSON.stringify({email: estado.email.texto, senha: estado.senha.texto}));
+        localStorage.setItem("currentUser", JSON.stringify(estado.json()));
     }
 
     private onLogout() {
@@ -27,30 +27,30 @@ export default class Autenticador {
         localStorage.setItem("currentUser", "null");
     }
 
-    login(estado: EstadoAutenticacao): EstadoAutenticacao | null {
+    login(estado: EstadoAutenticacao): boolean {
         let conta = undefined;
 
-        const novoEstado = {...estado};
-        novoEstado.email.erro = (() => {
-            const texto = estado.email.texto;
+        estado.campo("email").erro = (() => {
+            const texto = estado.campo("email").texto;
             if (!texto.trim().length) return "Insira seu e-mail.";
 
             conta = Autenticador.contas.find(conta => conta.email === texto);
-            if (conta === undefined) return "O e-mail fornecido não existe.";
+            if (!conta) return "O e-mail fornecido não existe.";
             return undefined;
         })();
-        novoEstado.senha.erro = (() => {
-            const texto = estado.senha.texto;
+        estado.campo("senha").erro = (() => {
+            const texto = estado.campo("senha").texto;
             if (!texto.trim().length) return "Insira sua senha.";
-            if (novoEstado.email.erro !== undefined) return undefined;
-            if (conta !== undefined) return texto === conta.senha ? undefined : "A senha está inválida."
+            if (estado.campo("email").erro) return undefined;
+            if (conta) return texto === conta.senha ? undefined : "A senha está inválida."
             return undefined;
         })();
 
-        if (novoEstado.email.erro === undefined && novoEstado.senha.erro === undefined) {
+        if (!estado.campo("email").erro && !estado.campo("senha").erro) {
             this.onLogin(estado);
+            return true;
         }
-        return novoEstado;
+        return false;
     }
 
     logout() {

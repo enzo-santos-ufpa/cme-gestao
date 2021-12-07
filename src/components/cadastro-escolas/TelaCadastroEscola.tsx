@@ -1,11 +1,13 @@
-import React, {ChangeEvent, FormEvent} from "react";
+import React, {FormEvent} from "react";
 import './TelaCadastroEscolas.css';
 import '../common/Tela.css';
 import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
+import {Processo} from "../../models/tipos";
 
-type _Estado = Forms.Formulario<"nome" | "processoAtual" | "resolucao" | "tempoVigencia" | "dataInicio">;
+type FormularioCadastro = Forms.Formulario<"nome" | "processo.nome" | "processo.resolucao" | "processo.duracao" | "processo.inicio">;
+type Estado = { form: FormularioCadastro };
 
 function parseDate(value: string): Date {
     const tokens = value.split("/");
@@ -16,56 +18,49 @@ function parseDate(value: string): Date {
     );
 }
 
-class TelaCadastroEscola extends React.Component<{}, _Estado> {
-    state: _Estado
+class TelaCadastroEscola extends React.Component<{}, Estado> {
+    state: Estado
 
     constructor(props: {}) {
         super(props);
 
         this.state = {
-            nome: {texto: ""},
-            processoAtual: {texto: ""},
-            resolucao: {texto: ""},
-            tempoVigencia: {texto: ""},
-            dataInicio: {texto: ""},
+            form: new Forms.Formulario({
+                "nome": new Forms.Campo(),
+                "processo.nome": new Forms.Campo(),
+                "processo.resolucao": new Forms.Campo(),
+                "processo.duracao": new Forms.Campo(),
+                "processo.inicio": new Forms.Campo(),
+            }),
         };
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    private atualizaCampo(e: ChangeEvent<HTMLInputElement>, nomeCampo: keyof _Estado) {
-        const estado = this.state;
-        const novoEstado = {...estado};
-        novoEstado[nomeCampo] = {...novoEstado[nomeCampo], texto: e.target.value};
-        this.setState(novoEstado);
-    }
-
-    private static valida(estado: _Estado): _Estado | null {
-        const novoEstado = {...estado};
-        Forms.defineErro(novoEstado.nome, "Insira o nome da instituição.", (v) => /^.+$/.test(v));
-        Forms.defineErro(novoEstado.processoAtual, "Insira o nome do processo atual.", (v) => /^.+$/.test(v));
-        Forms.defineErro(novoEstado.resolucao, "Insira a resolução.", (v) => /^.+$/.test(v));
-        Forms.defineErro(novoEstado.dataInicio, "Insira a data de início.", (v) => /^.+$/.test(v));
-        Forms.defineErro(novoEstado.tempoVigencia, "Insira o tempo de vigência.", (v) => /^.+$/.test(v));
-        Forms.defineErro(novoEstado.dataInicio, "A data deve estar no formado DD/MM/YYYY.", (v) => /^\d{2}\/\d{2}\/\d{4}$/.test(v));
-        Forms.defineErro(novoEstado.tempoVigencia, "O tempo de vigência fornecido é inválido.", (v) => /^\d+$/.test(v));
-        return Forms.possuiErro(novoEstado) ? novoEstado : null;
-    }
-
     private async onSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        const novoEstado = TelaCadastroEscola.valida(this.state);
-        if (novoEstado !== null) {
-            this.setState(novoEstado);
+        const form = this.state.form.clone();
+        const valido = form.valida((form) => {
+            form.campo("nome").valida("Insira o nome da instituição.", (v) => /^.+$/.test(v));
+            form.campo("processo.nome").valida("Insira o nome do processo atual.", (v) => /^.+$/.test(v));
+            form.campo("processo.resolucao").valida("Insira a resolução.", (v) => /^.+$/.test(v));
+            form.campo("processo.inicio").valida("Insira a data de início.", (v) => /^.+$/.test(v));
+            form.campo("processo.duracao").valida("Insira o tempo de vigência.", (v) => /^.+$/.test(v));
+            form.campo("processo.inicio").valida("A data deve estar no formato DD/MM/YYYY.", (v) => /^\d{2}\/\d{2}\/\d{4}$/.test(v));
+            form.campo("processo.duracao").valida("O tempo de vigência fornecido é inválido.", (v) => /^\d+$/.test(v));
+        });
+        if (!valido) {
+            this.setState({form});
         } else {
-            const json = Forms.json(this.state);
-
-            await escolas.criar(
-                json["nome"],
-                json["processoAtual"],
-                json["resolucao"],
-                parseInt(json["tempoVigencia"]),
-                parseDate(json["dataInicio"]),
-            );
+            const json = form.json();
+            await escolas.criar({
+                nome: json["nome"],
+                processoAtual: new Processo({
+                    nome: json["processo.nome"],
+                    resolucao: json["processo.resolucao"],
+                    inicio: parseDate(json["processo.inicio"]),
+                    duracao: parseInt(json["processo.duracao"]),
+                }),
+            });
             alert("Escola cadastrada com sucesso!");
             window.history.back();
         }
@@ -83,45 +78,65 @@ class TelaCadastroEscola extends React.Component<{}, _Estado> {
                                 <div className="TelaCadastroEscolas-divisorCampo"/>
                                 <input type="text"
                                        className="TelaCadastroEscolas-caixaTexto"
-                                       value={this.state.nome.texto}
-                                       onChange={(e) => this.atualizaCampo(e, "nome")}/>
-                                <p>{this.state.nome.erro}</p>
+                                       value={this.state.form.campo("nome").texto}
+                                       onChange={(e) => {
+                                           const form = this.state.form;
+                                           form.campo("nome").consome(e);
+                                           this.setState({form});
+                                       }}/>
+                                <p>{this.state.form.campo("nome").erro}</p>
                             </label>
                             <label className="TelaCadastroEscolas-campo">
                                 Processo atual:
                                 <div className="TelaCadastroEscolas-divisorCampo"/>
                                 <input type="text"
-                                       value={this.state.processoAtual.texto}
+                                       value={this.state.form.campo("processo.nome").texto}
                                        className="TelaCadastroEscolas-caixaTexto"
-                                       onChange={(e) => this.atualizaCampo(e, "processoAtual")}/>
-                                <p>{this.state.processoAtual.erro}</p>
+                                       onChange={(e) => {
+                                           const form = this.state.form;
+                                           form.campo("processo.nome").consome(e);
+                                           this.setState({form});
+                                       }}/>
+                                <p>{this.state.form.campo("processo.nome").erro}</p>
                             </label>
                             <label className="TelaCadastroEscolas-campo">
                                 Resolução:
                                 <div className="TelaCadastroEscolas-divisorCampo"/>
                                 <input type="text"
-                                       value={this.state.resolucao.texto}
+                                       value={this.state.form.campo("processo.resolucao").texto}
                                        className="TelaCadastroEscolas-caixaTexto"
-                                       onChange={(e) => this.atualizaCampo(e, "resolucao")}/>
-                                <p>{this.state.resolucao.erro}</p>
+                                       onChange={(e) => {
+                                           const form = this.state.form;
+                                           form.campo("processo.resolucao").consome(e);
+                                           this.setState({form});
+                                       }}/>
+                                <p>{this.state.form.campo("processo.resolucao").erro}</p>
                             </label>
                             <label className="TelaCadastroEscolas-campo">
                                 Início de vigência (DD/MM/YYYY):
                                 <div className="TelaCadastroEscolas-divisorCampo"/>
                                 <input type="text"
-                                       value={this.state.dataInicio.texto}
+                                       value={this.state.form.campo("processo.inicio").texto}
                                        className="TelaCadastroEscolas-caixaTexto"
-                                       onChange={(e) => this.atualizaCampo(e, "dataInicio")}/>
-                                <p>{this.state.dataInicio.erro}</p>
+                                       onChange={(e) => {
+                                           const form = this.state.form;
+                                           form.campo("processo.inicio").consome(e);
+                                           this.setState({form});
+                                       }}/>
+                                <p>{this.state.form.campo("processo.inicio").erro}</p>
                             </label>
                             <label className="TelaCadastroEscolas-campo">
                                 Tempo de vigência (anos):
                                 <div className="TelaCadastroEscolas-divisorCampo"/>
                                 <input type="text"
-                                       value={this.state.tempoVigencia.texto}
+                                       value={this.state.form.campo("processo.duracao").texto}
                                        className="TelaCadastroEscolas-caixaTexto"
-                                       onChange={(e) => this.atualizaCampo(e, "tempoVigencia")}/>
-                                <p>{this.state.tempoVigencia.erro}</p>
+                                       onChange={(e) => {
+                                           const form = this.state.form;
+                                           form.campo("processo.duracao").consome(e);
+                                           this.setState({form});
+                                       }}/>
+                                <p>{this.state.form.campo("processo.duracao").erro}</p>
                             </label>
                         </div>
                         <input type="submit" value="Cadastrar"/>

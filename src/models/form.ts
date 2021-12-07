@@ -4,36 +4,61 @@ import {ChangeEvent} from "react";
 namespace Forms {
     type EventoCampo = ChangeEvent<HTMLInputElement>;
 
-    export type Campo = { texto: string, erro?: string };
+    type _Campo = { texto: string, erro?: string };
 
-    export type Formulario<T extends string> = Record<T, Campo>;
+    export class Campo implements _Campo {
+        texto: string;
+        erro?: string;
 
-    type _Formulario = Formulario<string>;
+        constructor(params?: _Campo) {
+            this.texto = params?.texto ?? "";
+            this.erro = params?.erro;
+        }
 
-    export function json(form: _Formulario): { [k: string]: string } {
-        const chaves: (keyof _Formulario)[] = Object.keys(form);
-        return Object.fromEntries(chaves.map(chave => [chave, form[chave].texto]));
-    }
+        consome(evento: EventoCampo) {
+            this.texto = evento.target.value;
+        }
 
-    export function atualizaCampo<T extends _Formulario>(form: T, nomeCampo: keyof T, callback?: (novoForm: T) => void) {
-        return (e: EventoCampo) => {
-            const novoForm = {...form};
-            novoForm[nomeCampo] = {...novoForm[nomeCampo], texto: e.target.value};
-            if (callback !== undefined) callback(novoForm);
-        };
-    }
-
-    export function defineErro(campo: Campo, erro: string, esperado: (texto: string) => boolean) {
-        if (esperado(campo.texto)) {
-            campo.erro = undefined;
-        } else if (campo.erro === undefined) {
-            campo.erro = erro;
+        valida(erro: string, esperado: (texto: string) => boolean) {
+            if (esperado(this.texto)) {
+                this.erro = undefined;
+            } else if (!this.erro) {
+                this.erro = erro;
+            }
         }
     }
 
-    export function possuiErro(form: _Formulario): boolean {
-        const campos: Campo[] = Object.values(form);
-        return campos.some(campo => campo.erro !== undefined);
+    type _Formulario<T extends string> = Record<T, Campo>;
+
+    export class Formulario<T extends string> {
+        private readonly dados: _Formulario<T>;
+
+        constructor(dados: _Formulario<T>) {
+            this.dados = dados;
+        }
+
+        valida(validador: (form: Formulario<T>) => void): boolean {
+            validador(this);
+            return !this.possuiErro;
+        }
+
+        json(): Record<T, string> {
+            const chaves: T[] = Object.keys(this.dados) as T[];
+            return Object.fromEntries(chaves.map(chave => [chave, this.dados[chave].texto])) as Record<T, string>;
+        }
+
+        campo(chave: T): Campo {
+            return this.dados[chave];
+        }
+
+        get possuiErro(): boolean {
+            const campos: Campo[] = Object.values(this.dados);
+            return campos.some(campo => campo.erro);
+        }
+
+        clone(): Formulario<T> {
+            return new Formulario({...this.dados});
+        }
     }
 }
 
