@@ -18,9 +18,9 @@ class LinhaConsultaEscolas extends React.Component<_Props, {}> {
 
             </div>
             <div style={{display: "flex", flexDirection: "column"}}>
-                <LinhaChaveValor chave="Tempo de vigência" valor={`${processo.anosVigencia} anos`}/>
+                <LinhaChaveValor chave="Tempo de vigência" valor={`${processo.duracao} anos`}/>
                 <LinhaChaveValor chave="Período de vigência"
-                                 valor={`${processo.dataInicio.toLocaleDateString("pt-BR")} - ${processo.dataFim.toLocaleDateString("pt-BR")}`}/>
+                                 valor={`${processo.inicio.toLocaleDateString("pt-BR")} - ${processo.dataFim.toLocaleDateString("pt-BR")}`}/>
             </div>
             <div style={{width: "30px"}}/>
 

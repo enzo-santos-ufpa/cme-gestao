@@ -36,22 +36,29 @@ export type ModalidadeEnsino = {
     nome: string, // Creche, Pré-escola, CF I
 }
 
-export class Processo {
+type _Processo = {
+    nome: string,
+    resolucao: string,
+    inicio: Date,
+    duracao: number,
+}
+
+export class Processo implements _Processo {
     nome: string;
     resolucao: string;
-    dataInicio: Date;
-    anosVigencia: number;
+    inicio: Date;
+    duracao: number;
 
-    constructor(nome: string, resolucao: string, dataInicio: Date, anosVigencia: number) {
-        this.nome = nome;
-        this.resolucao = resolucao;
-        this.dataInicio = dataInicio;
-        this.anosVigencia = anosVigencia;
+    constructor(params: _Processo) {
+        this.nome = params.nome;
+        this.resolucao = params.resolucao;
+        this.inicio = params.inicio;
+        this.duracao = params.duracao;
     }
 
     get dataFim(): Date {
-        const resultado = new Date(this.dataInicio.getTime());
-        resultado.setFullYear(this.dataInicio.getFullYear() + this.anosVigencia);
+        const resultado = new Date(this.inicio.getTime());
+        resultado.setFullYear(this.inicio.getFullYear() + this.duracao);
         return resultado;
     }
 

@@ -1,5 +1,6 @@
 import {db} from "./config";
 import express from "express";
+import {EscolaBase} from "../models/Escola";
 
 export namespace index {
     export function info(req: express.Request, res: express.Response) {
@@ -9,12 +10,12 @@ export namespace index {
 
 export namespace escolas {
     export async function criar(req: express.Request, res: express.Response) {
-        const {nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia} = req.body;
+        const {nome, processoAtual} = req.body as EscolaBase;
         const consulta = await db.pool.query(`INSERT INTO 
             Escola (Nome, ProcessoAtual, Resolucao, TempoVigencia, DataInicioVigencia) 
             VALUES ($1, $2, $3, $4, $5) 
             RETURNING Id`,
-            [nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia],
+            [nome, processoAtual?.nome, processoAtual?.resolucao, processoAtual?.duracao, processoAtual?.inicio],
         );
 
         for (const row of consulta.rows) {
