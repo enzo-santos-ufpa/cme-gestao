@@ -50,3 +50,7 @@
     font-size: 20px;
     background-color: lightblue;
 }
+
+.TelaAutenticacao-erroCaixaTexto {
+    color: red;
+}

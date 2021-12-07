@@ -37,7 +37,7 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, _Estado> {
                                        form.campo("email").consome(e);
                                        this.setState({form});
                                    }}/>
-                            <span style={{color: "red"}}>{this.state.form.campo("email").erro}</span>
+                            <span className="TelaAutenticacao-erroCaixaTexto">{this.state.form.campo("email").erro}</span>
                             <div style={{height: "10px"}}/>
                             <input className="TelaAutenticacao-caixaTexto"
                                    type="text"
@@ -48,7 +48,7 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, _Estado> {
                                        form.campo("senha").consome(e);
                                        this.setState({form});
                                    }}/>
-                            <span style={{color: "red"}}>{this.state.form.campo("senha").erro}</span>
+                            <span className="TelaAutenticacao-erroCaixaTexto">{this.state.form.campo("senha").erro}</span>
                             <div style={{height: "20px"}}/>
                             <div className="TelaAutenticacao-botoes">
                                 <input className="TelaAutenticacao-botao"
