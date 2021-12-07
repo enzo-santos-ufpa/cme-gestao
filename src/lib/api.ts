@@ -1,17 +1,16 @@
-import Escola, {EscolaPendente} from "../models/Escola";
+import Escola, {EscolaBase, EscolaPendente} from "../models/Escola";
 import {
     DistritoAdministrativo,
-    FiltroEscolasBD,
     ModeloBD,
     Processo,
     RespostaCadastro,
     SetorEscola
 } from "../models/tipos";
-import {networkInterfaces} from "os";
+import {rede} from "./utils";
 
 class APIEscola {
     private static async post(caminho: string, object: any): Promise<void> {
-        await fetch(APIEscola.url(caminho), {
+        await fetch(rede.urlAtual({esquema: "http", porta: 3030, caminho: caminho}), {
             method: 'POST',
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify(object),
@@ -20,29 +19,14 @@ class APIEscola {
 
     private static async get(caminho: string, object?: any) {
         const url = (() => {
-            const url = APIEscola.url(caminho);
+            const url = rede.urlAtual({esquema: "http", porta: 3030, caminho: caminho});
             return url + (object == null ? "" : ("?" + new URLSearchParams(object)));
         })();
         return await fetch(url);
     }
 
-    private static url(caminho: string): string {
-        const address = Object.values(networkInterfaces())
-            .flatMap(child => child)
-            .find(network => network.family === "IPv4" && !network.internal)
-            ?.address || "localhost";
-
-        const result = `http://${address}:3030/${caminho}`;
-        console.log(`Conectando a ${result}`)
-        return result;
-    }
-
-    async criar(nome: string, processoAtual: string, resolucao: string, tempoVigencia: number, dataInicioVigencia: Date): Promise<void> {
-        await APIEscola.post(
-            "api/escolas/criar",
-            {nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia},
-        ).catch(_ => {
-        });
+    async criar(escola: EscolaBase): Promise<void> {
+        await APIEscola.post("api/escolas/criar", escola);
     }
 
     async autorizadas(): Promise<ModeloBD<Escola>[]> {
@@ -54,12 +38,12 @@ class APIEscola {
                 return {
                     id: id,
                     nome: nome,
-                    processoAtual: new Processo(
-                        processoAtual,
-                        resolucao,
-                        new Date(dataInicioVigencia),
-                        tempoVigencia,
-                    ),
+                    processoAtual: new Processo({
+                        nome: processoAtual,
+                        resolucao: resolucao,
+                        inicio: new Date(dataInicioVigencia),
+                        duracao: tempoVigencia,
+                    }),
                     cep: "000.00-000",
                     contatoDiretor: {telefone: "(91) 9 9999-9999", whatsapp: "None", email: "abc@def.com"},
                     contatoSecretario: {telefone: "(91) 9 9888-8888", whatsapp: "None", email: "ghi@jkl.com"},
@@ -98,12 +82,12 @@ class APIEscola {
                         dataInsercao: new Date(dataInsercao),
                     },
                     nome: nome,
-                    processoAtual: new Processo(
-                        processoAtual,
-                        resolucao,
-                        new Date(dataInicioVigencia),
-                        tempoVigencia,
-                    ),
+                    processoAtual: new Processo({
+                        nome: processoAtual,
+                        resolucao: resolucao,
+                        inicio: new Date(dataInicioVigencia),
+                        duracao: tempoVigencia,
+                    }),
                     cep: "000.00-000",
                     contatoDiretor: {telefone: "(91) 9 9999-9999", whatsapp: "None", email: "abc@def.com"},
                     contatoSecretario: {telefone: "(91) 9 9888-8888", whatsapp: "None", email: "ghi@jkl.com"},

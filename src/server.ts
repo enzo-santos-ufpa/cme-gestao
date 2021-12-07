@@ -3,6 +3,7 @@ import net from "net";
 
 import dotenv from "dotenv";
 import {networkInterfaces} from "os";
+import {rede} from "./lib/utils";
 
 dotenv.config();
 
@@ -12,11 +13,9 @@ const listener = app.listen(3030, () => {
         return "port" in address;
     }
 
-    const domain = Object.values(networkInterfaces())
-        .flatMap(child => child)
-        .find(network => network.family === "IPv4" && !network.internal)
-        ?.address || "localhost";
-
     const address = listener.address();
-    console.log(`backend: Executando em ${domain}:${possuiPorta(address) ? address.port : address}`);
+    const url = rede.urlAtual({
+        porta: possuiPorta(address) ? address.port : address,
+    });
+    console.log(`backend: Executando em ${url}`);
 });
