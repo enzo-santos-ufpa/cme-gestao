@@ -49,3 +49,17 @@ body {
     font-weight: bold;
     font-style: italic;
 }
+
+.TelaEscolas-controlePaginas {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 50px;
+}
+
+.TelaEscolas-botaoControle {
+    background-color: #508dbe;
+    padding: 10px 25px;
+    font-weight: bold;
+    cursor: pointer;
+}

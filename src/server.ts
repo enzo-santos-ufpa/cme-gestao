@@ -2,7 +2,6 @@ import app from "./api/index";
 import net from "net";
 
 import dotenv from "dotenv";
-import {networkInterfaces} from "os";
 import {rede} from "./lib/utils";
 
 dotenv.config();

@@ -20,14 +20,22 @@ type _EstadoCarregando = {
 type _EstadoCarregado = {
     escolas: ModeloBD<Escola>[],
     escolasAtuais: ModeloBD<Escola>[],
+    paginaAtual: number,
+    paginaAtualPesquisa?: number,
 }
 
 class TelaEscolas extends React.Component<_Props, _Estado> {
+    private static readonly escolasPorPagina = 6;
+
     state: _EstadoCarregando = {}
 
     componentDidMount() {
         this.props.construtorEscolas().then((escolas) => {
-            const novoEstado: _EstadoCarregado = {escolas: escolas, escolasAtuais: escolas};
+            const novoEstado: _EstadoCarregado = {
+                escolas: escolas,
+                escolasAtuais: escolas,
+                paginaAtual: 0,
+            };
             this.setState(novoEstado);
         });
     }
@@ -37,9 +45,12 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
         if (estadoAtual.escolas == null) return;
 
         estadoAtual = estadoAtual as _EstadoCarregado;
+        const escolasAtuais = estadoAtual.escolas.filter(escola => escola.nome.toLowerCase().includes(text.toLowerCase()));
         const estadoNovo: _EstadoCarregado = {
-            ...estadoAtual,
-            escolasAtuais: estadoAtual.escolas.filter(escola => escola.nome.toLowerCase().includes(text.toLowerCase()))
+            escolas: estadoAtual.escolas,
+            paginaAtual: estadoAtual.paginaAtual,
+            escolasAtuais: escolasAtuais,
+            paginaAtualPesquisa: 0,
         };
         this.setState(estadoNovo);
     }
@@ -48,9 +59,34 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
         const estado = this.state as _Estado;
         if (estado.escolas == null) return <p>Carregando..</p>;
 
-        const escolas = (estado as _EstadoCarregado).escolasAtuais;
+        console.log(estado.paginaAtual * TelaEscolas.escolasPorPagina);
+        console.log((estado.paginaAtual + 1) * TelaEscolas.escolasPorPagina);
+
+        const escolasPorPagina = TelaEscolas.escolasPorPagina;
+        const escolas = (estado as _EstadoCarregado).escolasAtuais
+            .slice(estado.paginaAtual * escolasPorPagina, (estado.paginaAtual + 1) * escolasPorPagina);
         if (!escolas.length) return <p>Nenhuma escola encontrada.</p>;
         return this.props.construtorTabela(escolas);
+    }
+
+    private renderizaBotaoAnterior(): JSX.Element | null {
+        const estado = this.state as _Estado;
+        if (estado.escolas == null) return null;
+        if (estado.paginaAtual === 0) return null;
+        return <p
+            className="TelaEscolas-botaoControle"
+            onClick={(_) => this.setState({...estado, paginaAtual: estado.paginaAtual - 1})}>
+            ANTERIOR</p>;
+    }
+
+    private renderizaBotaoProximo(): JSX.Element | null {
+        const estado = this.state as _Estado;
+        if (estado.escolas == null) return null;
+        if ((TelaEscolas.escolasPorPagina * (estado.paginaAtual + 1)) >= estado.escolasAtuais.length) return null;
+        return <p
+            className="TelaEscolas-botaoControle"
+            onClick={(_) => this.setState({...estado, paginaAtual: estado.paginaAtual + 1})}>
+            PRÓXIMO</p>;
     }
 
     render() {
@@ -66,6 +102,10 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
                         </div>
                     </div>
                     {this.renderizaTabela()}
+                    <div className="TelaEscolas-controlePaginas">
+                        {this.renderizaBotaoAnterior()}
+                        {this.renderizaBotaoProximo()}
+                    </div>
                 </div>
             </PlanoFundo>
         );
