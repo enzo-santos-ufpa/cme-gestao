@@ -18,16 +18,17 @@ class MenuPrincipal extends React.Component<PropsAutenticador, {}> {
         {
             nome: "Consulta de\nInstituições",
             icone: {valor: icSearch, alt: "Ícone de busca"},
-            caminhoRota: "/consulta-escolas"
+            caminhoRota: "/consulta-escolas",
         },
         {
             nome: "Tabelas e\nGráficos",
             icone: {valor: icChart, alt: "Ícone de gráficos"},
+            caminhoRota: "/tabelas-graficos",
         },
         {
             nome: "Autorização\nde Cadastro",
             icone: {valor: icCheck, alt: "Ícone de verificação"},
-            caminhoRota: "/autoriza-cadastro"
+            caminhoRota: "/autoriza-cadastro",
         },
         {
             nome: "Consultar\nrelatórios",
