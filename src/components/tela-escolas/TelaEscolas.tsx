@@ -21,7 +21,6 @@ type _EstadoCarregado = {
     escolas: ModeloBD<Escola>[],
     escolasAtuais: ModeloBD<Escola>[],
     paginaAtual: number,
-    paginaAtualPesquisa?: number,
 }
 
 class TelaEscolas extends React.Component<_Props, _Estado> {
@@ -48,9 +47,8 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
         const escolasAtuais = estadoAtual.escolas.filter(escola => escola.nome.toLowerCase().includes(text.toLowerCase()));
         const estadoNovo: _EstadoCarregado = {
             escolas: estadoAtual.escolas,
-            paginaAtual: estadoAtual.paginaAtual,
+            paginaAtual: 0,
             escolasAtuais: escolasAtuais,
-            paginaAtualPesquisa: 0,
         };
         this.setState(estadoNovo);
     }
@@ -58,9 +56,6 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
     private renderizaTabela(): JSX.Element {
         const estado = this.state as _Estado;
         if (estado.escolas == null) return <p>Carregando..</p>;
-
-        console.log(estado.paginaAtual * TelaEscolas.escolasPorPagina);
-        console.log((estado.paginaAtual + 1) * TelaEscolas.escolasPorPagina);
 
         const escolasPorPagina = TelaEscolas.escolasPorPagina;
         const escolas = (estado as _EstadoCarregado).escolasAtuais
