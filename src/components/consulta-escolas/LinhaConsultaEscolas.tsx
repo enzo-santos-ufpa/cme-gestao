@@ -47,7 +47,6 @@ class LinhaConsultaEscolas extends React.Component<_Props, {}> {
 
     render() {
         const processoAtual = this.props.escola.processoAtual;
-        console.log(JSON.stringify(processoAtual));
         return (
             <div className="LinhaConsultaEscolas">
                 {this.renderizaStatus(processoAtual)}
