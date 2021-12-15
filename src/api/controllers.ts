@@ -1,6 +1,8 @@
 import {db} from "./config";
 import express from "express";
-import {EscolaBase} from "../models/Escola";
+import {EscolaAutorizada, EscolaBase} from "../models/Escola";
+import {ModeloBD, Processo} from "../models/tipos";
+import {logger} from "../lib/utils";
 
 export namespace index {
     export function info(req: express.Request, res: express.Response) {
@@ -8,14 +10,46 @@ export namespace index {
     }
 }
 
+function assertNever(shouldBeNever: never): never {
+    throw new Error("Was not never: " + shouldBeNever);
+}
+
 export namespace escolas {
     export async function criar(req: express.Request, res: express.Response) {
-        const {nome, processoAtual} = req.body as EscolaBase;
+        const escola = req.body as EscolaBase;
+        const tuples: ([string, string, any])[] = Object.entries(escola)
+            .map(([key, value], i) => {
+                const nomeAtributo = key as keyof EscolaBase;
+                const nomeColuna: string = (() => {
+                    switch (nomeAtributo) {
+                        case "nome":
+                            return "Nome";
+                        case "sigla":
+                            return "Sigla";
+                        case "cnpj":
+                            return "CNPJ";
+                        case "dataCriacao":
+                            return "DataCriacao";
+                        case "codigoInep":
+                            return "CodigoInep";
+                        case "nomeEntidadeMantenedora":
+                            return "NomeEntidadeMantenedora";
+                        case "cnpjConselho":
+                            return "CNPJConselho";
+                        case "vigenciaConselho":
+                            return "VigenciaConselho";
+                        default:
+                            return assertNever(nomeAtributo);
+                    }
+                })();
+                return [nomeColuna, `$${i + 1}`, value];
+            });
+
         const consulta = await db.pool.query(`INSERT INTO 
-            Escola (Nome, ProcessoAtual, Resolucao, TempoVigencia, DataInicioVigencia) 
-            VALUES ($1, $2, $3, $4, $5) 
+            Escola (${tuples.map(tuple => tuple[0]).join(", ")}) 
+            VALUES (${tuples.map(tuple => tuple[1]).join(", ")}) 
             RETURNING Id`,
-            [nome, processoAtual?.nome, processoAtual?.resolucao, processoAtual?.duracao, processoAtual?.inicio],
+            tuples.map(tuple => tuple[2]),
         );
 
         for (const row of consulta.rows) {
@@ -53,16 +87,25 @@ export namespace escolas {
             LEFT JOIN TriagemEscola B 
             ON A.Id = B.IdEscola 
             WHERE B.IdEscola IS NULL`);
-
         res.status(200).send(consulta.rows.map(row => {
-            return {
-                dataInicioVigencia: row["datainiciovigencia"],
+            const escola: ModeloBD<EscolaAutorizada> = {
                 id: row["id"],
                 nome: row["nome"],
-                processoAtual: row["processoatual"],
-                resolucao: row["resolucao"],
-                tempoVigencia: row["tempovigencia"],
-            }
+                sigla: row["sigla"],
+                cnpj: row["cnpj"],
+                nomeEntidadeMantenedora: row["nomeentidademantenedora"],
+                vigenciaConselho: row["vigenciaconselho"],
+                cnpjConselho: row["cnpjConselho"],
+                codigoInep: row["codigoinep"],
+                dataCriacao: row["datacriacao"],
+                processoAtual: new Processo({
+                    nome: "ABC",
+                    resolucao: "DEF",
+                    duracao: 1,
+                    inicio: new Date(2021),
+                }),
+            };
+            return escola;
         }));
     }
 

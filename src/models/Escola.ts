@@ -28,13 +28,10 @@ type Escola = {
     tipo: TipoEscola,
     modalidadeEnsino: ModalidadeEnsino,
     convenioSemec?: ConvenioSEMEC,
-    processoAtual?: Processo,
     filiais: Escola[],
     nomeEntidadeMantenedora: string,
 }
 
-
-export type EscolaBase = Pick<Escola, "nome" | "processoAtual">;
-export type EscolaPendente = Escola & { cadastro: DadosCadastro }
-
-export default Escola;
+export type EscolaBase = Pick<Escola, "nome" | "sigla" | "cnpj" | "dataCriacao" | "codigoInep" | "nomeEntidadeMantenedora" | "cnpjConselho" | "vigenciaConselho">;
+export type EscolaAutorizada = EscolaBase & { processoAtual: Processo };
+export type EscolaPendente = EscolaBase & { cadastro: DadosCadastro };
