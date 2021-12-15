@@ -1,47 +1,47 @@
 import React from "react";
 import './TelaEscolas.css';
-import Escola from "../../models/Escola";
+import {EscolaBase} from "../../models/Escola";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
 import {DistritoAdministrativo, ModeloBD} from "../../models/tipos";
 
-type _Props = {
+type Props<T extends EscolaBase> = {
     titulo: string,
-    construtorEscolas: () => Promise<ModeloBD<Escola>[]>,
-    construtorTabela: (escolas: ModeloBD<Escola>[]) => JSX.Element,
-}
+    construtorEscolas: () => Promise<ModeloBD<T>[]>,
+    construtorTabela: (escolas: ModeloBD<T>[]) => JSX.Element,
+};
 
-type _Filtro = Readonly<{
+type Filtro = Readonly<{
     distrito?: DistritoAdministrativo,
     sigla?: string,
 }>;
 
-type _Estado = _EstadoCarregando | _EstadoCarregado;
+type Estado<T extends EscolaBase> = EstadoCarregando | EstadoCarregado<T>;
 
-type _EstadoCarregando = {
+type EstadoCarregando = {
     escolas?: undefined
 };
 
-type _EstadoCarregado = {
-    escolas: ModeloBD<Escola>[],
-    escolasAtuais: ModeloBD<Escola>[],
+type EstadoCarregado<T extends EscolaBase> = {
+    escolas: ModeloBD<T>[],
+    escolasAtuais: ModeloBD<T>[],
     paginaAtual: number,
-    filtro: _Filtro,
-}
+    filtro: Filtro,
+};
 
-function isCarregando(estado: _Estado): estado is _EstadoCarregando {
+function isCarregando(estado: Estado<any>): estado is EstadoCarregando {
     return estado.escolas == null;
 }
 
-class TelaEscolas extends React.Component<_Props, _Estado> {
+class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado<T>> {
     private static readonly escolasPorPagina = 6;
 
-    state: _EstadoCarregando = {}
+    state: EstadoCarregando = {}
 
-    private static filtra<T extends Escola>(filtro: _Filtro, escolas: T[]): T[] {
+    private static filtra<T extends EscolaBase>(filtro: Filtro, escolas: T[]): T[] {
         let escolasFiltradas = escolas;
-        if (filtro.distrito != null) {
-            escolasFiltradas = escolasFiltradas.filter(escola => escola.distrito === filtro.distrito);
-        }
+        // if (filtro.distrito != null) {
+        //     escolasFiltradas = escolasFiltradas.filter(escola => escola.distrito === filtro.distrito);
+        // }
         if (filtro.sigla != null) {
             escolasFiltradas = escolasFiltradas.filter(escola => escola.sigla === filtro.sigla);
         }
@@ -50,7 +50,7 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
 
     componentDidMount() {
         this.props.construtorEscolas().then((escolas) => {
-            const novoEstado: _EstadoCarregado = {
+            const novoEstado: EstadoCarregado<T> = {
                 escolas: escolas,
                 escolasAtuais: escolas,
                 paginaAtual: 0,
@@ -61,12 +61,12 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
     }
 
     private onBusca(text: string) {
-        let estado: _Estado = this.state;
+        let estado: Estado<T> = this.state;
         if (isCarregando(estado)) return;
 
-        estado = estado as _EstadoCarregado;
+        estado = estado as EstadoCarregado<T>;
         const escolasAtuais = estado.escolas.filter(escola => escola.nome.toLowerCase().includes(text.toLowerCase()));
-        const estadoNovo: _EstadoCarregado = {
+        const estadoNovo: EstadoCarregado<T> = {
             escolas: estado.escolas,
             paginaAtual: 0,
             escolasAtuais: escolasAtuais,
@@ -75,18 +75,18 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
         this.setState(estadoNovo);
     }
 
-    private get escolasAtuais(): ModeloBD<Escola>[] {
-        const estado = this.state as _Estado;
+    private get escolasAtuais(): ModeloBD<T>[] {
+        const estado = this.state as Estado<T>;
         if (isCarregando(estado)) return [];
 
         const escolasPorPagina = TelaEscolas.escolasPorPagina;
-        let escolas = (estado as _EstadoCarregado).escolasAtuais
+        const escolas = (estado as EstadoCarregado<T>).escolasAtuais
             .slice(estado.paginaAtual * escolasPorPagina, (estado.paginaAtual + 1) * escolasPorPagina);
         return TelaEscolas.filtra(estado.filtro, escolas);
     }
 
     private renderizaTabela(): JSX.Element {
-        const estado = this.state as _Estado;
+        const estado = this.state as Estado<T>;
         if (isCarregando(estado)) return <p>Carregando..</p>;
         const escolas = this.escolasAtuais;
         if (!escolas.length) return <p>Nenhuma escola encontrada.</p>;
@@ -94,7 +94,7 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
     }
 
     private renderizaBotaoAnterior(): JSX.Element | null {
-        const estado = this.state as _Estado;
+        const estado = this.state as Estado<T>;
         if (isCarregando(estado)) return null;
         if (!this.escolasAtuais.length) return null;
         if (estado.paginaAtual === 0) return null;
@@ -105,7 +105,7 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
     }
 
     private renderizaBotaoProximo(): JSX.Element | null {
-        const estado = this.state as _Estado;
+        const estado = this.state as Estado<T>;
         if (isCarregando(estado)) return null;
         if (!this.escolasAtuais.length) return null;
         if ((TelaEscolas.escolasPorPagina * (estado.paginaAtual + 1)) >= estado.escolasAtuais.length) return null;
@@ -116,7 +116,7 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
     }
 
     private renderizaFiltros(): JSX.Element | null {
-        const estado = this.state as _Estado;
+        const estado = this.state as Estado<T>;
         if (isCarregando(estado)) return null;
 
         const sigla = estado.filtro.sigla;
@@ -128,6 +128,7 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
                 onChange={(e) => {
                     this.setState({
                         ...estado,
+                        paginaAtual: 0,
                         filtro: {
                             ...estado.filtro,
                             distrito: DistritoAdministrativo[e.target.value as keyof typeof DistritoAdministrativo]
@@ -149,6 +150,7 @@ class TelaEscolas extends React.Component<_Props, _Estado> {
                     const value = e.target.value === "sigla" ? undefined : e.target.value;
                     this.setState({
                         ...estado,
+                        paginaAtual: 0,
                         filtro: {...estado.filtro, sigla: value},
                     });
                 }}>
