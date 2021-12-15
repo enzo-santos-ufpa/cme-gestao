@@ -35,6 +35,16 @@ export namespace rede {
     }
 }
 
+export function parseDate(value: string): Date | null {
+    const tokens = value.split("/");
+    if (tokens.length !== 3) return null;
+    const date = new Date(
+        parseInt(tokens[2], 10),
+        parseInt(tokens[1], 10) - 1,
+        parseInt(tokens[0], 10),
+    );
+    return isNaN(date.getTime()) ? null : date;
+}
 
 export const logger = {
     server: new Logger("backend"),
