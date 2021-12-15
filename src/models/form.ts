@@ -1,30 +1,39 @@
-import {ChangeEvent} from "react";
+import {ChangeEvent, Validator} from "react";
+import Validador from "./Validador";
 
 
 namespace Forms {
     type EventoCampo = ChangeEvent<HTMLInputElement>;
 
-    type _Campo = { texto: string, erro?: string };
+    type _Campo = {
+        nome: string,
+        texto: string,
+        erro?: string,
+        validador: Validador,
+        mask?: string,
+    };
 
     export class Campo implements _Campo {
+        readonly nome: string;
+        readonly validador: Validador;
+        readonly mask?: string;
         texto: string;
         erro?: string;
 
         constructor(params?: _Campo) {
+            this.nome = params?.nome ?? "";
             this.texto = params?.texto ?? "";
             this.erro = params?.erro;
+            this.validador = params?.validador ?? new Validador();
+            this.mask = params?.mask;
         }
 
         consome(evento: EventoCampo) {
             this.texto = evento.target.value;
         }
 
-        valida(erro: string, esperado: (texto: string) => boolean) {
-            if (esperado(this.texto)) {
-                this.erro = undefined;
-            } else if (!this.erro) {
-                this.erro = erro;
-            }
+        valida() {
+            this.erro = this.validador.validate(this.texto);
         }
     }
 
@@ -49,6 +58,10 @@ namespace Forms {
 
         campo(chave: T): Campo {
             return this.dados[chave];
+        }
+
+        get chaves(): T[] {
+            return Object.keys(this.dados) as T[];
         }
 
         get possuiErro(): boolean {
