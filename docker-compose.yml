@@ -1,7 +1,6 @@
 version: '3'
 services:
-  cme-server:
-    container_name: cme-server
+  server:
     command: bash -c "npm run server"
     build: .
     ports:
@@ -14,18 +13,25 @@ services:
     links:
       - postgres
 
-  cme-client:
-    container_name: cme-client
+  client:
     command: bash -c "npm run client"
     build: .
     ports:
       - "3000:3000"
 
   postgres:
-    container_name: postgres
     restart: always
     image: postgres
     ports:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: postgres
+
+  pgadmin:
+    restart: unless-stopped
+    image: dpage/pgadmin4
+    ports:
+      - "5555:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
