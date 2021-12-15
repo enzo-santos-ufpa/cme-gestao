@@ -18,6 +18,7 @@ app.use((() => {
 
 app.use("/api/", (() => {
     const router = express_promise_router();
+    router.get("/escolas/ler", escolas.ler);
     router.post("/escolas/criar", escolas.criar);
     router.get("/escolas/autorizadas", escolas.autorizadas);
     router.get("/escolas/pendentes", escolas.pendentes);

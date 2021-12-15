@@ -1,11 +1,5 @@
 import {EscolaAutorizada, EscolaBase, EscolaPendente} from "../models/Escola";
-import {
-    DistritoAdministrativo,
-    ModeloBD,
-    Processo,
-    RespostaCadastro,
-    SetorEscola
-} from "../models/tipos";
+import {ModeloBD, Processo, RespostaCadastro} from "../models/tipos";
 import {rede} from "./utils";
 
 class APIEscola {
@@ -17,12 +11,18 @@ class APIEscola {
         });
     }
 
-    private static async get(caminho: string, object?: any) {
+    private static async get<T>(caminho: string, object?: any): Promise<T> {
         const url = (() => {
             const url = rede.urlAtual({esquema: "http", porta: 3030, caminho: caminho});
             return url + (object == null ? "" : ("?" + new URLSearchParams(object)));
         })();
-        return await fetch(url);
+        return await fetch(url)
+            .then(response => response.json())
+            .then(obj => obj as T);
+    }
+
+    async escola(id: number): Promise<ModeloBD<EscolaBase>> {
+        return await APIEscola.get<ModeloBD<EscolaBase>>("api/escolas/ler", {id});
     }
 
     async criar(escola: EscolaBase): Promise<void> {
@@ -30,58 +30,37 @@ class APIEscola {
     }
 
     async autorizadas(): Promise<ModeloBD<EscolaAutorizada>[]> {
-        return APIEscola.get("api/escolas/autorizadas")
-            .then(response => response.json())
-            .then(json => json as any[])
+        return APIEscola.get<any[]>("api/escolas/autorizadas")
             .then(json => json.map(child => child as ModeloBD<EscolaAutorizada>))
-            .catch(_ => []);
+            .then(children => children.map(child => {
+                const escola: ModeloBD<EscolaAutorizada> = {
+                    ...child,
+                    dataCriacao: new Date(child.dataCriacao),
+                    processoAtual: new Processo({
+                        ...child.processoAtual,
+                        inicio: new Date(child.processoAtual.inicio),
+                    }),
+                };
+                return escola;
+            }));
     }
 
     async pendentes(): Promise<ModeloBD<EscolaPendente>[]> {
-        return APIEscola.get("api/escolas/pendentes")
-            .then(response => response.json())
-            .then(json => json as any[])
-            .then(json => json.map(child => {
-                const {id, nome, processoAtual, resolucao, tempoVigencia, dataInicioVigencia, dataInsercao} = child;
+        return APIEscola.get<any[]>("api/escolas/pendentes")
+            .then(children => children.map(child => child as ModeloBD<EscolaPendente>))
+            .then(children => children.map(child => {
                 return {
-                    id: id,
+                    ...child,
+                    dataCriacao: new Date(child.dataCriacao),
                     cadastro: {
-                        dataInsercao: new Date(dataInsercao),
-                    },
-                    nome: nome,
-                    processoAtual: new Processo({
-                        nome: processoAtual,
-                        resolucao: resolucao,
-                        inicio: new Date(dataInicioVigencia),
-                        duracao: tempoVigencia,
-                    }),
-                    cep: "000.00-000",
-                    contatoDiretor: {telefone: "(91) 9 9999-9999", whatsapp: "None", email: "abc@def.com"},
-                    contatoSecretario: {telefone: "(91) 9 9888-8888", whatsapp: "None", email: "ghi@jkl.com"},
-                    email: "escola@escola.com",
-                    bairro: "Parque Verde",
-                    cidade: "Belém",
-                    cnpj: "11111111111111",
-                    cnpjConselho: "22222222222222",
-                    codigoInep: "33333333",
-                    convenioSemec: {numConvenio: 4, objeto: "ABC-DEF", vigencia: "GHI"},
-                    dataCriacao: new Date(Date.now()),
-                    filiais: [],
-                    distrito: DistritoAdministrativo.DABEN,
-                    endereco: "Um Dois Três da Silva Quatro",
-                    telefone: "(91) 9 9777-7777",
-                    uf: "PA",
-                    sigla: "EMEF",
-                    tipo: {nome: "EMEF", setor: SetorEscola.publico},
-                    modalidadeEnsino: {nome: "Infantil", etapa: {nome: "Pré-escola"}},
-                    vigenciaConselho: "5",
-                    nomeEntidadeMantenedora: "SEMEC",
+                        ...child.cadastro,
+                        dataInsercao: new Date(child.cadastro.dataInsercao)
+                    }
                 };
-            }))
-            .catch(_ => []);
+            }));
     }
 
-    async answer(escola: ModeloBD<EscolaPendente>, resposta: RespostaCadastro): Promise<void> {
+    async answer(escola: ModeloBD<EscolaBase>, resposta: RespostaCadastro): Promise<void> {
         await APIEscola.post("api/escolas/cadastro/responder", {idEscola: escola.id, resposta});
     }
 }

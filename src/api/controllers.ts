@@ -1,8 +1,7 @@
 import {db} from "./config";
 import express from "express";
-import {EscolaAutorizada, EscolaBase} from "../models/Escola";
+import {EscolaAutorizada, EscolaBase, EscolaPendente} from "../models/Escola";
 import {ModeloBD, Processo} from "../models/tipos";
-import {logger} from "../lib/utils";
 
 export namespace index {
     export function info(req: express.Request, res: express.Response) {
@@ -15,6 +14,20 @@ function assertNever(shouldBeNever: never): never {
 }
 
 export namespace escolas {
+    function dbToModel(row: { [key: string]: any }): ModeloBD<EscolaBase> {
+        return {
+            id: row["id"],
+            nome: row["nome"],
+            sigla: row["sigla"],
+            cnpj: row["cnpj"],
+            nomeEntidadeMantenedora: row["nomeentidademantenedora"],
+            vigenciaConselho: row["vigenciaconselho"],
+            cnpjConselho: row["cnpjconselho"],
+            codigoInep: row["codigoinep"],
+            dataCriacao: new Date(row["datacriacao"]),
+        };
+    }
+
     export async function criar(req: express.Request, res: express.Response) {
         const escola = req.body as EscolaBase;
         const tuples: ([string, string, any])[] = Object.entries(escola)
@@ -64,21 +77,37 @@ export namespace escolas {
         res.status(201).send({message: "Escola adicionada com sucesso!", body: {escola: req.body}});
     }
 
+    export async function ler(req: express.Request, res: express.Response) {
+        const consulta = await db.pool.query(`SELECT * FROM Escola WHERE Id = $1`, [req.query.id]);
+
+        const rows = consulta.rows;
+        switch (rows.length) {
+            case 0: {
+                return res.status(404).send({});
+            }
+            case 1: {
+                const row = rows.pop();
+                return res.status(200).send(dbToModel(row));
+            }
+            default: {
+                return res.status(404).send({});
+            }
+        }
+    }
+
     export async function pendentes(req: express.Request, res: express.Response) {
         const consulta = await db.pool.query(`SELECT * FROM Escola A
             RIGHT JOIN TriagemEscola B
             ON A.Id = B.IdEscola`);
 
         res.status(200).send(consulta.rows.map(row => {
-            return {
-                dataInicioVigencia: row["datainiciovigencia"],
-                id: row["idescola"],
-                nome: row["nome"],
-                processoAtual: row["processoatual"],
-                resolucao: row["resolucao"],
-                tempoVigencia: row["tempovigencia"],
-                dataInsercao: row["datainsercao"]
+            const escola: ModeloBD<EscolaPendente> = {
+                ...dbToModel(row),
+                cadastro: {
+                    dataInsercao: new Date(row["datainsercao"]),
+                },
             };
+            return escola;
         }));
     }
 
@@ -89,15 +118,7 @@ export namespace escolas {
             WHERE B.IdEscola IS NULL`);
         res.status(200).send(consulta.rows.map(row => {
             const escola: ModeloBD<EscolaAutorizada> = {
-                id: row["id"],
-                nome: row["nome"],
-                sigla: row["sigla"],
-                cnpj: row["cnpj"],
-                nomeEntidadeMantenedora: row["nomeentidademantenedora"],
-                vigenciaConselho: row["vigenciaconselho"],
-                cnpjConselho: row["cnpjConselho"],
-                codigoInep: row["codigoinep"],
-                dataCriacao: row["datacriacao"],
+                ...dbToModel(row),
                 processoAtual: new Processo({
                     nome: "ABC",
                     resolucao: "DEF",
@@ -115,7 +136,7 @@ export namespace escolas {
         if (resposta === "refuse") {
             await db.pool.query("DELETE FROM Escola WHERE Id = $1", [idEscola]);
         }
-        res.status(201).send({message: "Escola respondida com sucesso!", body: {escola: req.body}});
+        res.status(201).send({});
     }
 
     export async function atualizar(req: express.Request, res: express.Response) {
@@ -125,6 +146,6 @@ export namespace escolas {
         const {nome} = req.body;
 
         await db.pool.query("UPDATE escola SET Nome = $1 WHERE Id = $2", [nome, idEscola]);
-        res.status(200).send({message: "Escola atualizada com sucesso!"});
+        res.status(200).send({});
     }
 }
