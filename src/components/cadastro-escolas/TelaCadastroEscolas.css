@@ -10,7 +10,13 @@
 
 .TelaCadastroEscolas-campo {
     display: flex;
+    flex-direction: column;
     align-items: baseline;
+}
+
+.TelaCadastroEscolas-erroCampo {
+    color: red;
+    align-self: center;
 }
 
 .TelaCadastroEscolas-divisorCampo {

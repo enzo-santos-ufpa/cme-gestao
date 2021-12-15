@@ -1,12 +1,12 @@
 import React from "react";
 import './LinhaConsultaEscolas.css';
-import Escola from "../../models/Escola";
+import {EscolaAutorizada} from "../../models/Escola";
 import {Processo} from "../../models/tipos";
 import LinhaChaveValor from "../common/LinhaChaveValor";
 
-type _Props = { escola: Escola, mostraStatus: boolean }
+type Props = { escola: EscolaAutorizada, mostraStatus: boolean };
 
-class LinhaConsultaEscolas extends React.Component<_Props, {}> {
+class LinhaConsultaEscolas extends React.Component<Props, {}> {
     private static renderizaDescricaoProcesso(processo?: Processo): JSX.Element | null {
         if (processo == null) return null;
         return <div style={{display: "flex"}}>
