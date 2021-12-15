@@ -1,21 +1,14 @@
 .LinhaAutorizacaoCadastro {
     display: flex;
     align-items: center;
-}
-
-.LinhaAutorizacaoCadastro-status {
-    width: 1%;
-    margin-right: 10px;
+    padding: 10px 0;
 }
 
 .LinhaAutorizacaoCadastro-titulo {
     font-weight: bold;
     font-size: 18px;
-}
-
-.LinhaAutorizacaoCadastro-subtitulo {
-    font-weight: bold;
-    font-size: 16px;
+    cursor: pointer;
+    text-decoration: underline black;
 }
 
 .LinhaAutorizacaoCadastro-opcoes {

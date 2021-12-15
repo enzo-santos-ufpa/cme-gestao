@@ -1,4 +1,4 @@
-import {ChangeEvent, Validator} from "react";
+import {ChangeEvent} from "react";
 import Validador from "./Validador";
 
 
