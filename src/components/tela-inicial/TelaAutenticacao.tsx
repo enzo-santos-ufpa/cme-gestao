@@ -22,6 +22,7 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, _Estado> {
     }
 
     render() {
+        const form = this.state.form;
         return (
             <PlanoFundo bg={bg.login}>
                 <div className="TelaAutenticacao">
@@ -31,24 +32,24 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, _Estado> {
                             <input className="TelaAutenticacao-caixaTexto"
                                    type="text"
                                    placeholder="insira seu e-mail"
-                                   value={this.state.form.campo("email").texto}
+                                   value={form.campo("email").texto}
                                    onChange={(e) => {
-                                       const form = this.state.form.clone();
                                        form.campo("email").consome(e);
                                        this.setState({form});
                                    }}/>
-                            <span className="TelaAutenticacao-erroCaixaTexto">{this.state.form.campo("email").erro}</span>
+                            <span
+                                className="TelaAutenticacao-erroCaixaTexto">{form.campo("email").erro}</span>
                             <div style={{height: "10px"}}/>
                             <input className="TelaAutenticacao-caixaTexto"
                                    type="text"
                                    placeholder="insira sua senha"
-                                   value={this.state.form.campo("senha").texto}
+                                   value={form.campo("senha").texto}
                                    onChange={(e) => {
-                                       const form = this.state.form.clone();
                                        form.campo("senha").consome(e);
                                        this.setState({form});
                                    }}/>
-                            <span className="TelaAutenticacao-erroCaixaTexto">{this.state.form.campo("senha").erro}</span>
+                            <span
+                                className="TelaAutenticacao-erroCaixaTexto">{form.campo("senha").erro}</span>
                             <div style={{height: "20px"}}/>
                             <div className="TelaAutenticacao-botoes">
                                 <input className="TelaAutenticacao-botao"
@@ -59,7 +60,6 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, _Estado> {
                                        type="button"
                                        value="Entrar"
                                        onClick={(_) => {
-                                           const form = this.state.form;
                                            const sucesso = this.props.autenticador.login(form);
                                            if (sucesso) return;
                                            this.setState({form});

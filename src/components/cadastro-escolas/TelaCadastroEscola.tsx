@@ -156,22 +156,22 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
             const json = form.json();
             try {
                 await escolas.criar({
-                    nome: json["nome"],
-                    cnpj: json["cnpj"] as string,
-                    sigla: json["sigla"] as string,
-                    dataCriacao: parseDate(json["dataCriacao"])!,
-                    codigoInep: json["codigoInep"],
-                    nomeEntidadeMantenedora: json["nomeEntidadeMantenedora"],
-                    cnpjConselho: json["cnpjConselho"],
-                    vigenciaConselho: json["vigenciaConselho"],
-                    distrito: DistritoAdministrativo[json["distrito"] as keyof typeof DistritoAdministrativo],
-                    cidade: json["cidade"],
-                    uf: json["uf"],
-                    bairro: json["bairro"],
-                    cep: json["cep"],
-                    endereco: json["endereco"],
-                    email: json["email"],
-                    telefone: json["telefone"],
+                    nome: json.get("nome"),
+                    cnpj: json.get("cnpj"),
+                    sigla: json.get("sigla"),
+                    dataCriacao: parseDate(json.get("dataCriacao"))!,
+                    codigoInep: json.get("codigoInep"),
+                    nomeEntidadeMantenedora: json.get("nomeEntidadeMantenedora"),
+                    cnpjConselho: json.get("cnpjConselho"),
+                    vigenciaConselho: json.get("vigenciaConselho"),
+                    distrito: DistritoAdministrativo[json.get("distrito") as keyof typeof DistritoAdministrativo],
+                    cidade: json.get("cidade"),
+                    uf: json.get("uf"),
+                    bairro: json.get("bairro"),
+                    cep: json.get("cep"),
+                    endereco: json.get("endereco"),
+                    email: json.get("email"),
+                    telefone: json.get("telefone"),
                 });
             } catch (e) {
                 alert("Ocorreu um erro. Tente novamente mais tarde.");
