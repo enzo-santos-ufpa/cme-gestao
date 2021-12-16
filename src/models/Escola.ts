@@ -35,6 +35,6 @@ type Escola = {
     nomeEntidadeMantenedora: string,
 }
 
-export type EscolaBase = Omit<Escola, "servidores" | "tipo" | "modalidadeEnsino" | "convenioSemec" | "filiais">;
+export type EscolaBase = Omit<Escola, "tipo" | "modalidadeEnsino" | "convenioSemec" | "filiais">;
 export type EscolaAutorizada = EscolaBase & { processoAtual: Processo };
 export type EscolaPendente = EscolaBase & { cadastro: DadosCadastro };

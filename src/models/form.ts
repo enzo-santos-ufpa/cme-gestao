@@ -13,9 +13,7 @@ namespace Forms {
         mask?: string,
     };
 
-    type Campo = CampoSimples | CampoAninhado;
-
-    export class CampoSimples implements _Campo {
+    export class Campo implements _Campo {
         readonly nome: string;
         readonly validador: Validador;
         readonly mask?: string;
@@ -39,13 +37,7 @@ namespace Forms {
         }
     }
 
-    export type CampoAninhado = { [k: string]: CampoSimples };
-
     type _Formulario<T extends string> = Record<T, Campo>;
-
-    type ValorCampo = ValorCampoSimples | ValorCampoAninhado;
-    export type ValorCampoSimples = string;
-    export type ValorCampoAninhado = { [k: string]: string };
 
     export class Formulario<T extends string> {
         private readonly dados: _Formulario<T>;
@@ -59,13 +51,12 @@ namespace Forms {
             return !this.possuiErro;
         }
 
-        json(): Resultado<T> {
+        json(): Record<T, string> {
             const chaves: T[] = Object.keys(this.dados) as T[];
-            const json = Object.fromEntries(chaves.map(chave => [chave, this.dados[chave].texto])) as Record<T, ValorCampo>;
-            return new Resultado(json);
+            return Object.fromEntries(chaves.map(chave => [chave, this.dados[chave].texto])) as Record<T, string>;
         }
 
-        campo<R extends Campo = CampoSimples>(chave: T): R {
+        campo<R extends Campo = Campo>(chave: T): R {
             return this.dados[chave] as R;
         }
 
@@ -74,24 +65,12 @@ namespace Forms {
         }
 
         get possuiErro(): boolean {
-            const campos: CampoSimples[] = Object.values(this.dados);
+            const campos: Campo[] = Object.values(this.dados);
             return campos.some(campo => campo.erro);
         }
 
         clone(): Formulario<T> {
             return new Formulario({...this.dados});
-        }
-    }
-
-    export class Resultado<T extends string> {
-        private readonly json: Record<T, ValorCampo>;
-
-        constructor(json: Record<T, ValorCampo>) {
-            this.json = json;
-        }
-
-        get<R extends ValorCampo = ValorCampoSimples>(key: T): R {
-            return this.json[key] as R;
         }
     }
 }

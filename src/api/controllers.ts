@@ -33,6 +33,7 @@ export namespace escolas {
             bairro: row["bairro"],
             cidade: row["cidade"],
             uf: row["uf"],
+            servidores: row["servidores"], // TODO fi
         };
     }
 
@@ -75,6 +76,8 @@ export namespace escolas {
                             return "Telefone";
                         case "uf":
                             return "UF";
+                        case "servidores":
+                            return "Servidores";
                         default:
                             return assertNever(nomeAtributo);
                     }

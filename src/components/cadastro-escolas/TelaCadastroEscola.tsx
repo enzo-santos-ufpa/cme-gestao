@@ -8,13 +8,14 @@ import {EscolaBase} from "../../models/Escola";
 import ReactInputMask from "react-input-mask";
 import Validador, {Validadores} from "../../models/Validador";
 import {parseDate} from "../../lib/utils";
-import {DistritoAdministrativo} from "../../models/tipos";
+import {DistritoAdministrativo, Flatten} from "../../models/tipos";
 
-type FormularioCadastro = Forms.Formulario<keyof EscolaBase>;
+type FormularioCadastro = Forms.Formulario<Extract<keyof Flatten<EscolaBase>, string>>;
+
 type Estado = { form: FormularioCadastro };
 
 
-type PropsCampoCadastro = { campo: Forms.CampoSimples, onChange: () => void, flex?: number };
+type PropsCampoCadastro = { campo: Forms.Campo, onChange: () => void, flex?: number };
 
 class CampoCadastroEscola extends React.Component<PropsCampoCadastro, {}> {
     render() {
@@ -46,51 +47,51 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
 
         this.state = {
             form: new Forms.Formulario({
-                nome: new Forms.CampoSimples({
+                "nome": new Forms.Campo({
                     nome: "Nome da instituição",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                sigla: new Forms.CampoSimples({
+                "sigla": new Forms.Campo({
                     nome: "Sigla",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                cnpj: new Forms.CampoSimples({
+                "cnpj": new Forms.Campo({
                     nome: "CNPJ",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use(Validadores.cnpj()),
                     mask: "99.999.999/9999-99",
                 }),
-                dataCriacao: new Forms.CampoSimples({
+                "dataCriacao": new Forms.Campo({
                     nome: "Data de fundação",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use(Validadores.date()),
                     mask: "99/99/9999",
                 }),
-                codigoInep: new Forms.CampoSimples({
+                "codigoInep": new Forms.Campo({
                     nome: "Código INEP",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use((texto) => !texto.match(/^\d{8}$/) ? "O código INEP deve estar no formato XXXXXXXX." : undefined),
                     mask: "99999999",
                 }),
-                nomeEntidadeMantenedora: new Forms.CampoSimples({
+                "nomeEntidadeMantenedora": new Forms.Campo({
                     nome: "Nome da entidade mantenedora",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                cnpjConselho: new Forms.CampoSimples({
+                "cnpjConselho": new Forms.Campo({
                     nome: "CNPF/Conselho",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use(Validadores.cnpj()),
                     mask: "99.999.999/9999-99",
                 }),
-                vigenciaConselho: new Forms.CampoSimples({
+                "vigenciaConselho": new Forms.Campo({
                     nome: "Vigência/Conselho",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                distrito: new Forms.CampoSimples({
+                "distrito": new Forms.Campo({
                     nome: "Distrito",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use((texto) => {
@@ -102,45 +103,88 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                             return `Apenas os seguintes valores são permitidos: ${valores.join(", ")}`;
                     }),
                 }),
-                cidade: new Forms.CampoSimples({
+                "cidade": new Forms.Campo({
                     nome: "Cidade",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                uf: new Forms.CampoSimples({
+                "uf": new Forms.Campo({
                     nome: "UF",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                bairro: new Forms.CampoSimples({
+                "bairro": new Forms.Campo({
                     nome: "Bairro",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                cep: new Forms.CampoSimples({
+                "cep": new Forms.Campo({
                     nome: "CEP",
                     mask: "999.99-999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use(Validadores.cep()),
                 }),
-                endereco: new Forms.CampoSimples({
+                "endereco": new Forms.Campo({
                     nome: "Endereço",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                // TODO inserir validador de e-mail
-                email: new Forms.CampoSimples({
+                "email": new Forms.Campo({
                     nome: "E-mail institucional",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                telefone: new Forms.CampoSimples({
+                "telefone": new Forms.Campo({
                     nome: "Telefone",
                     mask: "(99) 99999-9999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-
+                "servidores.diretor.whatsapp": new Forms.Campo({
+                    nome: "Nome/Diretor",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
+                "servidores.diretor.email": new Forms.Campo({
+                    nome: "E-mail institucional",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
+                "servidores.diretor.telefone": new Forms.Campo({
+                    nome: "Telefone",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
+                "servidores.secretario.whatsapp": new Forms.Campo({
+                    nome: "Nome/Secretário",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
+                "servidores.secretario.email": new Forms.Campo({
+                    nome: "E-mail institucional",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
+                "servidores.secretario.telefone": new Forms.Campo({
+                    nome: "Telefone",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
+                "servidores.coordenador.whatsapp": new Forms.Campo({
+                    nome: "Nome/Coordenador",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
+                "servidores.coordenador.email": new Forms.Campo({
+                    nome: "E-mail institucional",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
+                "servidores.coordenador.telefone": new Forms.Campo({
+                    nome: "Telefone",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
             }),
         };
         this.onSubmit = this.onSubmit.bind(this);
@@ -156,22 +200,39 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
             const json = form.json();
             try {
                 await escolas.criar({
-                    nome: json.get("nome"),
-                    cnpj: json.get("cnpj"),
-                    sigla: json.get("sigla"),
-                    dataCriacao: parseDate(json.get("dataCriacao"))!,
-                    codigoInep: json.get("codigoInep"),
-                    nomeEntidadeMantenedora: json.get("nomeEntidadeMantenedora"),
-                    cnpjConselho: json.get("cnpjConselho"),
-                    vigenciaConselho: json.get("vigenciaConselho"),
-                    distrito: DistritoAdministrativo[json.get("distrito") as keyof typeof DistritoAdministrativo],
-                    cidade: json.get("cidade"),
-                    uf: json.get("uf"),
-                    bairro: json.get("bairro"),
-                    cep: json.get("cep"),
-                    endereco: json.get("endereco"),
-                    email: json.get("email"),
-                    telefone: json.get("telefone"),
+                    nome: json["nome"],
+                    cnpj: json["cnpj"],
+                    sigla: json["sigla"],
+                    dataCriacao: parseDate(json["dataCriacao"])!,
+                    codigoInep: json["codigoInep"],
+                    nomeEntidadeMantenedora: json["nomeEntidadeMantenedora"],
+                    cnpjConselho: json["cnpjConselho"],
+                    vigenciaConselho: json["vigenciaConselho"],
+                    distrito: DistritoAdministrativo[json["distrito"] as keyof typeof DistritoAdministrativo],
+                    cidade: json["cidade"],
+                    uf: json["uf"],
+                    bairro: json["bairro"],
+                    cep: json["cep"],
+                    endereco: json["endereco"],
+                    email: json["email"],
+                    telefone: json["telefone"],
+                    servidores: {
+                        diretor: {
+                            telefone: json["servidores.diretor.telefone"],
+                            email: json["servidores.diretor.email"],
+                            whatsapp: json["servidores.diretor.whatsapp"],
+                        },
+                        secretario: {
+                            telefone: json["servidores.secretario.telefone"],
+                            email: json["servidores.secretario.email"],
+                            whatsapp: json["servidores.secretario.whatsapp"],
+                        },
+                        coordenador: {
+                            telefone: json["servidores.coordenador.telefone"],
+                            email: json["servidores.coordenador.email"],
+                            whatsapp: json["servidores.coordenador.whatsapp"],
+                        },
+                    }
                 });
             } catch (e) {
                 alert("Ocorreu um erro. Tente novamente mais tarde.");
@@ -255,6 +316,46 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                                      onChange={() => this.updateSelf()}/>
                                 <CampoCadastroEscola flex={6}
                                                      campo={form.campo("telefone")}
+                                                     onChange={() => this.updateSelf()}/>
+                            </div>
+                            <p>Dados (servidores)</p>
+                            <div className="TelaCadastroEscolas-linhaFormulario">
+                                <CampoCadastroEscola flex={12}
+                                                     campo={form.campo("servidores.diretor.whatsapp")}
+                                                     onChange={() => this.updateSelf()}/>
+                            </div>
+                            <div className="TelaCadastroEscolas-linhaFormulario">
+                                <CampoCadastroEscola flex={6}
+                                                     campo={form.campo("servidores.diretor.email")}
+                                                     onChange={() => this.updateSelf()}/>
+                                <CampoCadastroEscola flex={6}
+                                                     campo={form.campo("servidores.diretor.telefone")}
+                                                     onChange={() => this.updateSelf()}/>
+                            </div>
+                            <div className="TelaCadastroEscolas-linhaFormulario">
+                                <CampoCadastroEscola flex={12}
+                                                     campo={form.campo("servidores.secretario.whatsapp")}
+                                                     onChange={() => this.updateSelf()}/>
+                            </div>
+                            <div className="TelaCadastroEscolas-linhaFormulario">
+                                <CampoCadastroEscola flex={6}
+                                                     campo={form.campo("servidores.secretario.email")}
+                                                     onChange={() => this.updateSelf()}/>
+                                <CampoCadastroEscola flex={6}
+                                                     campo={form.campo("servidores.secretario.telefone")}
+                                                     onChange={() => this.updateSelf()}/>
+                            </div>
+                            <div className="TelaCadastroEscolas-linhaFormulario">
+                                <CampoCadastroEscola flex={12}
+                                                     campo={form.campo("servidores.coordenador.whatsapp")}
+                                                     onChange={() => this.updateSelf()}/>
+                            </div>
+                            <div className="TelaCadastroEscolas-linhaFormulario">
+                                <CampoCadastroEscola flex={6}
+                                                     campo={form.campo("servidores.coordenador.email")}
+                                                     onChange={() => this.updateSelf()}/>
+                                <CampoCadastroEscola flex={6}
+                                                     campo={form.campo("servidores.coordenador.telefone")}
                                                      onChange={() => this.updateSelf()}/>
                             </div>
                         </div>
