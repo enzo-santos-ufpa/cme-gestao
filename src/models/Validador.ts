@@ -34,4 +34,8 @@ export namespace Validadores {
     export function date(erro?: string): MetodoValidacao {
         return (texto) => parseDate(texto) == null ? (erro ?? "A data deve estar no formato DD/MM/YYYY.") : undefined;
     }
+
+    export function cep(erro?: string): MetodoValidacao {
+        return (texto) => !texto.match(/^\d{3}\.\d{2}-\d{3}$/) ? (erro ?? "O CEP deve estar no formato XXX.XX-XXX.") : undefined;
+    }
 }

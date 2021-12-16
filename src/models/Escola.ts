@@ -23,8 +23,11 @@ type Escola = {
     cep: string,
     email: string,
     telefone: string,
-    contatoDiretor: ContatoServidor,
-    contatoSecretario: ContatoServidor,
+    servidores: {
+        diretor: ContatoServidor,
+        secretario: ContatoServidor,
+        coordenador: ContatoServidor,
+    },
     tipo: TipoEscola,
     modalidadeEnsino: ModalidadeEnsino,
     convenioSemec?: ConvenioSEMEC,
@@ -32,6 +35,6 @@ type Escola = {
     nomeEntidadeMantenedora: string,
 }
 
-export type EscolaBase = Pick<Escola, "nome" | "sigla" | "cnpj" | "dataCriacao" | "codigoInep" | "nomeEntidadeMantenedora" | "cnpjConselho" | "vigenciaConselho">;
+export type EscolaBase = Omit<Escola, "servidores" | "tipo" | "modalidadeEnsino" | "convenioSemec" | "filiais">;
 export type EscolaAutorizada = EscolaBase & { processoAtual: Processo };
 export type EscolaPendente = EscolaBase & { cadastro: DadosCadastro };

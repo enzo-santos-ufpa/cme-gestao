@@ -1,7 +1,7 @@
 import {db} from "./config";
 import express from "express";
 import {EscolaAutorizada, EscolaBase, EscolaPendente} from "../models/Escola";
-import {ModeloBD, Processo} from "../models/tipos";
+import {DistritoAdministrativo, ModeloBD, Processo} from "../models/tipos";
 
 export namespace index {
     export function info(req: express.Request, res: express.Response) {
@@ -25,6 +25,14 @@ export namespace escolas {
             cnpjConselho: row["cnpjconselho"],
             codigoInep: row["codigoinep"],
             dataCriacao: new Date(row["datacriacao"]),
+            email: row["email"],
+            distrito: DistritoAdministrativo[row["distrito"] as keyof typeof DistritoAdministrativo],
+            telefone: row["telefone"],
+            endereco: row["endereco"],
+            cep: row["cep"],
+            bairro: row["bairro"],
+            cidade: row["cidade"],
+            uf: row["uf"],
         };
     }
 
@@ -51,6 +59,22 @@ export namespace escolas {
                             return "CNPJConselho";
                         case "vigenciaConselho":
                             return "VigenciaConselho";
+                        case "bairro":
+                            return "Bairro";
+                        case "cep":
+                            return "CEP";
+                        case "cidade":
+                            return "Cidade";
+                        case "distrito":
+                            return "Distrito";
+                        case "email":
+                            return "Email";
+                        case "endereco":
+                            return "Endereco";
+                        case "telefone":
+                            return "Telefone";
+                        case "uf":
+                            return "UF";
                         default:
                             return assertNever(nomeAtributo);
                     }

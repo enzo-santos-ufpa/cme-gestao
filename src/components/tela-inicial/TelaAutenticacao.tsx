@@ -15,8 +15,8 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, _Estado> {
         super(props);
         this.state = {
             form: new Forms.Formulario({
-                email: new Forms.Campo(),
-                senha: new Forms.Campo()
+                email: new Forms.CampoSimples(),
+                senha: new Forms.CampoSimples()
             }),
         }
     }

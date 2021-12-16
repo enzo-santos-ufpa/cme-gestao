@@ -3,20 +3,34 @@
 }
 
 .TelaCadastroEscolas-formulario {
+    padding: 20px 0;
     display: flex;
     flex-direction: column;
     row-gap: 15px;
 }
 
+.TelaCadastroEscolas-linhaFormulario {
+    display: flex;
+    flex-direction: row;
+}
+
 .TelaCadastroEscolas-campo {
     display: flex;
     flex-direction: column;
-    align-items: baseline;
+    align-items: stretch;
+}
+
+.TelaCadastroEscolas-nomeCampo {
+    font-weight: bold;
+    align-self: center;
+    padding: 0 30px 0 20px;
+    font-size: 20px;
 }
 
 .TelaCadastroEscolas-erroCampo {
     color: red;
-    align-self: center;
+    font-size: 14px;
+    align-self: flex-end;
 }
 
 .TelaCadastroEscolas-divisorCampo {
@@ -24,5 +38,10 @@
 }
 
 .TelaCadastroEscolas-caixaTexto {
+    height: 2em;
+    font-size: 18px;
     padding: 10px;
+    border-width: 0;
+    background-color: #d9d9d9;
+    width: 100%;
 }
