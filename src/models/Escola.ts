@@ -1,5 +1,5 @@
 import {
-    ContatoServidor,
+    Servidor,
     ConvenioSEMEC, DadosCadastro,
     DistritoAdministrativo,
     ModalidadeEnsino,
@@ -24,9 +24,9 @@ type Escola = {
     email: string,
     telefone: string,
     servidores: {
-        diretor: ContatoServidor,
-        secretario: ContatoServidor,
-        coordenador: ContatoServidor,
+        diretor: Servidor,
+        secretario: Servidor,
+        coordenador: Servidor,
     },
     tipo: TipoEscola,
     modalidadeEnsino: ModalidadeEnsino,

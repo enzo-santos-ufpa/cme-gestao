@@ -140,7 +140,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.diretor.whatsapp": new Forms.Campo({
+                "servidores.diretor.nome": new Forms.Campo({
                     nome: "Nome/Diretor",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
@@ -155,7 +155,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.secretario.whatsapp": new Forms.Campo({
+                "servidores.secretario.nome": new Forms.Campo({
                     nome: "Nome/Secretário",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
@@ -170,7 +170,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.coordenador.whatsapp": new Forms.Campo({
+                "servidores.coordenador.nome": new Forms.Campo({
                     nome: "Nome/Coordenador",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
@@ -220,17 +220,17 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                         diretor: {
                             telefone: json["servidores.diretor.telefone"],
                             email: json["servidores.diretor.email"],
-                            whatsapp: json["servidores.diretor.whatsapp"],
+                            nome: json["servidores.diretor.nome"],
                         },
                         secretario: {
                             telefone: json["servidores.secretario.telefone"],
                             email: json["servidores.secretario.email"],
-                            whatsapp: json["servidores.secretario.whatsapp"],
+                            nome: json["servidores.secretario.nome"],
                         },
                         coordenador: {
                             telefone: json["servidores.coordenador.telefone"],
                             email: json["servidores.coordenador.email"],
-                            whatsapp: json["servidores.coordenador.whatsapp"],
+                            nome: json["servidores.coordenador.nome"],
                         },
                     }
                 });
@@ -321,7 +321,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                             <p>Dados (servidores)</p>
                             <div className="TelaCadastroEscolas-linhaFormulario">
                                 <CampoCadastroEscola flex={12}
-                                                     campo={form.campo("servidores.diretor.whatsapp")}
+                                                     campo={form.campo("servidores.diretor.nome")}
                                                      onChange={() => this.updateSelf()}/>
                             </div>
                             <div className="TelaCadastroEscolas-linhaFormulario">
@@ -334,7 +334,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                             </div>
                             <div className="TelaCadastroEscolas-linhaFormulario">
                                 <CampoCadastroEscola flex={12}
-                                                     campo={form.campo("servidores.secretario.whatsapp")}
+                                                     campo={form.campo("servidores.secretario.nome")}
                                                      onChange={() => this.updateSelf()}/>
                             </div>
                             <div className="TelaCadastroEscolas-linhaFormulario">
@@ -347,7 +347,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                             </div>
                             <div className="TelaCadastroEscolas-linhaFormulario">
                                 <CampoCadastroEscola flex={12}
-                                                     campo={form.campo("servidores.coordenador.whatsapp")}
+                                                     campo={form.campo("servidores.coordenador.nome")}
                                                      onChange={() => this.updateSelf()}/>
                             </div>
                             <div className="TelaCadastroEscolas-linhaFormulario">

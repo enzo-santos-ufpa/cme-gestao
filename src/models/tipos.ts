@@ -37,9 +37,9 @@ export enum DistritoAdministrativo { DABEL, DABEN, DAGUA, DAICO, DAOUT, DAMOS }
 
 export enum SetorEscola { publico, privado}
 
-export type ContatoServidor = {
+export type Servidor = {
+    nome: string,
     telefone: string,
-    whatsapp: string,
     email: string,
 }
 
