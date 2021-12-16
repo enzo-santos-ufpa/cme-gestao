@@ -1,37 +1,34 @@
 import React from "react";
 import './MenuPrincipal.css';
 import {ItemTelaInicial, ItemTelaInicialProps} from "./ItemTelaInicial";
-import icPeople from "../../assets/people-icon.png";
-import icSearch from "../../assets/magnifier-icon.png";
-import icChart from "../../assets/chart-icon.png";
-import icCheck from "../../assets/check-icon.png";
 import {PropsAutenticador} from "./TelaInicial";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
+import {BsBarChartLineFill, BsCardChecklist, BsFileEarmarkPostFill, BsPeopleFill, BsSearch} from "react-icons/bs";
 
 class MenuPrincipal extends React.Component<PropsAutenticador, {}> {
     private static readonly colunas = 3;
-    private static readonly itens: Array<ItemTelaInicialProps> = [
+    private static readonly itens: ItemTelaInicialProps[] = [
         {
-            nome: "Cadastro\nde Usuário",
-            icone: {valor: icPeople, alt: "Ícone de grupo de pessoas"},
+            nome: "Cadastro\nde usuário",
+            construtorIcone: () => <BsPeopleFill size={50}/>,
         },
         {
-            nome: "Consulta de\nInstituições",
-            icone: {valor: icSearch, alt: "Ícone de busca"},
+            nome: "Consulta de\ninstituições",
+            construtorIcone: () => <BsSearch size={50}/>,
             caminhoRota: "/consulta-escolas"
         },
         {
-            nome: "Tabelas e\nGráficos",
-            icone: {valor: icChart, alt: "Ícone de gráficos"},
+            nome: "Tabelas e\ngráficos",
+            construtorIcone: () => <BsBarChartLineFill size={50}/>,
         },
         {
-            nome: "Autorização\nde Cadastro",
-            icone: {valor: icCheck, alt: "Ícone de verificação"},
+            nome: "Autorização\nde cadastro",
+            construtorIcone: () => <BsCardChecklist size={50}/>,
             caminhoRota: "/autoriza-cadastro"
         },
         {
             nome: "Consultar\nrelatórios",
-            icone: {valor: icChart, alt: "Ícone de gráficos"}
+            construtorIcone: () => <BsFileEarmarkPostFill size={50}/>,
         },
     ];
 
@@ -42,19 +39,17 @@ class MenuPrincipal extends React.Component<PropsAutenticador, {}> {
                 gridRow: (i / numCols) + 1,
                 gridColumn: (i % numCols) + 1
             }}>
-                <ItemTelaInicial nome={item.nome}
-                                 icone={item.icone}
-                                 caminhoRota={item.caminhoRota}/>
+                <ItemTelaInicial {...item}/>
             </div>
         });
         return (
             <PlanoFundo bg={bg.menu}>
+                <div className="MenuPrincipal">
+                    <div className="MenuPrincipal-grade">{itens}</div>
+
+                </div>
                 <p className="MenuPrincipal-botaoSair"
-                   onClick={(_) => this.props.autenticador.logout()}>Sair</p>
-                <div className="MenuPrincipal-grade"
-                     style={{
-                         gridTemplateColumns: Array(numCols).fill("1fr").join(" "),
-                     }}>{itens}</div>
+                   onClick={() => this.props.autenticador.logout()}>Sair</p>
             </PlanoFundo>
         );
     }

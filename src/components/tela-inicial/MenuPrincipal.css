@@ -1,32 +1,18 @@
 .MenuPrincipal {
-    display: grid;
-}
-
-.MenuPrincipal-bg {
-    width: 100%;
-    height: 100%;
     position: absolute;
-    background-image: url(../../assets/background-painel.png);
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.MenuPrincipal-cabecalho {
-    grid-row: 1;
-    grid-column: span 3;
-    margin: 0;
-    padding: 20px;
-    background-color: lightblue;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .MenuPrincipal-grade {
-    padding: 0 100px;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
+    height: 50%;
+    width: 75%;
     display: grid;
-    gap: 0 50px;
+    gap: 5vw;
+    grid-template-rows: 1fr 1fr;
 }
 
 .MenuPrincipal-botaoSair {

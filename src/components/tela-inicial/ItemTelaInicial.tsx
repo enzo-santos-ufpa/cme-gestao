@@ -1,11 +1,10 @@
 import React from "react";
 import './ItemTelaInicial.css';
-import {ValorAlt} from "../../models/tipos";
 
-export interface ItemTelaInicialProps {
-    nome: string;
-    icone: ValorAlt<string>;
-    caminhoRota?: string;
+export type ItemTelaInicialProps = {
+    nome: string,
+    construtorIcone: () => JSX.Element,
+    caminhoRota?: string,
 }
 
 export class ItemTelaInicial extends React.Component<ItemTelaInicialProps, {}> {
@@ -17,9 +16,7 @@ export class ItemTelaInicial extends React.Component<ItemTelaInicialProps, {}> {
                 window.location.href = route;
             }}>
                 <p className="ItemTelaInicial-legenda">{this.props.nome}</p>
-                <img style={{height: "100px", width: undefined}}
-                     src={this.props.icone.valor}
-                     alt={this.props.icone.alt}/>
+                {this.props.construtorIcone()}
             </div>
         </div>);
     }
