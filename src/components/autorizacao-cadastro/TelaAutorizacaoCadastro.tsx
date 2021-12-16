@@ -4,6 +4,7 @@ import {escolas} from "../../lib/api";
 import LinhaAutorizacaoCadastro from "./LinhaAutorizacaoCadastro";
 import {ModeloBD} from "../../models/tipos";
 import {EscolaPendente} from "../../models/Escola";
+import TelaInterna from "../common/TelaInterna";
 
 function divideElementos(elementos: JSX.Element[], divisor: JSX.Element): JSX.Element[] {
     const resultado: JSX.Element[] = [divisor];
@@ -13,7 +14,7 @@ function divideElementos(elementos: JSX.Element[], divisor: JSX.Element): JSX.El
 
 class TelaAutorizacaoCadastro extends React.Component {
     render() {
-        return (
+        return <TelaInterna>
             <TelaEscolas<EscolaPendente>
                 titulo="Autorização de Cadastro"
                 construtorEscolas={() => escolas.pendentes().then((escolas) => {
@@ -34,7 +35,7 @@ class TelaAutorizacaoCadastro extends React.Component {
                     </div>;
                 }}
             />
-        );
+        </TelaInterna>;
     }
 }
 
