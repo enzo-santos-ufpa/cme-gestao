@@ -1,0 +1,12 @@
+.BarraLateral {
+    display: flex;
+    flex-direction: column;
+    background-color: #90bcefff;
+    height: 100vh;
+    padding: 15px;
+    row-gap: 25px;
+}
+
+.BarraLateral-item {
+    cursor: pointer;
+}
