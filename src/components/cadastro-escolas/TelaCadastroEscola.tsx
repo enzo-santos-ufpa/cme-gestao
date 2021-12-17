@@ -253,158 +253,156 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
     render() {
         const form = this.state.form;
         return (
-            <PlanoFundo bg={bg.tela}>
-                <div className="TelaCadastroEscolas">
-                    <p className="Tela-titulo">Cadastrar escola</p>
-                    <form onSubmit={this.onSubmit}>
-                        <div className="TelaCadastroEscolas-formulario">
-                            <p>Dados</p>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("nome")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={3}
-                                                     campo={form.campo("sigla")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={3}
-                                                     campo={form.campo("cnpj")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={3}
-                                                     campo={form.campo("dataCriacao")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={3}
-                                                     campo={form.campo("codigoInep")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("nomeEntidadeMantenedora")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("cnpjConselho")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("vigenciaConselho")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <p>Localização</p>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={2}
-                                                     campo={form.campo("distrito")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={3}
-                                                     campo={form.campo("cidade")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={1}
-                                                     campo={form.campo("uf")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={4}
-                                                     campo={form.campo("bairro")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={2}
-                                                     campo={form.campo("cep")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <p>Contato</p>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={12}
-                                                     campo={form.campo("endereco")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("email")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("telefone")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <p>Dados (servidores)</p>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={12}
-                                                     campo={form.campo("servidores.diretor.nome")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("servidores.diretor.email")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("servidores.diretor.telefone")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={12}
-                                                     campo={form.campo("servidores.secretario.nome")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("servidores.secretario.email")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("servidores.secretario.telefone")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={12}
-                                                     campo={form.campo("servidores.coordenador.nome")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
-                            <div className="TelaCadastroEscolas-linhaFormulario">
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("servidores.coordenador.email")}
-                                                     onChange={() => this.updateSelf()}/>
-                                <CampoCadastroEscola flex={6}
-                                                     campo={form.campo("servidores.coordenador.telefone")}
-                                                     onChange={() => this.updateSelf()}/>
-                            </div>
+            <div className="TelaCadastroEscolas">
+                <p className="Tela-titulo">Cadastrar escola</p>
+                <form onSubmit={this.onSubmit}>
+                    <div className="TelaCadastroEscolas-formulario">
+                        <p>Dados</p>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("nome")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={3}
+                                                 campo={form.campo("sigla")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={3}
+                                                 campo={form.campo("cnpj")}
+                                                 onChange={() => this.updateSelf()}/>
                         </div>
-                        <input className="TelaEscolas-botaoControle" type="submit" value="CADASTRAR"/>
-                        <button type="button" onClick={(_) => {
-                            function dsrandomf(format: string): string {
-                                return format.split("").map((c) => c === "#" ? random.range(0, 9) : c).join("");
-                            }
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={3}
+                                                 campo={form.campo("dataCriacao")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={3}
+                                                 campo={form.campo("codigoInep")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("nomeEntidadeMantenedora")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("cnpjConselho")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("vigenciaConselho")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <p>Localização</p>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={2}
+                                                 campo={form.campo("distrito")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={3}
+                                                 campo={form.campo("cidade")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={1}
+                                                 campo={form.campo("uf")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={4}
+                                                 campo={form.campo("bairro")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={2}
+                                                 campo={form.campo("cep")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={12}
+                                                 campo={form.campo("endereco")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <p>Contato</p>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("email")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("telefone")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <p>Dados (servidores)</p>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={12}
+                                                 campo={form.campo("servidores.diretor.nome")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("servidores.diretor.email")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("servidores.diretor.telefone")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={12}
+                                                 campo={form.campo("servidores.secretario.nome")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("servidores.secretario.email")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("servidores.secretario.telefone")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={12}
+                                                 campo={form.campo("servidores.coordenador.nome")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                        <div className="TelaCadastroEscolas-linhaFormulario">
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("servidores.coordenador.email")}
+                                                 onChange={() => this.updateSelf()}/>
+                            <CampoCadastroEscola flex={6}
+                                                 campo={form.campo("servidores.coordenador.telefone")}
+                                                 onChange={() => this.updateSelf()}/>
+                        </div>
+                    </div>
+                    <input className="TelaEscolas-botaoControle" type="submit" value="CADASTRAR"/>
+                    <button type="button" onClick={(_) => {
+                        function dsrandomf(format: string): string {
+                            return format.split("").map((c) => c === "#" ? random.range(0, 9) : c).join("");
+                        }
 
-                            function wsrandomf(format: string): string {
-                                return format.split("").map((c) => c === "#" ? random.word({size: 1}) : c).join("");
-                            }
+                        function wsrandomf(format: string): string {
+                            return format.split("").map((c) => c === "#" ? random.word({size: 1}) : c).join("");
+                        }
 
-                            form.campo("nome").texto = wsrandomf("##########");
-                            form.campo("sigla").texto = wsrandomf("#####");
-                            form.campo("cnpj").texto = dsrandomf("##.###.###/####-##");
-                            form.campo("dataCriacao").texto = new Date(random.range(1609459200000, 1640908800000)).toLocaleDateString();
-                            form.campo("codigoInep").texto = dsrandomf("########");
-                            form.campo("nomeEntidadeMantenedora").texto = wsrandomf("##########");
-                            form.campo("cnpjConselho").texto = dsrandomf("##.###.###/####-##");
-                            form.campo("vigenciaConselho").texto = wsrandomf("##########");
-                            form.campo("distrito").texto = random.choice(["DABEL", "DABEN", "DAOUT"]);
-                            form.campo("cidade").texto = wsrandomf("##########");
-                            form.campo("uf").texto = wsrandomf("##");
-                            form.campo("bairro").texto = wsrandomf("##########");
-                            form.campo("cep").texto = dsrandomf("###.##-###");
-                            form.campo("endereco").texto = wsrandomf("##########");
-                            form.campo("email").texto = wsrandomf("######@gmail.com");
-                            form.campo("telefone").texto = dsrandomf("(91) 98###-####");
-                            form.campo("servidores.diretor.telefone").texto = dsrandomf("(91) 98###-####");
-                            form.campo("servidores.secretario.telefone").texto = dsrandomf("(91) 98###-####");
-                            form.campo("servidores.coordenador.telefone").texto = dsrandomf("(91) 98###-####");
-                            form.campo("servidores.diretor.nome").texto = wsrandomf("##########");
-                            form.campo("servidores.secretario.nome").texto = wsrandomf("##########");
-                            form.campo("servidores.coordenador.nome").texto = wsrandomf("##########");
-                            form.campo("servidores.diretor.email").texto = wsrandomf("######@gmail.com");
-                            form.campo("servidores.secretario.email").texto = wsrandomf("######@gmail.com");
-                            form.campo("servidores.coordenador.email").texto = wsrandomf("######@gmail.com");
+                        form.campo("nome").texto = wsrandomf("##########");
+                        form.campo("sigla").texto = wsrandomf("#####");
+                        form.campo("cnpj").texto = dsrandomf("##.###.###/####-##");
+                        form.campo("dataCriacao").texto = new Date(random.range(1609459200000, 1640908800000)).toLocaleDateString();
+                        form.campo("codigoInep").texto = dsrandomf("########");
+                        form.campo("nomeEntidadeMantenedora").texto = wsrandomf("##########");
+                        form.campo("cnpjConselho").texto = dsrandomf("##.###.###/####-##");
+                        form.campo("vigenciaConselho").texto = wsrandomf("##########");
+                        form.campo("distrito").texto = random.choice(["DABEL", "DABEN", "DAOUT"]);
+                        form.campo("cidade").texto = random.choice(["Belém", "Ananindeua", "Marituba"]);
+                        form.campo("uf").texto = "PA";
+                        form.campo("bairro").texto = wsrandomf("##########");
+                        form.campo("cep").texto = dsrandomf("###.##-###");
+                        form.campo("endereco").texto = wsrandomf("###################################");
+                        form.campo("email").texto = wsrandomf("######@gmail.com");
+                        form.campo("telefone").texto = dsrandomf("(91) 98###-####");
+                        form.campo("servidores.diretor.telefone").texto = dsrandomf("(91) 98###-####");
+                        form.campo("servidores.secretario.telefone").texto = dsrandomf("(91) 98###-####");
+                        form.campo("servidores.coordenador.telefone").texto = dsrandomf("(91) 98###-####");
+                        form.campo("servidores.diretor.nome").texto = wsrandomf("##########");
+                        form.campo("servidores.secretario.nome").texto = wsrandomf("##########");
+                        form.campo("servidores.coordenador.nome").texto = wsrandomf("##########");
+                        form.campo("servidores.diretor.email").texto = wsrandomf("######@gmail.com");
+                        form.campo("servidores.secretario.email").texto = wsrandomf("######@gmail.com");
+                        form.campo("servidores.coordenador.email").texto = wsrandomf("######@gmail.com");
+                        this.updateSelf();
+                    }}>
+                        Preencher formulário (será removido)
+                    </button>
+                </form>
+            </div>
 
-                            this.updateSelf();
-                        }}>
-                            Preencher formulário (será removido)
-                        </button>
-                    </form>
-                </div>
-            </PlanoFundo>
         );
     }
 }

@@ -6,7 +6,7 @@ import TelaConsultaEscolas from "./components/consulta-escolas/TelaConsultaEscol
 import Autenticador from "./models/Autenticador";
 import TelaCadastroEscola from "./components/cadastro-escolas/TelaCadastroEscola";
 import TelaAutorizacaoCadastro from "./components/autorizacao-cadastro/TelaAutorizacaoCadastro";
-import TelaCadastro from "./components/tela-escola/TelaCadastro";
+import TelaEscola from "./components/tela-escola/TelaEscola";
 
 class App extends React.Component {
     private static autenticador = new Autenticador();
@@ -18,7 +18,7 @@ class App extends React.Component {
                 <Route path="/consulta-escolas" element={<TelaConsultaEscolas/>}/>
                 <Route path="/autoriza-cadastro" element={<TelaAutorizacaoCadastro/>}/>
                 <Route path="/cadastro-escola" element={<TelaCadastroEscola/>}/>
-                <Route path="/info-escola" element={<TelaCadastro/>}/>
+                <Route path="/info-escola" element={<TelaEscola/>}/>
             </Routes>
         </BrowserRouter>;
     }
