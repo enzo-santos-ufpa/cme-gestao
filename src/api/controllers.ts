@@ -1,7 +1,13 @@
 import {db} from "./config";
 import express from "express";
-import {DistritoAdministrativo, encoding, EscolaBase, Servidor} from "../models/Escola";
-import {FlatEncoded} from "../models/tipos";
+import {
+    DistritoAdministrativo,
+    encoding,
+    EscolaBase,
+    EscolaPendente,
+    Servidor
+} from "../models/Escola";
+import {FlatEncoded, ModeloBD} from "../models/tipos";
 
 export namespace index {
     export function info(req: express.Request, res: express.Response) {
@@ -9,15 +15,74 @@ export namespace index {
     }
 }
 
-function assertNever(object: never): never {
-    throw new Error("Was not never: " + object);
-}
-
-function assertEmpty(object: Record<any, never>) {
-    return !Object.keys(object).length;
-}
-
 export namespace escolas {
+    async function parseEscolaBase(row: any): Promise<ModeloBD<EscolaBase>> {
+        const id = row.id;
+        const consultaServidores = await db.pool.query(
+            `SELECT * FROM ServidorEscola WHERE IdEscola = $1`,
+            [id],
+        );
+        const mapeamentoServidores = new Map<string, any>();
+        consultaServidores.rows.forEach(row => mapeamentoServidores.set(row["tipo"], row));
+        const dadosServidores = {
+            diretor: mapeamentoServidores.get("Diretor"),
+            secretario: mapeamentoServidores.get("Secretario"),
+            coordenador: mapeamentoServidores.get("Coordenador"),
+        };
+
+        return {
+            id: id,
+            nome: row.nome,
+            email: row.email,
+            telefone: row.telefone,
+            endereco: row.endereco,
+            cep: row.cep,
+            uf: row.uf,
+            cidade: row.cidade,
+            bairro: row.bairro,
+            cnpj: row.cnpj,
+            distrito: DistritoAdministrativo[row.distrito as keyof typeof DistritoAdministrativo],
+            sigla: row.sigla,
+            vigenciaConselho: row.vigenciaconselho,
+            cnpjConselho: row.cnpjconselho,
+            nomeEntidadeMantenedora: row.nomeentidademantenedora,
+            codigoInep: row.codigoinep,
+            dataCriacao: new Date(row.datacriacao),
+            servidores: {
+                diretor: ((dadosServidor: any) => {
+                    return {
+                        nome: dadosServidor["nome"],
+                        email: dadosServidor["email"],
+                        telefone: dadosServidor["telefone"],
+                    };
+                })(dadosServidores.diretor),
+                secretario: ((dadosServidor: any) => {
+                    return {
+                        nome: dadosServidor["nome"],
+                        email: dadosServidor["email"],
+                        telefone: dadosServidor["telefone"],
+                    };
+                })(dadosServidores.secretario),
+                coordenador: ((dadosServidor: any) => {
+                    return {
+                        nome: dadosServidor["nome"],
+                        email: dadosServidor["email"],
+                        telefone: dadosServidor["telefone"],
+                    };
+                })(dadosServidores.coordenador),
+            }
+        };
+    }
+
+    async function parseEscolaPendente(row: any): Promise<ModeloBD<EscolaPendente>> {
+        return {
+            ...(await parseEscolaBase(row)),
+            cadastro: {
+                dataInsercao: row["datainsercao"],
+            }
+        };
+    }
+
     export async function criar(req: express.Request, res: express.Response) {
         async function insereServidor(id: number, tipo: "Diretor" | "Secretario" | "Coordenador", servidor: Servidor) {
             await db.pool.query(`INSERT INTO
@@ -96,21 +161,26 @@ export namespace escolas {
     //     }
     // }
     //
-    // export async function pendentes(req: express.Request, res: express.Response) {
-    //     const consulta = await db.pool.query(`SELECT * FROM Escola A
-    //         RIGHT JOIN TriagemEscola B
-    //         ON A.Id = B.IdEscola`);
-    //
-    //     res.status(200).send(consulta.rows.map(row => {
-    //         const escola: ModeloBD<EscolaPendente> = {
-    //             ...dbToModel(row),
-    //             cadastro: {
-    //                 dataInsercao: new Date(row["datainsercao"]),
-    //             },
-    //         };
-    //         return escola;
-    //     }));
-    // }
+
+    export async function pendentes(req: express.Request, res: express.Response) {
+        const encoder = encoding.lista(encoding.modeloDB(encoding.escolaPendente()));
+        const data: ModeloBD<EscolaPendente>[] = [];
+
+        try {
+            const consulta = await db.pool.query(`SELECT * FROM Escola
+                JOIN EnderecoEscola ON Escola.Id = EnderecoEscola.IdEscola
+                RIGHT JOIN TriagemEscola ON Escola.Id = TriagemEscola.IdEscola`);
+
+            for (const row of consulta.rows) {
+                data.push(await parseEscolaPendente(row));
+            }
+        } catch (e) {
+            return res.status(401).send({error: e + ""});
+        }
+
+        res.status(200).send(encoder.encode(data));
+    }
+
     //
     // export async function autorizadas(req: express.Request, res: express.Response) {
     //     const consulta = await db.pool.query(`SELECT * FROM Escola A

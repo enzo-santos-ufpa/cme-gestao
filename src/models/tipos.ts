@@ -30,7 +30,7 @@ export type ModeloBD<T> = T & { id: number };
 export type ValorAlt<T> = { valor: T, alt: string };
 
 
-export type FlatEncoded<T> = { [k in keyof Flatten<T>]: string };
+export type FlatEncoded<T> = { [k in Extract<keyof Flatten<T>, string>]: string };
 
 export abstract class FlatEncoder<T> {
     abstract encode(value: T): FlatEncoded<T>;
@@ -38,7 +38,7 @@ export abstract class FlatEncoder<T> {
     abstract decode(value: FlatEncoded<T>): T;
 }
 
-export abstract class FlatEncoderDecorator<T, R extends T> extends FlatEncoder<R> {
+export abstract class FlatEncoderDecorator<T, R> extends FlatEncoder<R> {
     protected readonly encoder: FlatEncoder<T>;
 
     constructor(encoder: FlatEncoder<T>) {

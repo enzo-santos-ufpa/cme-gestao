@@ -11,7 +11,7 @@ class APIEscola {
         });
     }
 
-    private static async get<T extends FlatEncoded<any>, R extends FlatEncoded<any>>(caminho: string, object?: T): Promise<R> {
+    private static async get<T extends FlatEncoded<any>, R>(caminho: string, object?: T): Promise<R> {
         const url = (() => {
             const url = rede.urlAtual({esquema: "http", porta: 3030, caminho: caminho});
             return url + (object == null ? "" : ("?" + new URLSearchParams(object)));
@@ -23,7 +23,7 @@ class APIEscola {
 
     async escola(id: number): Promise<ModeloBD<EscolaBase>> {
         const data = await APIEscola.get("api/escolas/ler", {id: id.toString()});
-        return encoding.modeloDB(encoding.escolaBase()).decode(data);
+        return encoding.modeloDB(encoding.escolaBase()).decode(data as any);
     }
 
     async criar(escola: EscolaBase): Promise<void> {
@@ -32,42 +32,17 @@ class APIEscola {
     }
 
     async autorizadas(): Promise<ModeloBD<EscolaAutorizada>[]> {
-        return [];
-        // type Data = FlatEncoded<{ escolas: ModeloBD<EscolaAutorizada>[] }>;
-        //
-        // return APIEscola.get("api/escolas/autorizadas")
-        //     .then(json => json.map(child => child as Data))
-        //     .then(children => children.map(child => {
-        //         const escola: ModeloBD<EscolaAutorizada> = {
-        //             ...child,
-        //             dataCriacao: new Date(child.dataCriacao),
-        //             processoAtual: new Processo({
-        //                 ...child.processoAtual,
-        //                 inicio: new Date(child.processoAtual.inicio),
-        //             }),
-        //         };
-        //         return escola;
-        //     }));
+        const data = await APIEscola.get("api/escolas/autorizadas");
+        return encoding.lista(encoding.modeloDB(encoding.escolaAutorizada())).decode(data as any);
     }
 
     async pendentes(): Promise<ModeloBD<EscolaPendente>[]> {
-        return [];
-        // return APIEscola.get<any[]>("api/escolas/pendentes")
-        //     .then(children => children.map(child => child as ModeloBD<EscolaPendente>))
-        //     .then(children => children.map(child => {
-        //         return {
-        //             ...child,
-        //             dataCriacao: new Date(child.dataCriacao),
-        //             cadastro: {
-        //                 ...child.cadastro,
-        //                 dataInsercao: new Date(child.cadastro.dataInsercao)
-        //             }
-        //         };
-        //     }));
+        const data = await APIEscola.get("api/escolas/pendentes");
+        console.log(data);
+        return encoding.lista(encoding.modeloDB(encoding.escolaPendente())).decode(data as any);
     }
 
     async answer(escola: ModeloBD<EscolaBase>, resposta: RespostaCadastro): Promise<void> {
-        return;
         // await APIEscola.post("api/escolas/cadastro/responder", {idEscola: escola.id, resposta});
     }
 }

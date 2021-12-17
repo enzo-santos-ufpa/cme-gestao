@@ -221,6 +221,23 @@ export namespace encoding {
         }
     }
 
+    class ListaValoresEncoder<T> {
+        private readonly encoder: FlatEncoder<T>;
+
+        constructor(encoder: FlatEncoder<T>) {
+            this.encoder = encoder;
+        }
+
+        decode(value: { [p: string]: FlatEncoded<T> }): T[] {
+            return Object.values(value).map(v => this.encoder.decode(v));
+        }
+
+        encode(value: T[]): { [p: string]: FlatEncoded<T> } {
+            return Object.fromEntries(value.map((v, i) => [`${i}`, this.encoder.encode(v)]));
+        }
+
+    }
+
     class ModeloDBEncoder<T> extends FlatEncoderDecorator<T, ModeloBD<T>> {
         decode(value: FlatEncoded<ModeloBD<T>>): ModeloBD<T> {
             return {...this.encoder.decode(value), id: parseInt(value.id)};
@@ -236,12 +253,16 @@ export namespace encoding {
         return new EscolaBaseEncoder();
     }
 
-    export function escolaPendente<T extends EscolaBase>(encoder: FlatEncoder<T>): FlatEncoder<EscolaPendente> {
-        return new EscolaPendenteEncoder(encoder);
+    export function escolaPendente(): FlatEncoder<EscolaPendente> {
+        return new EscolaPendenteEncoder(escolaBase());
     }
 
-    export function escolaAutorizada<T extends EscolaBase>(encoder: FlatEncoder<T>): FlatEncoder<EscolaAutorizada> {
-        return new EscolaAutorizadaEncoder(encoder);
+    export function escolaAutorizada(): FlatEncoder<EscolaAutorizada> {
+        return new EscolaAutorizadaEncoder(escolaBase());
+    }
+
+    export function lista<T>(encoder: FlatEncoder<T>): ListaValoresEncoder<T> {
+        return new ListaValoresEncoder(encoder);
     }
 
     export function modeloDB<T>(encoder: FlatEncoder<T>): FlatEncoder<ModeloBD<T>> {

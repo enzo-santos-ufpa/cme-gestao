@@ -21,7 +21,7 @@ app.use("/api/", (() => {
     // router.get("/escolas/ler", escolas.ler);
     router.post("/escolas/criar", escolas.criar);
     // router.get("/escolas/autorizadas", escolas.autorizadas);
-    // router.get("/escolas/pendentes", escolas.pendentes);
+    router.get("/escolas/pendentes", escolas.pendentes);
     // router.put("/escolas/:id", escolas.atualizar);
     // router.post("/escolas/cadastro/responder", escolas.responderTriagem);
     return router;
