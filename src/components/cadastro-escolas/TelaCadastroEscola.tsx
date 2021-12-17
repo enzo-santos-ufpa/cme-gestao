@@ -95,7 +95,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     nome: "Distrito",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use((texto) => {
-                        const valores = Object.keys(DistritoAdministrativo).filter(v => {
+                        const valores = Object.values(DistritoAdministrativo).filter(v => {
                             // noinspection SuspiciousTypeOfGuard
                             return typeof v === "string";
                         });
