@@ -69,21 +69,11 @@ class TelaTriagemEscola extends _TelaEscola<EscolaBase> {
     }
 
     protected encontraEscola(id: number): Promise<ModeloBD<EscolaBase>> {
-        return escolas.escola(id);
+        return escolas.consulta(id);
     }
 
     protected renderizaCorpo(escola: EscolaBase): JSX.Element {
         return <div>
-            <form>
-                <div style={{height: 20}}/>
-                <p>Dados do processo</p>
-                <div style={{display: "flex", flexDirection: "column"}}>
-                    <input placeholder="Nome"/>
-                    <input placeholder="Resolução"/>
-                    <input placeholder="Data de início"/>
-                    <input placeholder="Tempo de vigência (anos)"/>
-                </div>
-            </form>
             <FcCancel className="LinhaAutorizacaoCadastro-BotaoResposta"
                       size="40px"
                       onClick={(_) => this.responderTriagem("refuse")}/>

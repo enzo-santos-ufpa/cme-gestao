@@ -21,7 +21,7 @@ class APIEscola {
             .then(obj => obj as R);
     }
 
-    async escola(id: number): Promise<ModeloBD<EscolaBase>> {
+    async consulta(id: number): Promise<ModeloBD<EscolaBase>> {
         const data = await APIEscola.get("api/escolas/ler", {id: id.toString()});
         return encoding.modeloDB(encoding.escolaBase()).decode(data as any);
     }
@@ -43,7 +43,7 @@ class APIEscola {
     }
 
     async answer(escola: ModeloBD<EscolaBase>, resposta: RespostaCadastro): Promise<void> {
-        // await APIEscola.post("api/escolas/cadastro/responder", {idEscola: escola.id, resposta});
+        await APIEscola.post("api/escolas/cadastro/responder", {id: escola.id.toString(), resposta});
     }
 }
 

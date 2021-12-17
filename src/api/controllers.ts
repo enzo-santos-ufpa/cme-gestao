@@ -9,6 +9,12 @@ import {
 } from "../models/Escola";
 import {FlatEncoded, ModeloBD} from "../models/tipos";
 
+type ErroConsulta = { error: string };
+
+export function possuiErro(data: any): data is ErroConsulta {
+    return "error" in data;
+}
+
 export namespace index {
     export function info(req: express.Request, res: express.Response) {
         res.status(200).send({success: "true", message: "Gestão CME", version: "1.0.0"});
@@ -143,24 +149,27 @@ export namespace escolas {
         return res.status(201).send({message: "Escola adicionada com sucesso!", body: {escola: req.body}});
     }
 
-    // export async function ler(req: express.Request, res: express.Response) {
-    //     const consulta = await db.pool.query(`SELECT * FROM Escola WHERE Id = $1`, [req.query.id]);
-    //
-    //     const rows = consulta.rows;
-    //     switch (rows.length) {
-    //         case 0: {
-    //             return res.status(404).send({});
-    //         }
-    //         case 1: {
-    //             const row = rows.pop();
-    //             return res.status(200).send(dbToModel(row));
-    //         }
-    //         default: {
-    //             return res.status(404).send({});
-    //         }
-    //     }
-    // }
-    //
+    export async function consultar(req: express.Request, res: express.Response) {
+        const consulta = await db.pool.query(`SELECT * FROM Escola 
+            JOIN EnderecoEscola ON Escola.Id = EnderecoEscola.IdEscola
+            WHERE Id = $1`, [req.query.id]);
+
+        const rows = consulta.rows;
+        switch (rows.length) {
+            case 0: {
+                return res.status(404).send({error: "Escola com o ID fornecido não existe"});
+            }
+            case 1: {
+                const row = rows.pop();
+                const encoder = encoding.modeloDB(encoding.escolaBase());
+                const escola = await parseEscolaPendente(row);
+                return res.status(200).send(encoder.encode(escola));
+            }
+            default: {
+                return res.status(404).send({error: "Mais de uma escola com o ID fornecido existe"});
+            }
+        }
+    }
 
     export async function pendentes(req: express.Request, res: express.Response) {
         const encoder = encoding.lista(encoding.modeloDB(encoding.escolaPendente()));
@@ -179,6 +188,19 @@ export namespace escolas {
         }
 
         res.status(200).send(encoder.encode(data));
+    }
+
+    export async function responderTriagem(req: express.Request, res: express.Response) {
+        try {
+            const {id, resposta} = req.body;
+            await db.pool.query("DELETE FROM TriagemEscola WHERE IdEscola = $1", [id]);
+            if (resposta === "refuse") {
+                await db.pool.query("DELETE FROM Escola WHERE Id = $1", [id]);
+            }
+        } catch (e) {
+            return res.status(401).send({error: e});
+        }
+        res.status(201).send({});
     }
 
     //
@@ -201,14 +223,6 @@ export namespace escolas {
     //     }));
     // }
     //
-    // export async function responderTriagem(req: express.Request, res: express.Response) {
-    //     const {idEscola, resposta} = req.body;
-    //     await db.pool.query("DELETE FROM TriagemEscola WHERE IdEscola = $1", [idEscola]);
-    //     if (resposta === "refuse") {
-    //         await db.pool.query("DELETE FROM Escola WHERE Id = $1", [idEscola]);
-    //     }
-    //     res.status(201).send({});
-    // }
     //
     // export async function atualizar(req: express.Request, res: express.Response) {
     //     const idEscola = parseInt(req.params.id);

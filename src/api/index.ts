@@ -18,12 +18,12 @@ app.use((() => {
 
 app.use("/api/", (() => {
     const router = express_promise_router();
-    // router.get("/escolas/ler", escolas.ler);
+    router.get("/escolas/ler", escolas.consultar);
     router.post("/escolas/criar", escolas.criar);
     // router.get("/escolas/autorizadas", escolas.autorizadas);
     router.get("/escolas/pendentes", escolas.pendentes);
     // router.put("/escolas/:id", escolas.atualizar);
-    // router.post("/escolas/cadastro/responder", escolas.responderTriagem);
+    router.post("/escolas/cadastro/responder", escolas.responderTriagem);
     return router;
 })());
 
