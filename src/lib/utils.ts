@@ -35,6 +35,73 @@ export namespace rede {
     }
 }
 
+export namespace random {
+    export function range(from: number, to: number): number {
+        const min = Math.ceil(from);
+        const max = Math.floor(to);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    export function choice<T>(value: T[]): T {
+        return value[range(0, value.length - 1)];
+    }
+
+    export function stringchoice(params: { alphabet: string, size: number }): string {
+        return new Array(params.size)
+            .fill(undefined)
+            .map((_) => range(0, params.alphabet.length - 1))
+            .map((i) => params.alphabet[i])
+            .join("");
+    }
+
+    export function word(params: { size: number, case?: "lower" | "upper" | "both" }): string {
+        const chars = (() => {
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            switch (params?.case ?? "both") {
+                case "lower":
+                    return alphabet.toLowerCase();
+                case "upper":
+                    return alphabet;
+                case "both":
+                    return alphabet + alphabet.toLowerCase();
+            }
+        })();
+        return stringchoice({alphabet: chars, size: params.size});
+    }
+
+    export function decimal(params: { size: number }): string {
+        return stringchoice({alphabet: "0123456789", size: params.size});
+    }
+}
+
+export namespace strings {
+    export function insert(value: string, at: number, what: string): string {
+        return value.slice(0, at) + what + value.slice(at);
+    }
+}
+
+export namespace chaining {
+    class Chain<T> {
+        private readonly value: T;
+
+        constructor(value: T) {
+            this.value = value;
+        }
+
+        then<R>(action: (value: T) => R): Chain<R> {
+            return new Chain(action(this.value));
+        }
+
+        get(): T {
+            return this.value;
+        }
+    }
+
+    export function chain<T>(value: T): Chain<T> {
+        return new Chain(value);
+    }
+}
+
 export function parseDate(value: string): Date | null {
     const tokens = value.split("/");
     if (tokens.length !== 3) return null;

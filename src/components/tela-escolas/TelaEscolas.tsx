@@ -1,8 +1,8 @@
 import React from "react";
 import './TelaEscolas.css';
-import {EscolaBase} from "../../models/Escola";
+import {EscolaBase, DistritoAdministrativo} from "../../models/Escola";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
-import {DistritoAdministrativo, ModeloBD} from "../../models/tipos";
+import {ModeloBD} from "../../models/tipos";
 
 type Props<T extends EscolaBase> = {
     titulo: string,

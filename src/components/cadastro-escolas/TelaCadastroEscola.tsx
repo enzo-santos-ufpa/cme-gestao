@@ -4,11 +4,11 @@ import '../common/Tela.css';
 import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
-import {EscolaBase} from "../../models/Escola";
+import {EscolaBase, DistritoAdministrativo} from "../../models/Escola";
 import ReactInputMask from "react-input-mask";
 import Validador, {Validadores} from "../../models/Validador";
-import {parseDate} from "../../lib/utils";
-import {DistritoAdministrativo, Flatten} from "../../models/tipos";
+import {parseDate, random} from "../../lib/utils";
+import {Flatten} from "../../models/tipos";
 
 type FormularioCadastro = Forms.Formulario<Extract<keyof Flatten<EscolaBase>, string>>;
 
@@ -152,6 +152,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 }),
                 "servidores.diretor.telefone": new Forms.Campo({
                     nome: "Telefone",
+                    mask: "(99) 99999-9999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
@@ -167,6 +168,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 }),
                 "servidores.secretario.telefone": new Forms.Campo({
                     nome: "Telefone",
+                    mask: "(99) 99999-9999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
@@ -182,6 +184,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 }),
                 "servidores.coordenador.telefone": new Forms.Campo({
                     nome: "Telefone",
+                    mask: "(99) 99999-9999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
@@ -359,16 +362,42 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                                      onChange={() => this.updateSelf()}/>
                             </div>
                         </div>
-                        <input type="submit" value="Cadastrar"/>
+                        <input className="TelaEscolas-botaoControle" type="submit" value="CADASTRAR"/>
                         <button type="button" onClick={(_) => {
-                            form.campo("nome").texto = Math.random().toString(36).replace(/[^a-z]+/g, '').slice(0, 10);
-                            form.campo("nomeEntidadeMantenedora").texto = Math.random().toString(36).replace(/[^a-z]+/g, '').slice(0, 10);
-                            form.campo("sigla").texto = Math.random().toString(36).replace(/[^a-z]+/g, '').slice(0, 5);
-                            form.campo("vigenciaConselho").texto = Math.random().toString().replace(/[^0-9]+/g, '').slice(0, 14);
-                            form.campo("codigoInep").texto = Math.random().toString().replace(/[^0-9]+/g, '').slice(0, 8);
-                            form.campo("dataCriacao").texto = new Date(2021, Math.floor(Math.random() * 12), Math.floor(Math.random() * 31) + 1).toLocaleString().split(' ')[0];
-                            form.campo("cnpj").texto = `${Math.floor(Math.random() * 100)}.${Math.floor(Math.random() * 1000)}.${Math.floor(Math.random() * 1000)}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 100)}`
-                            form.campo("cnpjConselho").texto = `${Math.floor(Math.random() * 100)}.${Math.floor(Math.random() * 1000)}.${Math.floor(Math.random() * 1000)}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 100)}`
+                            function dsrandomf(format: string): string {
+                                return format.split("").map((c) => c === "#" ? random.range(0, 9) : c).join("");
+                            }
+
+                            function wsrandomf(format: string): string {
+                                return format.split("").map((c) => c === "#" ? random.word({size: 1}) : c).join("");
+                            }
+
+                            form.campo("nome").texto = wsrandomf("##########");
+                            form.campo("sigla").texto = wsrandomf("#####");
+                            form.campo("cnpj").texto = dsrandomf("##.###.###/####-##");
+                            form.campo("dataCriacao").texto = new Date(random.range(1609459200000, 1640908800000)).toLocaleDateString();
+                            form.campo("codigoInep").texto = dsrandomf("########");
+                            form.campo("nomeEntidadeMantenedora").texto = wsrandomf("##########");
+                            form.campo("cnpjConselho").texto = dsrandomf("##.###.###/####-##");
+                            form.campo("vigenciaConselho").texto = wsrandomf("##########");
+                            form.campo("distrito").texto = random.choice(["DABEL", "DABEN", "DAOUT"]);
+                            form.campo("cidade").texto = wsrandomf("##########");
+                            form.campo("uf").texto = wsrandomf("##");
+                            form.campo("bairro").texto = wsrandomf("##########");
+                            form.campo("cep").texto = dsrandomf("###.##-###");
+                            form.campo("endereco").texto = wsrandomf("##########");
+                            form.campo("email").texto = wsrandomf("######@gmail.com");
+                            form.campo("telefone").texto = dsrandomf("(91) 98###-####");
+                            form.campo("servidores.diretor.telefone").texto = dsrandomf("(91) 98###-####");
+                            form.campo("servidores.secretario.telefone").texto = dsrandomf("(91) 98###-####");
+                            form.campo("servidores.coordenador.telefone").texto = dsrandomf("(91) 98###-####");
+                            form.campo("servidores.diretor.nome").texto = wsrandomf("##########");
+                            form.campo("servidores.secretario.nome").texto = wsrandomf("##########");
+                            form.campo("servidores.coordenador.nome").texto = wsrandomf("##########");
+                            form.campo("servidores.diretor.email").texto = wsrandomf("######@gmail.com");
+                            form.campo("servidores.secretario.email").texto = wsrandomf("######@gmail.com");
+                            form.campo("servidores.coordenador.email").texto = wsrandomf("######@gmail.com");
+
                             this.updateSelf();
                         }}>
                             Preencher formulário (será removido)

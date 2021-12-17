@@ -1,7 +1,7 @@
 import React from "react";
-import {EscolaBase, EscolaPendente} from "../../models/Escola";
+import {EscolaBase, RespostaCadastro} from "../../models/Escola";
 import {escolas} from "../../lib/api";
-import {ModeloBD, RespostaCadastro} from "../../models/tipos";
+import {ModeloBD} from "../../models/tipos";
 import {useSearchParams} from "react-router-dom";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
 import {FcCancel, FcOk} from "react-icons/fc";

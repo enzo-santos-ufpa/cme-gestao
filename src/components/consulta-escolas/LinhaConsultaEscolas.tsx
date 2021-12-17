@@ -1,7 +1,6 @@
 import React from "react";
 import './LinhaConsultaEscolas.css';
-import {EscolaAutorizada} from "../../models/Escola";
-import {Processo} from "../../models/tipos";
+import {EscolaAutorizada, Processo} from "../../models/Escola";
 import LinhaChaveValor from "../common/LinhaChaveValor";
 
 type Props = { escola: EscolaAutorizada, mostraStatus: boolean };

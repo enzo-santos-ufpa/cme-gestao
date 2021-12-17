@@ -1,7 +1,7 @@
 import {db} from "./config";
 import express from "express";
-import {EscolaAutorizada, EscolaBase, EscolaPendente} from "../models/Escola";
-import {DistritoAdministrativo, ModeloBD, Processo} from "../models/tipos";
+import {DistritoAdministrativo, encoding, EscolaBase, Servidor} from "../models/Escola";
+import {FlatEncoded} from "../models/tipos";
 
 export namespace index {
     export function info(req: express.Request, res: express.Response) {
@@ -9,170 +9,144 @@ export namespace index {
     }
 }
 
-function assertNever(shouldBeNever: never): never {
-    throw new Error("Was not never: " + shouldBeNever);
+function assertNever(object: never): never {
+    throw new Error("Was not never: " + object);
+}
+
+function assertEmpty(object: Record<any, never>) {
+    return !Object.keys(object).length;
 }
 
 export namespace escolas {
-    function dbToModel(row: { [key: string]: any }): ModeloBD<EscolaBase> {
-        return {
-            id: row["id"],
-            nome: row["nome"],
-            sigla: row["sigla"],
-            cnpj: row["cnpj"],
-            nomeEntidadeMantenedora: row["nomeentidademantenedora"],
-            vigenciaConselho: row["vigenciaconselho"],
-            cnpjConselho: row["cnpjconselho"],
-            codigoInep: row["codigoinep"],
-            dataCriacao: new Date(row["datacriacao"]),
-            email: row["email"],
-            distrito: DistritoAdministrativo[row["distrito"] as keyof typeof DistritoAdministrativo],
-            telefone: row["telefone"],
-            endereco: row["endereco"],
-            cep: row["cep"],
-            bairro: row["bairro"],
-            cidade: row["cidade"],
-            uf: row["uf"],
-            servidores: row["servidores"], // TODO fi
-        };
-    }
-
     export async function criar(req: express.Request, res: express.Response) {
-        const escola = req.body as EscolaBase;
-        const tuples: ([string, string, any])[] = Object.entries(escola)
-            .map(([key, value], i) => {
-                const nomeAtributo = key as keyof EscolaBase;
-                const nomeColuna: string = (() => {
-                    switch (nomeAtributo) {
-                        case "nome":
-                            return "Nome";
-                        case "sigla":
-                            return "Sigla";
-                        case "cnpj":
-                            return "CNPJ";
-                        case "dataCriacao":
-                            return "DataCriacao";
-                        case "codigoInep":
-                            return "CodigoInep";
-                        case "nomeEntidadeMantenedora":
-                            return "NomeEntidadeMantenedora";
-                        case "cnpjConselho":
-                            return "CNPJConselho";
-                        case "vigenciaConselho":
-                            return "VigenciaConselho";
-                        case "bairro":
-                            return "Bairro";
-                        case "cep":
-                            return "CEP";
-                        case "cidade":
-                            return "Cidade";
-                        case "distrito":
-                            return "Distrito";
-                        case "email":
-                            return "Email";
-                        case "endereco":
-                            return "Endereco";
-                        case "telefone":
-                            return "Telefone";
-                        case "uf":
-                            return "UF";
-                        case "servidores":
-                            return "Servidores";
-                        default:
-                            return assertNever(nomeAtributo);
-                    }
-                })();
-                return [nomeColuna, `$${i + 1}`, value];
-            });
-
-        const consulta = await db.pool.query(`INSERT INTO 
-            Escola (${tuples.map(tuple => tuple[0]).join(", ")}) 
-            VALUES (${tuples.map(tuple => tuple[1]).join(", ")}) 
-            RETURNING Id`,
-            tuples.map(tuple => tuple[2]),
-        );
-
-        for (const row of consulta.rows) {
-            const idEscola = row["id"];
-            await db.pool.query(`INSERT INTO 
-                TriagemEscola (IdEscola, DataInsercao)
-                VALUES ($1, $2)`,
-                [idEscola, new Date()],
+        async function insereServidor(id: number, tipo: "Diretor" | "Secretario" | "Coordenador", servidor: Servidor) {
+            await db.pool.query(`INSERT INTO
+                ServidorEscola (IdEscola, Tipo, Nome, Email, Telefone)
+                VALUES         (      $1,   $2,   $3,    $4,       $5)`,
+                [id, tipo, servidor.nome, servidor.email, servidor.telefone],
             );
         }
 
-        res.status(201).send({message: "Escola adicionada com sucesso!", body: {escola: req.body}});
-    }
+        try {
+            const data = req.body as FlatEncoded<EscolaBase>;
 
-    export async function ler(req: express.Request, res: express.Response) {
-        const consulta = await db.pool.query(`SELECT * FROM Escola WHERE Id = $1`, [req.query.id]);
+            const {
+                nome,
+                sigla,
+                dataCriacao,
+                codigoInep,
+                cnpj,
+                cnpjConselho,
+                vigenciaConselho,
+                nomeEntidadeMantenedora,
+                email,
+                telefone,
+                ...a0
+            } = encoding.escolaBase().decode(data);
 
-        const rows = consulta.rows;
-        switch (rows.length) {
-            case 0: {
-                return res.status(404).send({});
-            }
-            case 1: {
-                const row = rows.pop();
-                return res.status(200).send(dbToModel(row));
-            }
-            default: {
-                return res.status(404).send({});
-            }
+            const consulta = await db.pool.query(`INSERT INTO 
+                Escola (Nome, Sigla, DataCriacao, CodigoINEP, CNPJ, CNPJConselho, VigenciaConselho, NomeEntidadeMantenedora, Email, Telefone)
+                VALUES (  $1,    $2,          $3,         $4,   $5,           $6,               $7,                      $8,    $9,      $10)
+                RETURNING Id`,
+                [nome, sigla, dataCriacao, codigoInep, cnpj, cnpjConselho, vigenciaConselho, nomeEntidadeMantenedora, email, telefone]
+            );
+
+            const {id} = consulta.rows.pop();
+
+            await db.pool.query(`INSERT INTO 
+                TriagemEscola (IdEscola, DataInsercao)
+                VALUES        (      $1,           $2)`,
+                [id, new Date()],
+            );
+
+            const {distrito, endereco, cidade, uf, bairro, cep, ...a1} = a0;
+            await db.pool.query(`INSERT INTO
+                EnderecoEscola (IdEscola, Distrito, Endereco, Cidade, UF, Bairro, CEP)
+                VALUES         (      $1,       $2,       $3,     $4, $5,     $6,  $7)`,
+                [id, DistritoAdministrativo[distrito], endereco, cidade, uf, bairro, cep],
+            );
+
+            const {servidores, ...a2} = a1;
+
+            await insereServidor(id, "Diretor", servidores.diretor);
+            await insereServidor(id, "Coordenador", servidores.coordenador);
+            await insereServidor(id, "Secretario", servidores.secretario);
+
+        } catch (e) {
+            return res.status(401).send({error: e + ""});
         }
+        return res.status(201).send({message: "Escola adicionada com sucesso!", body: {escola: req.body}});
     }
 
-    export async function pendentes(req: express.Request, res: express.Response) {
-        const consulta = await db.pool.query(`SELECT * FROM Escola A
-            RIGHT JOIN TriagemEscola B
-            ON A.Id = B.IdEscola`);
-
-        res.status(200).send(consulta.rows.map(row => {
-            const escola: ModeloBD<EscolaPendente> = {
-                ...dbToModel(row),
-                cadastro: {
-                    dataInsercao: new Date(row["datainsercao"]),
-                },
-            };
-            return escola;
-        }));
-    }
-
-    export async function autorizadas(req: express.Request, res: express.Response) {
-        const consulta = await db.pool.query(`SELECT * FROM Escola A 
-            LEFT JOIN TriagemEscola B 
-            ON A.Id = B.IdEscola 
-            WHERE B.IdEscola IS NULL`);
-        res.status(200).send(consulta.rows.map(row => {
-            const escola: ModeloBD<EscolaAutorizada> = {
-                ...dbToModel(row),
-                processoAtual: new Processo({
-                    nome: "ABC",
-                    resolucao: "DEF",
-                    duracao: 1,
-                    inicio: new Date(2021),
-                }),
-            };
-            return escola;
-        }));
-    }
-
-    export async function responderTriagem(req: express.Request, res: express.Response) {
-        const {idEscola, resposta} = req.body;
-        await db.pool.query("DELETE FROM TriagemEscola WHERE IdEscola = $1", [idEscola]);
-        if (resposta === "refuse") {
-            await db.pool.query("DELETE FROM Escola WHERE Id = $1", [idEscola]);
-        }
-        res.status(201).send({});
-    }
-
-    export async function atualizar(req: express.Request, res: express.Response) {
-        const idEscola = parseInt(req.params.id);
-        console.log(`backend/escolas: Atualizando escola de ID ${idEscola}`)
-
-        const {nome} = req.body;
-
-        await db.pool.query("UPDATE escola SET Nome = $1 WHERE Id = $2", [nome, idEscola]);
-        res.status(200).send({});
-    }
+    // export async function ler(req: express.Request, res: express.Response) {
+    //     const consulta = await db.pool.query(`SELECT * FROM Escola WHERE Id = $1`, [req.query.id]);
+    //
+    //     const rows = consulta.rows;
+    //     switch (rows.length) {
+    //         case 0: {
+    //             return res.status(404).send({});
+    //         }
+    //         case 1: {
+    //             const row = rows.pop();
+    //             return res.status(200).send(dbToModel(row));
+    //         }
+    //         default: {
+    //             return res.status(404).send({});
+    //         }
+    //     }
+    // }
+    //
+    // export async function pendentes(req: express.Request, res: express.Response) {
+    //     const consulta = await db.pool.query(`SELECT * FROM Escola A
+    //         RIGHT JOIN TriagemEscola B
+    //         ON A.Id = B.IdEscola`);
+    //
+    //     res.status(200).send(consulta.rows.map(row => {
+    //         const escola: ModeloBD<EscolaPendente> = {
+    //             ...dbToModel(row),
+    //             cadastro: {
+    //                 dataInsercao: new Date(row["datainsercao"]),
+    //             },
+    //         };
+    //         return escola;
+    //     }));
+    // }
+    //
+    // export async function autorizadas(req: express.Request, res: express.Response) {
+    //     const consulta = await db.pool.query(`SELECT * FROM Escola A
+    //         LEFT JOIN TriagemEscola B
+    //         ON A.Id = B.IdEscola
+    //         WHERE B.IdEscola IS NULL`);
+    //     res.status(200).send(consulta.rows.map(row => {
+    //         const escola: ModeloBD<EscolaAutorizada> = {
+    //             ...dbToModel(row),
+    //             processoAtual: new Processo({
+    //                 nome: "ABC",
+    //                 resolucao: "DEF",
+    //                 duracao: 1,
+    //                 inicio: new Date(2021),
+    //             }),
+    //         };
+    //         return escola;
+    //     }));
+    // }
+    //
+    // export async function responderTriagem(req: express.Request, res: express.Response) {
+    //     const {idEscola, resposta} = req.body;
+    //     await db.pool.query("DELETE FROM TriagemEscola WHERE IdEscola = $1", [idEscola]);
+    //     if (resposta === "refuse") {
+    //         await db.pool.query("DELETE FROM Escola WHERE Id = $1", [idEscola]);
+    //     }
+    //     res.status(201).send({});
+    // }
+    //
+    // export async function atualizar(req: express.Request, res: express.Response) {
+    //     const idEscola = parseInt(req.params.id);
+    //     console.log(`backend/escolas: Atualizando escola de ID ${idEscola}`)
+    //
+    //     const {nome} = req.body;
+    //
+    //     await db.pool.query("UPDATE escola SET Nome = $1 WHERE Id = $2", [nome, idEscola]);
+    //     res.status(200).send({});
+    // }
 }
