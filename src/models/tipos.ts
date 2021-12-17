@@ -2,7 +2,7 @@
 type IsFunction<T, R, Fallback = T> = T extends (...args: any[]) => any ? R : Fallback
 
 // Returns R if T is an object, otherwise returns Fallback
-type IsObject<T, R, Fallback = T> = IsFunction<T, Fallback, (T extends (Date | number | string) ? Fallback : R)>
+type IsObject<T, R, Fallback = T> = IsFunction<T, Fallback, (T extends (Date | number | string | boolean) ? Fallback : R)>
 
 // "a.b.c" => "b.c"
 type Tail<S> = S extends `${string}.${infer T}` ? Tail<T> : S;
@@ -28,7 +28,6 @@ export type Flatten<T> = T extends FlattenOneLevel<T> ? T : Flatten<FlattenOneLe
 export type ModeloBD<T> = T & { id: number };
 
 export type ValorAlt<T> = { valor: T, alt: string };
-
 
 export type FlatEncoded<T> = { [k in Extract<keyof Flatten<T>, string>]: string };
 
