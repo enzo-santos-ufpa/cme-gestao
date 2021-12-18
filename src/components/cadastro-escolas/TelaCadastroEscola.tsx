@@ -17,6 +17,19 @@ type FormularioCadastro = Forms.Formulario<Extract<keyof Flatten<EscolaBase>, st
 
 type Estado = { form: FormularioCadastro };
 
+class CampoTextoCadastro extends CampoTexto {
+    constructor(props: Omit<PropsCampoTexto, "estilo"> & { flex?: number }) {
+        super({
+            ...props,
+            estilo: {
+                campo: {className: "TelaCadastroEscolas-campo", style: {flex: props.flex}},
+                nome: {className: "TelaCadastroEscolas-nomeCampo"},
+                divisor: {className: "TelaCadastroEscolas-divisorCampo"},
+                caixaTexto: {className: "TelaCadastroEscolas-caixaTexto"},
+                erro: {className: "TelaCadastroEscolas-erroCampo"},
+            },
+        });
+    }
 
     render() {
         const campo = this.props.campo;
@@ -207,45 +220,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
         } else {
             const json = form.json();
             try {
-                await escolas.criar({
-                    nome: json["nome"],
-                    cnpj: json["cnpj"],
-                    sigla: json["sigla"],
-                    dataCriacao: parseDate(json["dataCriacao"])!,
-                    codigoInep: json["codigoInep"],
-                    nomeEntidadeMantenedora: json["nomeEntidadeMantenedora"],
-                    cnpjConselho: json["cnpjConselho"],
-                    vigenciaConselho: json["vigenciaConselho"],
-                    distrito: DistritoAdministrativo[json["distrito"] as keyof typeof DistritoAdministrativo],
-                    cidade: json["cidade"],
-                    uf: json["uf"],
-                    bairro: json["bairro"],
-                    cep: json["cep"],
-                    endereco: json["endereco"],
-                    email: json["email"],
-                    telefone: json["telefone"],
-                    tipo: {
-                        setor: json["tipo.setor"] as "Pública" | "Privada",
-                        sigla: json["tipo.sigla"],
-                    },
-                    servidores: {
-                        diretor: {
-                            telefone: json["servidores.diretor.telefone"],
-                            email: json["servidores.diretor.email"],
-                            nome: json["servidores.diretor.nome"],
-                        },
-                        secretario: {
-                            telefone: json["servidores.secretario.telefone"],
-                            email: json["servidores.secretario.email"],
-                            nome: json["servidores.secretario.nome"],
-                        },
-                        coordenador: {
-                            telefone: json["servidores.coordenador.telefone"],
-                            email: json["servidores.coordenador.email"],
-                            nome: json["servidores.coordenador.nome"],
-                        },
-                    }
-                });
+                await escolas.criar(encoding.escolaBase().decode(json));
             } catch (e) {
                 alert("Ocorreu um erro. Tente novamente mais tarde.");
                 return;
@@ -268,106 +243,106 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     <div className="TelaCadastroEscolas-formulario">
                         <p>Dados</p>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("nome")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={3}
-                                                 campo={form.campo("sigla")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={3}
-                                                 campo={form.campo("cnpj")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("nome")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={3}
+                                                campo={form.campo("sigla")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={3}
+                                                campo={form.campo("cnpj")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={3}
-                                                 campo={form.campo("dataCriacao")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={3}
-                                                 campo={form.campo("codigoInep")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("nomeEntidadeMantenedora")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={3}
+                                                campo={form.campo("dataCriacao")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={3}
+                                                campo={form.campo("codigoInep")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("nomeEntidadeMantenedora")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("cnpjConselho")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("vigenciaConselho")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("cnpjConselho")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("vigenciaConselho")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <p>Localização</p>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={2}
-                                                 campo={form.campo("distrito")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={3}
-                                                 campo={form.campo("cidade")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={1}
-                                                 campo={form.campo("uf")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={4}
-                                                 campo={form.campo("bairro")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={2}
-                                                 campo={form.campo("cep")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={2}
+                                                campo={form.campo("distrito")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={3}
+                                                campo={form.campo("cidade")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={1}
+                                                campo={form.campo("uf")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={4}
+                                                campo={form.campo("bairro")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={2}
+                                                campo={form.campo("cep")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={12}
-                                                 campo={form.campo("endereco")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={12}
+                                                campo={form.campo("endereco")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <p>Contato</p>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("email")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("telefone")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("email")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("telefone")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <p>Dados (servidores)</p>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={12}
-                                                 campo={form.campo("servidores.diretor.nome")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={12}
+                                                campo={form.campo("servidores.diretor.nome")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("servidores.diretor.email")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("servidores.diretor.telefone")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("servidores.diretor.email")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("servidores.diretor.telefone")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={12}
-                                                 campo={form.campo("servidores.secretario.nome")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={12}
+                                                campo={form.campo("servidores.secretario.nome")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("servidores.secretario.email")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("servidores.secretario.telefone")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("servidores.secretario.email")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("servidores.secretario.telefone")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={12}
-                                                 campo={form.campo("servidores.coordenador.nome")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={12}
+                                                campo={form.campo("servidores.coordenador.nome")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("servidores.coordenador.email")}
-                                                 onChange={() => this.updateSelf()}/>
-                            <CampoCadastroEscola flex={6}
-                                                 campo={form.campo("servidores.coordenador.telefone")}
-                                                 onChange={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("servidores.coordenador.email")}
+                                                onChanged={() => this.updateSelf()}/>
+                            <CampoTextoCadastro flex={6}
+                                                campo={form.campo("servidores.coordenador.telefone")}
+                                                onChanged={() => this.updateSelf()}/>
                         </div>
                         <p>Ficha técnica</p>
                         <select
