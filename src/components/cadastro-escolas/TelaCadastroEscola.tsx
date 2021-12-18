@@ -221,7 +221,10 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                        if (setor) form.campo("tipo.sigla").texto = "";
                                        this.updateSelf();
                                    }}
-                                   estilo={{campo: {className: "TelaCadastroEscolas-nomeCampo"}, erro: {className: "TelaCadastroEscolas-erroCampo"}}}
+                                   estilo={{
+                                       campo: {className: "TelaCadastroEscolas-nomeCampo"},
+                                       erro: {className: "TelaCadastroEscolas-erroCampo"}
+                                   }}
                                    nome="setor"
                                    opcoes={tiposEscola.map(tipo => tipo.setor)}/>
                 <CampoUnicaEscolha campo={form.campo("tipo.sigla")}
@@ -233,7 +236,10 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                        }
                                        this.updateSelf();
                                    }}
-                                   estilo={{campo: {className: "TelaCadastroEscolas-nomeCampo"}, erro: {className: "TelaCadastroEscolas-erroCampo"}}}
+                                   estilo={{
+                                       campo: {className: "TelaCadastroEscolas-nomeCampo"},
+                                       erro: {className: "TelaCadastroEscolas-erroCampo"}
+                                   }}
                                    nome="sigla"
                                    opcoes={tiposEscola.flatMap(tipo => {
                                        const setor = form.campo("tipo.setor").texto;
@@ -397,7 +403,9 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 form.campo("servidores.diretor.email").texto = wsrandomf("######@gmail.com");
                 form.campo("servidores.secretario.email").texto = wsrandomf("######@gmail.com");
                 form.campo("servidores.coordenador.email").texto = wsrandomf("######@gmail.com");
-                form.campo("tipo.setor").texto = random.choice(["Pública", "Privada"]);
+                const tipo = random.choice(tiposEscola);
+                form.campo("tipo.setor").texto = tipo.setor;
+                form.campo("tipo.sigla").texto = random.choice(tipo.siglas);
                 this.updateSelf();
             }}>
                 Preencher formulário (será removido)
