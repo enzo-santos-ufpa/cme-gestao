@@ -153,18 +153,21 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
                                   nome="setor"
                                   opcoes={constantes.tiposEscola.map(tipo => tipo.setor)}
                                   estilo={{campo: {className: "TelaEscolas-filtro"}}}
-                                  onChanged={() => this.setState({...estado, paginaAtual: 0})}/>
+                                  onChanged={() => {
+                                      const setor = estado.filtro.campo("setor").texto;
+                                      if (setor) estado.filtro.campo("sigla").texto = "";
+                                      this.setState({...estado, paginaAtual: 0});
+                                  }}/>
             <CampoMultiplaEscolha campo={estado.filtro.campo("sigla")}
                                   nome="sigla"
                                   opcoes={constantes.tiposEscola.flatMap(tipo => {
                                       const setor = estado.filtro.campo("setor").texto;
-                                      if (!setor.length) return tipo.siglas;
+                                      if (!setor) return tipo.siglas;
                                       if (setor === tipo.setor) return tipo.siglas;
                                       return [];
                                   })}
                                   estilo={{campo: {className: "TelaEscolas-filtro"}}}
                                   onChanged={() => this.setState({...estado, paginaAtual: 0})}/>
-
         </div>;
     }
 
