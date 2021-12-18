@@ -1,4 +1,5 @@
 import {FlatEncoded, FlatEncoder, FlatEncoderDecorator, ModeloBD} from "./tipos";
+import distritos = constantes.distritos;
 
 type Escola = {
     nome: string,
@@ -36,11 +37,24 @@ export type DadosCadastro = { dataInsercao: Date }
 
 export type RespostaCadastro = "accept" | "refuse";
 
-export type FiltroEscolasBD = {
-    cadastro: "only-authorized" | "only-pending" | "all",
-};
+type SetorEscola = "Pública" | "Privada";
 
-export enum DistritoAdministrativo { DABEL, DABEN, DAGUA, DAICO, DAOUT, DAMOS }
+export namespace constantes {
+    export const distritos = ["DABEL", "DABEN", "DAGUA", "DAICO", "DAOUT", "DAMOS"] as const;
+
+    type SiglasEscola = { setor: SetorEscola, siglas: string[] };
+    export const tiposEscola: SiglasEscola[] = [
+        {setor: "Pública", siglas: ["EMEIF", "EMEF", "EMEI", "UEI"]},
+        {setor: "Privada", siglas: ["OSC", "Comunitária", "Confessional", "Privada"]},
+    ];
+
+    export function isDistrito(value: string): value is DistritoAdministrativo {
+        return distritos.includes(value as any);
+    }
+
+}
+
+export type DistritoAdministrativo = typeof distritos[number];
 
 export type Servidor = {
     nome: string,
@@ -58,17 +72,6 @@ export type TipoEscola = {
     setor: "Pública" | "Privada",
     sigla: string,
 }
-
-export const tiposEscola: TipoEscola[] = [
-    {setor: "Pública", sigla: "EMEIF"},
-    {setor: "Pública", sigla: "EMEF"},
-    {setor: "Pública", sigla: "EMEI"},
-    {setor: "Pública", sigla: "UEI"},
-    {setor: "Privada", sigla: "OSC"},
-    {setor: "Privada", sigla: "Comunitária"},
-    {setor: "Privada", sigla: "Confessional"},
-    {setor: "Privada", sigla: "Privada"},
-]
 
 export type EtapaEnsino = {
     nome: string, // Educação infantil, Ensino fundamental (CF), Ensino fundamental (EJA)
@@ -123,7 +126,7 @@ export namespace encoding {
                 cidade: value.cidade,
                 bairro: value.bairro,
                 endereco: value.endereco,
-                distrito: DistritoAdministrativo[value.distrito as keyof typeof DistritoAdministrativo],
+                distrito: value.distrito as DistritoAdministrativo,
                 telefone: value.telefone,
                 sigla: value.sigla,
                 dataCriacao: new Date(Date.parse(value.dataCriacao)),
@@ -175,7 +178,7 @@ export namespace encoding {
                 cnpjConselho: value.cnpjConselho,
                 codigoInep: value.codigoInep,
                 dataCriacao: value.dataCriacao.toISOString(),
-                distrito: DistritoAdministrativo[value.distrito],
+                distrito: value.distrito,
                 email: value.email,
                 endereco: value.endereco,
                 nome: value.nome,

@@ -1,8 +1,9 @@
 import React from "react";
 import './TelaEscolas.css';
-import {EscolaBase, DistritoAdministrativo} from "../../models/Escola";
+import {EscolaBase, DistritoAdministrativo, constantes} from "../../models/Escola";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
 import {ModeloBD} from "../../models/tipos";
+import distritos = constantes.distritos;
 
 type Props<T extends EscolaBase> = {
     titulo: string,
@@ -126,24 +127,19 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
         return <div>
             <select
                 className="TelaEscolas-filtro"
-                value={distrito == null ? "" : DistritoAdministrativo[distrito]}
+                value={distrito == null ? "" : distrito}
                 onChange={(e) => {
                     this.setState({
                         ...estado,
                         paginaAtual: 0,
                         filtro: {
                             ...estado.filtro,
-                            distrito: DistritoAdministrativo[e.target.value as keyof typeof DistritoAdministrativo],
+                            distrito: e.target.value as DistritoAdministrativo,
                         },
                     });
                 }}>
                 <option value={undefined}>distrito</option>
-                {Object.values(DistritoAdministrativo)
-                    .filter(value => {
-                        // noinspection SuspiciousTypeOfGuard
-                        return typeof value === "string";
-                    })
-                    .map(value => <option>{value}</option>)}
+                {distritos.map(value => <option>{value}</option>)}
             </select>
             <select
                 className="TelaEscolas-filtro"

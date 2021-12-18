@@ -3,20 +3,21 @@ import './TelaCadastroEscolas.css';
 import '../common/Tela.css';
 import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
-import {DistritoAdministrativo, EscolaBase, tiposEscola} from "../../models/Escola";
+import {constantes, encoding, EscolaBase} from "../../models/Escola";
 import ReactInputMask from "react-input-mask";
 import Validador, {Validadores} from "../../models/Validador";
-import {parseDate, random} from "../../lib/utils";
+import {random} from "../../lib/utils";
 import {Flatten} from "../../models/tipos";
+import distritosAdministrativos = constantes.distritos;
+import isDistrito = constantes.isDistrito;
+import tiposEscola = constantes.tiposEscola;
+import {CampoTexto, PropsCampoTexto} from "../common/forms/CampoTexto";
 
 type FormularioCadastro = Forms.Formulario<Extract<keyof Flatten<EscolaBase>, string>>;
 
 type Estado = { form: FormularioCadastro };
 
 
-type PropsCampoCadastro = { campo: Forms.Campo, onChange: () => void, flex?: number };
-
-class CampoCadastroEscola extends React.Component<PropsCampoCadastro, {}> {
     render() {
         const campo = this.props.campo;
         return <label className="TelaCadastroEscolas-campo" style={{flex: this.props.flex}}>
@@ -29,14 +30,13 @@ class CampoCadastroEscola extends React.Component<PropsCampoCadastro, {}> {
                     className="TelaCadastroEscolas-caixaTexto"
                     onChange={(e) => {
                         campo.consome(e);
-                        this.props.onChange();
+                        this.props.onChanged();
                     }}/>
             </div>
             <p className="TelaCadastroEscolas-erroCampo">{campo.erro}</p>
         </label>;
     }
 }
-
 
 class TelaCadastroEscola extends React.Component<{}, Estado> {
     state: Estado
@@ -94,12 +94,8 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     nome: "Distrito",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use((texto) => {
-                        const valores = Object.values(DistritoAdministrativo).filter(v => {
-                            // noinspection SuspiciousTypeOfGuard
-                            return typeof v === "string";
-                        });
-                        if (!valores.includes(texto))
-                            return `Apenas os seguintes valores são permitidos: ${valores.join(", ")}`;
+                        if (!isDistrito(texto))
+                            return `Apenas os seguintes valores são permitidos: ${distritosAdministrativos.join(", ")}`;
                     }),
                 }),
                 "cidade": new Forms.Campo({
@@ -395,10 +391,13 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                             }}
                         >
                             <option value={undefined}>sigla</option>
-                            {tiposEscola.filter((tipo) => {
-                                const setor = form.campo("tipo.setor").texto;
-                                return setor ? setor === tipo.setor : true;
-                            }).map((tipo) => <option>{tipo.sigla}</option>)}
+                            {tiposEscola
+                                .filter(tipo => {
+                                    const setor = form.campo("tipo.setor").texto;
+                                    return setor ? tipo.setor === setor : true;
+                                })
+                                .flatMap(tipo => tipo.siglas)
+                                .map(sigla => <option>{sigla}</option>)}
                         </select>
                     </div>
                     <input className="TelaEscolas-botaoControle" type="submit" value="CADASTRAR"/>

@@ -47,7 +47,7 @@ export namespace escolas {
             cidade: row.cidade,
             bairro: row.bairro,
             cnpj: row.cnpj,
-            distrito: DistritoAdministrativo[row.distrito as keyof typeof DistritoAdministrativo],
+            distrito: row.distrito,
             sigla: row.sigla,
             vigenciaConselho: row.vigenciaconselho,
             cnpjConselho: row.cnpjconselho,
@@ -151,7 +151,7 @@ export namespace escolas {
             await db.pool.query(`INSERT INTO
                 EnderecoEscola (IdEscola, Distrito, Endereco, Cidade, UF, Bairro, CEP)
                 VALUES         (      $1,       $2,       $3,     $4, $5,     $6,  $7)`,
-                [id, DistritoAdministrativo[distrito], endereco, cidade, uf, bairro, cep],
+                [id, distrito, endereco, cidade, uf, bairro, cep],
             );
 
             const {servidores, ...a2} = a1;

@@ -68,7 +68,7 @@ abstract class _TelaEscola<T extends EscolaBase> extends React.Component<Props, 
                             <p className="TelaEscola-subtitulo">Localização</p>
                             <div className="row">
                                 <LinhaChaveValor flex={4} chave="Distrito"
-                                                 valor={DistritoAdministrativo[escola.distrito]}/>
+                                                 valor={escola.distrito}/>
                                 <LinhaChaveValor flex={4} chave="Cidade" valor={escola.cidade}/>
                                 <LinhaChaveValor flex={4} chave="UF" valor={escola.uf}/>
                             </div>
