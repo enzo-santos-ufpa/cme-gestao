@@ -35,10 +35,21 @@ export class CampoTexto extends React.Component<PropsCampoTexto, {}> {
     }
 }
 
-type PropsCampoMultiplaEscolha = PropsCampo<"nome"> & { nome: string, opcoes: string[] };
+type PropsCampoMultiplaEscolha = PropsCampo<string> & { nome: string, opcoes: Readonly<string[]> };
 
 export class CampoMultiplaEscolha extends React.Component<PropsCampoMultiplaEscolha, {}> {
     render() {
-        return undefined;
+        const campo = this.props.campo;
+        return <select
+            {...this.props.estilo?.campo}
+            value={campo.texto.length ? campo.texto : this.props.nome}
+            onChange={(e) => {
+                const i = e.target.selectedIndex;
+                campo.texto = i > 0 ? e.target.value : "";
+                this.props.onChanged();
+            }}>
+            <option>{this.props.nome}</option>
+            {this.props.opcoes.map(value => <option>{value}</option>)}
+        </select>;
     }
 }
