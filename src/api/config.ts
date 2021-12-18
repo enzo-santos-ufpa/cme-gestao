@@ -14,11 +14,14 @@ async function initialize(pool: pg.Pool) {
             NomeEntidadeMantenedora VARCHAR(255) NOT NULL,
             Email VARCHAR(255) NOT NULL,
             Telefone VARCHAR(15) NOT NULL,
+            TipoSetor VARCHAR(255) NOT NULL,
+            TipoSigla VARCHAR(255) NOT NULL,
             PRIMARY KEY (Id)
         );
     `);
     await pool.query(`CREATE TABLE IF NOT EXISTS 
         EnderecoEscola (
+            Id SERIAL NOT NULL,
             IdEscola INTEGER NOT NULL,
             Distrito VARCHAR(30) NOT NULL,
             Endereco VARCHAR(255) NOT NULL,
@@ -26,7 +29,7 @@ async function initialize(pool: pg.Pool) {
             UF VARCHAR(2) NOT NULL,
             Bairro VARCHAR (255) NOT NULL,
             CEP VARCHAR(10) NOT NULL,
-            PRIMARY KEY (IdEscola),
+            PRIMARY KEY (Id),
             FOREIGN KEY (IdEscola) REFERENCES Escola (Id)
         );
     `);

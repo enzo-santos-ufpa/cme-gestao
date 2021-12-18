@@ -28,7 +28,7 @@ type Escola = {
     filiais: Escola[],
 }
 
-export type EscolaBase = Omit<Escola, "tipo" | "modalidadeEnsino" | "convenioSemec" | "filiais">;
+export type EscolaBase = Omit<Escola, "modalidadeEnsino" | "convenioSemec" | "filiais">;
 export type EscolaAutorizada = EscolaBase & { processoAtual: Processo };
 export type EscolaPendente = EscolaBase & { cadastro: DadosCadastro };
 
@@ -41,8 +41,6 @@ export type FiltroEscolasBD = {
 };
 
 export enum DistritoAdministrativo { DABEL, DABEN, DAGUA, DAICO, DAOUT, DAMOS }
-
-export enum SetorEscola { publico, privado}
 
 export type Servidor = {
     nome: string,
@@ -57,9 +55,20 @@ export type ConvenioSEMEC = {
 }
 
 export type TipoEscola = {
-    setor: SetorEscola,
-    nome: string, // EMEIF, EMEF, EMEI
+    setor: "Pública" | "Privada",
+    sigla: string,
 }
+
+export const tiposEscola: TipoEscola[] = [
+    {setor: "Pública", sigla: "EMEIF"},
+    {setor: "Pública", sigla: "EMEF"},
+    {setor: "Pública", sigla: "EMEI"},
+    {setor: "Pública", sigla: "UEI"},
+    {setor: "Privada", sigla: "OSC"},
+    {setor: "Privada", sigla: "Comunitária"},
+    {setor: "Privada", sigla: "Confessional"},
+    {setor: "Privada", sigla: "Privada"},
+]
 
 export type EtapaEnsino = {
     nome: string, // Educação infantil, Ensino fundamental (CF), Ensino fundamental (EJA)
@@ -122,6 +131,10 @@ export namespace encoding {
                 codigoInep: value.codigoInep,
                 cnpjConselho: value.cnpjConselho,
                 nomeEntidadeMantenedora: value.nomeEntidadeMantenedora,
+                tipo: {
+                    setor: value["tipo.setor"] as "Pública" | "Privada",
+                    sigla: value["tipo.sigla"],
+                },
                 servidores: {
                     diretor: {
                         nome: value["servidores.diretor.nome"],
@@ -153,6 +166,8 @@ export namespace encoding {
                 "servidores.coordenador.email": value.servidores.coordenador.email,
                 "servidores.coordenador.telefone": value.servidores.coordenador.telefone,
                 "servidores.coordenador.nome": value.servidores.coordenador.nome,
+                "tipo.setor": value.tipo.setor,
+                "tipo.sigla": value.tipo.sigla,
                 bairro: value.bairro,
                 cep: value.cep,
                 cidade: value.cidade,
@@ -211,10 +226,10 @@ export namespace encoding {
         encode(value: EscolaAutorizada): FlatEncoded<EscolaAutorizada> {
             return {
                 ...this.encoder.encode(value),
-                "processoAtual.nome": value.processoAtual.nome,
-                "processoAtual.resolucao": value.processoAtual.resolucao,
-                "processoAtual.inicio": value.processoAtual.inicio.toISOString(),
-                "processoAtual.duracao": value.processoAtual.duracao.toString(),
+                "processoAtual.nome": value.processoAtual?.nome,
+                "processoAtual.resolucao": value.processoAtual?.resolucao,
+                "processoAtual.inicio": value.processoAtual?.inicio.toISOString(),
+                "processoAtual.duracao": value.processoAtual?.duracao.toString(),
                 "processoAtual.dataFim": "",
                 "processoAtual.diasRestantes": "",
             };

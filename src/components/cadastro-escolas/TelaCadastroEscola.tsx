@@ -4,7 +4,7 @@ import '../common/Tela.css';
 import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
-import {EscolaBase, DistritoAdministrativo} from "../../models/Escola";
+import {EscolaBase, DistritoAdministrativo, tiposEscola} from "../../models/Escola";
 import ReactInputMask from "react-input-mask";
 import Validador, {Validadores} from "../../models/Validador";
 import {parseDate, random} from "../../lib/utils";
@@ -188,6 +188,16 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
+                "tipo.setor": new Forms.Campo({
+                    nome: "Setor",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
+                "tipo.sigla": new Forms.Campo({
+                    nome: "Setor",
+                    texto: "",
+                    validador: new Validador().use(Validadores.required()),
+                }),
             }),
         };
         this.onSubmit = this.onSubmit.bind(this);
@@ -219,6 +229,10 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     endereco: json["endereco"],
                     email: json["email"],
                     telefone: json["telefone"],
+                    tipo: {
+                        setor: json["tipo.setor"] as "Pública" | "Privada",
+                        sigla: json["tipo.sigla"],
+                    },
                     servidores: {
                         diretor: {
                             telefone: json["servidores.diretor.telefone"],
@@ -360,6 +374,35 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                                  campo={form.campo("servidores.coordenador.telefone")}
                                                  onChange={() => this.updateSelf()}/>
                         </div>
+                        <p>Ficha técnica</p>
+                        <select
+                            className="TelaCadastroEscolas-nomeCampo"
+                            value={form.campo("tipo.setor").texto.length ? form.campo("tipo.setor").texto : "sigla"}
+                            onChange={(e) => {
+                                const value = e.target.value === "setor" ? "" : e.target.value;
+                                form.campo("tipo.setor").texto = value;
+                                this.updateSelf();
+                            }}
+                        >
+                            <option value={undefined}>setor</option>
+                            <option>Pública</option>
+                            <option>Privada</option>
+                        </select>
+                        <select
+                            className="TelaCadastroEscolas-nomeCampo"
+                            value={form.campo("tipo.sigla").texto.length ? form.campo("tipo.sigla").texto : "sigla"}
+                            onChange={(e) => {
+                                const value = e.target.value === "sigla" ? "" : e.target.value;
+                                form.campo("tipo.sigla").texto = value;
+                                this.updateSelf();
+                            }}
+                        >
+                            <option value={undefined}>sigla</option>
+                            {tiposEscola.filter((tipo) => {
+                                const setor = form.campo("tipo.setor").texto;
+                                return setor ? setor === tipo.setor : true;
+                            }).map((tipo) => <option>{tipo.sigla}</option>)}
+                        </select>
                     </div>
                     <input className="TelaEscolas-botaoControle" type="submit" value="CADASTRAR"/>
                     <button type="button" onClick={(_) => {
@@ -396,6 +439,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                         form.campo("servidores.diretor.email").texto = wsrandomf("######@gmail.com");
                         form.campo("servidores.secretario.email").texto = wsrandomf("######@gmail.com");
                         form.campo("servidores.coordenador.email").texto = wsrandomf("######@gmail.com");
+                        form.campo("tipo.setor").texto = random.choice(["Pública", "Privada"]);
                         this.updateSelf();
                     }}>
                         Preencher formulário (será removido)

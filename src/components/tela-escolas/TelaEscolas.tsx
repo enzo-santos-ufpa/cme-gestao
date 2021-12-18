@@ -39,6 +39,11 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
 
     private static filtra<T extends EscolaBase>(filtro: Filtro, escolas: T[]): T[] {
         let escolasFiltradas = escolas;
+        if (filtro.sigla != null) {
+            escolasFiltradas = escolasFiltradas.filter(escola => {
+                return escola.tipo.sigla === filtro.sigla;
+            });
+        }
         if (filtro.distrito != null) {
             escolasFiltradas = escolasFiltradas.filter(escola => escola.distrito === filtro.distrito);
         }
