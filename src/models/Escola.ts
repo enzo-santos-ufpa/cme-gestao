@@ -1,5 +1,7 @@
 import {FlatEncoded, FlatEncoder, FlatEncoderDecorator, ModeloBD} from "./tipos";
 
+export type RespostaCadastro = "accept" | "refuse";
+
 type Escola = {
     nome: string,
     sigla: string,
@@ -28,16 +30,14 @@ type Escola = {
     filiais: Escola[],
 }
 
-export type EscolaBase = Omit<Escola, "modalidadeEnsino" | "convenioSemec" | "filiais">;
+export type EscolaBase = Omit<Escola, "modalidadeEnsino" | "filiais">;
+
 export type EscolaAutorizada = EscolaBase & { processoAtual: Processo };
-export type EscolaPendente = EscolaBase & { cadastro: DadosCadastro };
 
 export type DadosCadastro = { dataInsercao: Date }
-
-export type RespostaCadastro = "accept" | "refuse";
+export type EscolaPendente = EscolaBase & { cadastro: DadosCadastro };
 
 type SetorEscola = "Pública" | "Privada";
-
 export type TipoEscola = {
     setor: SetorEscola,
     sigla: string,

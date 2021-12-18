@@ -1,10 +1,11 @@
 import {db} from "./config";
 import express from "express";
 import {
-    DistritoAdministrativo,
-    encoding, EscolaAutorizada,
+    encoding,
+    EscolaAutorizada,
     EscolaBase,
-    EscolaPendente, Processo,
+    EscolaPendente,
+    Processo,
     Servidor
 } from "../models/Escola";
 import {FlatEncoded, ModeloBD} from "../models/tipos";
@@ -156,9 +157,13 @@ export namespace escolas {
 
             const {servidores, ...a2} = a1;
 
-            await insereServidor(id, "Diretor", servidores.diretor);
-            await insereServidor(id, "Coordenador", servidores.coordenador);
-            await insereServidor(id, "Secretario", servidores.secretario);
+            const {convenioSemec, ...a3} = a2;
+            if (convenioSemec != null) {
+                await db.pool.query(`INSERT INTO
+                    ConvenioSEMEC (NumeroConvenio, IdEscola, Objeto, Vigencia)
+                    VALUES        (            $1,       $2,     $3,       $4)`,
+                    [convenioSemec.numConvenio, id, convenioSemec.objeto, convenioSemec.vigencia]);
+            }
 
         } catch (e) {
             return res.status(401).send({error: e + ""});
@@ -169,6 +174,7 @@ export namespace escolas {
     export async function consultar(req: express.Request, res: express.Response) {
         const consulta = await db.pool.query(`SELECT * FROM Escola 
             JOIN EnderecoEscola ON Escola.Id = EnderecoEscola.IdEscola
+            LEFT JOIN ConvenioSEMEC ON Escola.Id = ConvenioSEMEC.IdEscola
             WHERE Escola.Id = $1`, [req.query.id]);
 
         const rows = consulta.rows;
@@ -195,6 +201,7 @@ export namespace escolas {
         try {
             const consulta = await db.pool.query(`SELECT * FROM Escola
                 JOIN EnderecoEscola ON Escola.Id = EnderecoEscola.IdEscola
+                LEFT JOIN ConvenioSEMEC ON Escola.Id = ConvenioSEMEC.IdEscola
                 RIGHT JOIN TriagemEscola ON Escola.Id = TriagemEscola.IdEscola`);
 
             for (const row of consulta.rows) {
@@ -217,6 +224,7 @@ export namespace escolas {
                     Escola.Id as EscolaId
                 FROM Escola
                 JOIN EnderecoEscola ON Escola.Id = EnderecoEscola.IdEscola
+                LEFT JOIN ConvenioSEMEC ON Escola.Id = ConvenioSEMEC.IdEscola
                 LEFT JOIN TriagemEscola ON Escola.Id = TriagemEscola.IdEscola
                 WHERE TriagemEscola.Id IS NULL;
                 `);

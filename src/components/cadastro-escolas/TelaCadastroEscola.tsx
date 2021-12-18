@@ -74,7 +74,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     validador: new Validador().use(Validadores.required()),
                 }),
                 "cnpjConselho": new Forms.Campo({
-                    nome: "CNPF/Conselho",
+                    nome: "CNPJ/Conselho",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use(Validadores.cnpj()),
                 }),
@@ -177,9 +177,24 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     validador: new Validador().use(Validadores.required()),
                 }),
                 "tipo.sigla": new Forms.Campo({
-                    nome: "Setor",
+                    nome: "Sigla",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
+                }),
+                "convenioSemec.vigencia": new Forms.Campo({
+                    nome: "Vigência",
+                    texto: "",
+                    validador: new Validador(),
+                }),
+                "convenioSemec.objeto": new Forms.Campo({
+                    nome: "Objeto",
+                    texto: "",
+                    validador: new Validador(),
+                }),
+                "convenioSemec.numConvenio": new Forms.Campo({
+                    nome: "Nº convênio",
+                    texto: "",
+                    validador: new Validador(),
                 }),
             }),
             abaAtual: "Ficha técnica",

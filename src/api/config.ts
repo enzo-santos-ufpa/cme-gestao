@@ -66,6 +66,16 @@ async function initialize(pool: pg.Pool) {
             FOREIGN KEY (IdEscola) REFERENCES Escola (Id)
         );
     `);
+    await pool.query(`CREATE TABLE IF NOT EXISTS
+        ConvenioSEMEC (
+            NumeroConvenio INTEGER NOT NULL,
+            IdEscola INTEGER NOT NULL,
+            Objeto VARCHAR(255) NOT NULL,
+            Vigencia VARCHAR(255) NOT NULL,
+            PRIMARY KEY (NumeroConvenio),
+            FOREIGN KEY (IdEscola) REFERENCES Escola (Id)
+        );
+    `);
 }
 
 
