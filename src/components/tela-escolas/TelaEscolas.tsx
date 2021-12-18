@@ -1,8 +1,12 @@
 import React from "react";
 import './TelaEscolas.css';
-import {EscolaBase, DistritoAdministrativo, constantes} from "../../models/Escola";
+import {EscolaBase, constantes} from "../../models/Escola";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
 import {ModeloBD} from "../../models/tipos";
+import {CampoMultiplaEscolha} from "../common/forms/Campo";
+import Forms from "../../models/form";
+import Formulario = Forms.Formulario;
+import Validador from "../../models/Validador";
 
 type Props<T extends EscolaBase> = {
     titulo: string,
@@ -10,16 +14,13 @@ type Props<T extends EscolaBase> = {
     construtorTabela: (escolas: ModeloBD<T>[]) => JSX.Element,
 };
 
-type Filtro = Readonly<{
-    distrito?: DistritoAdministrativo,
-    sigla?: string,
-}>;
-
 type Estado<T extends EscolaBase> = EstadoCarregando | EstadoCarregado<T>;
 
 type EstadoCarregando = {
     escolas?: undefined
 };
+
+type Filtro = Formulario<"distrito" | "setor" | "sigla">;
 
 type EstadoCarregado<T extends EscolaBase> = {
     escolas: ModeloBD<T>[],
@@ -39,14 +40,19 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
 
     private static filtra<T extends EscolaBase>(filtro: Filtro, escolas: T[]): T[] {
         let escolasFiltradas = escolas;
-        if (filtro.sigla != null) {
-            escolasFiltradas = escolasFiltradas.filter(escola => {
-                return escola.tipo.sigla === filtro.sigla;
-            });
+        const sigla = filtro.campo("sigla").texto;
+        if (sigla.length) {
+            escolasFiltradas = escolasFiltradas.filter(escola => escola.tipo.sigla === sigla);
         }
-        if (filtro.distrito != null) {
-            escolasFiltradas = escolasFiltradas.filter(escola => escola.distrito === filtro.distrito);
+        const setor = filtro.campo("setor").texto;
+        if (setor.length) {
+            escolasFiltradas = escolasFiltradas.filter(escola => escola.tipo.setor === setor);
         }
+        const distrito = filtro.campo("distrito").texto;
+        if (distrito.length) {
+            escolasFiltradas = escolasFiltradas.filter(escola => escola.distrito === distrito);
+        }
+
         return escolasFiltradas;
     }
 
@@ -56,7 +62,23 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
                 escolas: escolas,
                 escolasAtuais: escolas,
                 paginaAtual: 0,
-                filtro: {},
+                filtro: new Forms.Formulario({
+                    sigla: new Forms.Campo({
+                        nome: "sigla",
+                        texto: "",
+                        validador: new Validador(),
+                    }),
+                    setor: new Forms.Campo({
+                        nome: "setor",
+                        texto: "",
+                        validador: new Validador(),
+                    }),
+                    distrito: new Forms.Campo({
+                        nome: "distrito",
+                        texto: "",
+                        validador: new Validador(),
+                    }),
+                }),
             };
             this.setState(novoEstado);
         });
@@ -121,39 +143,28 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
         const estado = this.state as Estado<T>;
         if (isCarregando(estado)) return null;
 
-        const sigla = estado.filtro.sigla;
-        const distrito = estado.filtro.distrito;
         return <div>
-            <select
-                className="TelaEscolas-filtro"
-                value={distrito == null ? "" : distrito}
-                onChange={(e) => {
-                    this.setState({
-                        ...estado,
-                        paginaAtual: 0,
-                        filtro: {
-                            ...estado.filtro,
-                            distrito: e.target.value as DistritoAdministrativo,
-                        },
-                    });
-                }}>
-                <option value={undefined}>distrito</option>
-                {constantes.distritos.map(value => <option>{value}</option>)}
-            </select>
-            <select
-                className="TelaEscolas-filtro"
-                value={sigla == null ? "" : sigla}
-                onChange={(e) => {
-                    const value = e.target.value === "sigla" ? undefined : e.target.value;
-                    this.setState({
-                        ...estado,
-                        paginaAtual: 0,
-                        filtro: {...estado.filtro, sigla: value},
-                    });
-                }}>
-                <option value={undefined}>sigla</option>
-                {["EMEI", "EMEIF", "UEI", "EMEF", "OSC", "Privada"].map(value => <option>{value}</option>)}
-            </select>
+            <CampoMultiplaEscolha campo={estado.filtro.campo("distrito")}
+                                  nome="distrito"
+                                  opcoes={constantes.distritos}
+                                  estilo={{campo: {className: "TelaEscolas-filtro"}}}
+                                  onChanged={() => this.setState({...estado, paginaAtual: 0})}/>
+            <CampoMultiplaEscolha campo={estado.filtro.campo("setor")}
+                                  nome="setor"
+                                  opcoes={constantes.tiposEscola.map(tipo => tipo.setor)}
+                                  estilo={{campo: {className: "TelaEscolas-filtro"}}}
+                                  onChanged={() => this.setState({...estado, paginaAtual: 0})}/>
+            <CampoMultiplaEscolha campo={estado.filtro.campo("sigla")}
+                                  nome="sigla"
+                                  opcoes={constantes.tiposEscola.flatMap(tipo => {
+                                      const setor = estado.filtro.campo("setor").texto;
+                                      if (!setor.length) return tipo.siglas;
+                                      if (setor === tipo.setor) return tipo.siglas;
+                                      return [];
+                                  })}
+                                  estilo={{campo: {className: "TelaEscolas-filtro"}}}
+                                  onChanged={() => this.setState({...estado, paginaAtual: 0})}/>
+
         </div>;
     }
 
