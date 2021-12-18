@@ -38,6 +38,11 @@ export type RespostaCadastro = "accept" | "refuse";
 
 type SetorEscola = "Pública" | "Privada";
 
+export type TipoEscola = {
+    setor: SetorEscola,
+    sigla: string,
+}
+
 export namespace constantes {
     export const distritos = ["DABEL", "DABEN", "DAGUA", "DAICO", "DAOUT", "DAMOS"] as const;
 
@@ -51,10 +56,33 @@ export namespace constantes {
         return distritos.includes(value as any);
     }
 
+    export const etapasEnsino = ["Educação infantil", "Educação fundamental", "Educação funcdamental (EJA)"] as const;
+    export type EtapaEnsino = typeof etapasEnsino[number];
+    type LegendaEtapaEnsino = { titulo: string, subtitulo: string };
+    export const legendasEtapaEnsino: LegendaEtapaEnsino[] = [
+        {titulo: "Educação infantil", subtitulo: ""},
+        {titulo: "Educação fundamental", subtitulo: "Ciclos de formação (anos iniciais e finais)"},
+        {titulo: "Educação funcdamental (EJA)", subtitulo: "Totalidades do conhecimento (anos iniciais e finais)"},
+    ];
+
+    type ModalidadesEnsino = { etapa: EtapaEnsino, nomes: string[] };
+    export const modalidadesEnsino: ModalidadesEnsino[] = [
+        {
+            etapa: "Educação infantil", nomes: ["Creche", "Pré-escola"],
+        },
+        {
+            etapa: "Educação fundamental",
+            nomes: ["CF I (1º, 2º e 3º ano)", "CF II (4º e 5º ano)", "CF III (6º e 7º ano)", "CF IV (8º e 9º ano)"]
+        },
+        {
+            etapa: "Educação funcdamental (EJA)",
+            nomes: ["CF I (1º, 2º e 3º ano)", "CF II (4º e 5º ano)", "CF III (6º e 7º ano)", "CF IV (8º e 9º ano)"]
+        }
+    ];
 }
 
 export type DistritoAdministrativo = typeof constantes.distritos[number];
-
+export type ModalidadeEnsino = { etapa: constantes.EtapaEnsino, nome: string };
 export type Servidor = {
     nome: string,
     telefone: string,
@@ -65,20 +93,6 @@ export type ConvenioSEMEC = {
     numConvenio: number,
     objeto: string,
     vigencia: string,
-}
-
-export type TipoEscola = {
-    setor: "Pública" | "Privada",
-    sigla: string,
-}
-
-export type EtapaEnsino = {
-    nome: string, // Educação infantil, Ensino fundamental (CF), Ensino fundamental (EJA)
-}
-
-export type ModalidadeEnsino = {
-    etapa: EtapaEnsino,
-    nome: string, // Creche, Pré-escola, CF I
 }
 
 type _Processo = {
