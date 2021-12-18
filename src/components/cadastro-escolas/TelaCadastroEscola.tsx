@@ -15,18 +15,19 @@ type FormularioCadastro = Forms.Formulario<Extract<keyof Flatten<EscolaBase>, st
 
 type Estado = { form: FormularioCadastro };
 
-class CampoTextoCadastro extends CampoTexto {
-    constructor(props: Omit<PropsCampoTexto, "estilo"> & { flex?: number }) {
-        super({
-            ...props,
-            estilo: {
-                campo: {className: "TelaCadastroEscolas-campo", style: {flex: props.flex}},
+type PropsCampoTextoCadastro = Omit<PropsCampoTexto, "estilo"> & { flex?: number };
+
+class CampoTextoCadastro extends React.Component<PropsCampoTextoCadastro, any> {
+    render() {
+        return (
+            <CampoTexto {...this.props} estilo={{
+                campo: {className: "TelaCadastroEscolas-campo", style: {flex: this.props.flex}},
                 nome: {className: "TelaCadastroEscolas-nomeCampo"},
                 divisor: {className: "TelaCadastroEscolas-divisorCampo"},
                 caixaTexto: {className: "TelaCadastroEscolas-caixaTexto"},
                 erro: {className: "TelaCadastroEscolas-erroCampo"},
-            },
-        });
+            }}/>
+        );
     }
 }
 
