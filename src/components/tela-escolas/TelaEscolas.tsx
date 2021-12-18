@@ -41,18 +41,17 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
     private static filtra<T extends EscolaBase>(filtro: Filtro, escolas: T[]): T[] {
         let escolasFiltradas = escolas;
         const sigla = filtro.campo("sigla").texto;
-        if (sigla.length) {
+        if (sigla) {
             escolasFiltradas = escolasFiltradas.filter(escola => escola.tipo.sigla === sigla);
         }
         const setor = filtro.campo("setor").texto;
-        if (setor.length) {
+        if (setor) {
             escolasFiltradas = escolasFiltradas.filter(escola => escola.tipo.setor === setor);
         }
         const distrito = filtro.campo("distrito").texto;
-        if (distrito.length) {
+        if (distrito) {
             escolasFiltradas = escolasFiltradas.filter(escola => escola.distrito === distrito);
         }
-
         return escolasFiltradas;
     }
 
@@ -113,14 +112,14 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
         const estado = this.state as Estado<T>;
         if (isCarregando(estado)) return <p>Carregando..</p>;
         const escolas = this.escolasAtuais;
-        if (!escolas.length) return <p>Nenhuma escola encontrada.</p>;
+        if (!escolas) return <p>Nenhuma escola encontrada.</p>;
         return this.props.construtorTabela(escolas);
     }
 
     private renderizaBotaoAnterior(): JSX.Element | null {
         const estado = this.state as Estado<T>;
         if (isCarregando(estado)) return null;
-        if (!this.escolasAtuais.length) return null;
+        if (!this.escolasAtuais) return null;
         if (estado.paginaAtual === 0) return null;
         return <p
             className="TelaEscolas-botaoControle"
@@ -131,7 +130,7 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
     private renderizaBotaoProximo(): JSX.Element | null {
         const estado = this.state as Estado<T>;
         if (isCarregando(estado)) return null;
-        if (!this.escolasAtuais.length) return null;
+        if (!this.escolasAtuais) return null;
         if ((TelaEscolas.escolasPorPagina * (estado.paginaAtual + 1)) >= estado.escolasAtuais.length) return null;
         return <p
             className="TelaEscolas-botaoControle"

@@ -32,7 +32,7 @@ export default class Autenticador {
 
         estado.campo("email").erro = (() => {
             const texto = estado.campo("email").texto;
-            if (!texto.trim().length) return "Insira seu e-mail.";
+            if (!texto.trim()) return "Insira seu e-mail.";
 
             conta = Autenticador.contas.find(conta => conta.email === texto);
             if (!conta) return "O e-mail fornecido não existe.";
@@ -40,7 +40,7 @@ export default class Autenticador {
         })();
         estado.campo("senha").erro = (() => {
             const texto = estado.campo("senha").texto;
-            if (!texto.trim().length) return "Insira sua senha.";
+            if (!texto.trim()) return "Insira sua senha.";
             if (estado.campo("email").erro) return undefined;
             if (conta) return texto === conta.senha ? undefined : "A senha está inválida."
             return undefined;
