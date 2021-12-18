@@ -3,7 +3,7 @@ import './TelaEscolas.css';
 import {EscolaBase, constantes} from "../../models/Escola";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
 import {ModeloBD} from "../../models/tipos";
-import {CampoMultiplaEscolha} from "../common/forms/Campo";
+import {CampoUnicaEscolha} from "../common/forms/Campo";
 import Forms from "../../models/form";
 import Formulario = Forms.Formulario;
 import Validador from "../../models/Validador";
@@ -143,30 +143,30 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
         if (isCarregando(estado)) return null;
 
         return <div>
-            <CampoMultiplaEscolha campo={estado.filtro.campo("distrito")}
-                                  nome="distrito"
-                                  opcoes={constantes.distritos}
-                                  estilo={{campo: {className: "TelaEscolas-filtro"}}}
-                                  onChanged={() => this.setState({...estado, paginaAtual: 0})}/>
-            <CampoMultiplaEscolha campo={estado.filtro.campo("setor")}
-                                  nome="setor"
-                                  opcoes={constantes.tiposEscola.map(tipo => tipo.setor)}
-                                  estilo={{campo: {className: "TelaEscolas-filtro"}}}
-                                  onChanged={() => {
-                                      const setor = estado.filtro.campo("setor").texto;
-                                      if (setor) estado.filtro.campo("sigla").texto = "";
-                                      this.setState({...estado, paginaAtual: 0});
-                                  }}/>
-            <CampoMultiplaEscolha campo={estado.filtro.campo("sigla")}
-                                  nome="sigla"
-                                  opcoes={constantes.tiposEscola.flatMap(tipo => {
-                                      const setor = estado.filtro.campo("setor").texto;
-                                      if (!setor) return tipo.siglas;
-                                      if (setor === tipo.setor) return tipo.siglas;
-                                      return [];
-                                  })}
-                                  estilo={{campo: {className: "TelaEscolas-filtro"}}}
-                                  onChanged={() => this.setState({...estado, paginaAtual: 0})}/>
+            <CampoUnicaEscolha campo={estado.filtro.campo("distrito")}
+                               nome="distrito"
+                               opcoes={constantes.distritos}
+                               estilo={{campo: {className: "TelaEscolas-filtro"}}}
+                               onChanged={() => this.setState({...estado, paginaAtual: 0})}/>
+            <CampoUnicaEscolha campo={estado.filtro.campo("setor")}
+                               nome="setor"
+                               opcoes={constantes.tiposEscola.map(tipo => tipo.setor)}
+                               estilo={{campo: {className: "TelaEscolas-filtro"}}}
+                               onChanged={() => {
+                                   const setor = estado.filtro.campo("setor").texto;
+                                   if (setor) estado.filtro.campo("sigla").texto = "";
+                                   this.setState({...estado, paginaAtual: 0});
+                               }}/>
+            <CampoUnicaEscolha campo={estado.filtro.campo("sigla")}
+                               nome="sigla"
+                               opcoes={constantes.tiposEscola.flatMap(tipo => {
+                                   const setor = estado.filtro.campo("setor").texto;
+                                   if (!setor) return tipo.siglas;
+                                   if (setor === tipo.setor) return tipo.siglas;
+                                   return [];
+                               })}
+                               estilo={{campo: {className: "TelaEscolas-filtro"}}}
+                               onChanged={() => this.setState({...estado, paginaAtual: 0})}/>
         </div>;
     }
 

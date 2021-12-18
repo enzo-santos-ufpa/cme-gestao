@@ -1,0 +1,13 @@
+.Aba-default {
+    background-color: #508dbe;
+}
+
+.Aba-selected {
+    background-color: #c6bcbc;
+}
+
+.Aba-default, .Aba-selected {
+    padding: 10px 25px;
+    font-weight: bold;
+    cursor: pointer;
+}

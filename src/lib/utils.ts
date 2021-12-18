@@ -42,7 +42,7 @@ export namespace random {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    export function choice<T>(value: T[]): T {
+    export function choice<T>(value: Readonly<T[]>): T {
         return value[range(0, value.length - 1)];
     }
 

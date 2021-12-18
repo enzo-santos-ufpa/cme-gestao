@@ -8,7 +8,7 @@ type PropsCampo<T extends string> = {
     campo: Forms.Campo,
     onChanged: () => void,
     flex?: number,
-    estilo?: Record<"campo" | T, PropsComponenteCampo | undefined>,
+    estilo?: Partial<Record<"campo" | T, PropsComponenteCampo>>,
 };
 
 export type PropsCampoTexto = PropsCampo<"nome" | "divisor" | "caixaTexto" | "erro"> & { mask?: string };
@@ -35,21 +35,24 @@ export class CampoTexto extends React.Component<PropsCampoTexto, {}> {
     }
 }
 
-type PropsCampoMultiplaEscolha = PropsCampo<string> & { nome: string, opcoes: Readonly<string[]> };
+type PropsCampoMultiplaEscolha = PropsCampo<"erro"> & { nome: string, opcoes: Readonly<string[]> };
 
-export class CampoMultiplaEscolha extends React.Component<PropsCampoMultiplaEscolha, {}> {
+export class CampoUnicaEscolha extends React.Component<PropsCampoMultiplaEscolha, {}> {
     render() {
         const campo = this.props.campo;
-        return <select
-            {...this.props.estilo?.campo}
-            value={campo.texto.length ? campo.texto : this.props.nome}
-            onChange={(e) => {
-                const i = e.target.selectedIndex;
-                campo.texto = i > 0 ? e.target.value : "";
-                this.props.onChanged();
-            }}>
-            <option>{this.props.nome}</option>
-            {this.props.opcoes.map(value => <option>{value}</option>)}
-        </select>;
+        return <div>
+            <select
+                {...this.props.estilo?.campo}
+                value={campo.texto.length ? campo.texto : this.props.nome}
+                onChange={(e) => {
+                    const i = e.target.selectedIndex;
+                    campo.texto = i > 0 ? e.target.value : "";
+                    this.props.onChanged();
+                }}>
+                <option>{this.props.nome}</option>
+                {this.props.opcoes.map(value => <option>{value}</option>)}
+            </select>
+            <p {...this.props.estilo?.erro}>{this.props.campo.erro}</p>
+        </div>;
     }
 }
