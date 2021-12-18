@@ -2,9 +2,9 @@ import {db} from "./config";
 import express from "express";
 import {
     DistritoAdministrativo,
-    encoding,
+    encoding, EscolaAutorizada,
     EscolaBase,
-    EscolaPendente,
+    EscolaPendente, Processo,
     Servidor
 } from "../models/Escola";
 import {FlatEncoded, ModeloBD} from "../models/tipos";
@@ -54,6 +54,10 @@ export namespace escolas {
             nomeEntidadeMantenedora: row.nomeentidademantenedora,
             codigoInep: row.codigoinep,
             dataCriacao: new Date(row.datacriacao),
+            tipo: {
+                setor: row["tiposetor"],
+                sigla: row["tiposigla"],
+            },
             servidores: {
                 diretor: ((dadosServidor: any) => {
                     return {
@@ -89,6 +93,18 @@ export namespace escolas {
         };
     }
 
+    async function parseEscolaAutorizada(row: any): Promise<ModeloBD<EscolaAutorizada>> {
+        return {
+            ...(await parseEscolaBase(row)),
+            processoAtual: new Processo({
+                nome: "",
+                inicio: new Date(0),
+                duracao: NaN,
+                resolucao: "",
+            }),
+        };
+    }
+
     export async function criar(req: express.Request, res: express.Response) {
         async function insereServidor(id: number, tipo: "Diretor" | "Secretario" | "Coordenador", servidor: Servidor) {
             await db.pool.query(`INSERT INTO
@@ -112,14 +128,15 @@ export namespace escolas {
                 nomeEntidadeMantenedora,
                 email,
                 telefone,
+                tipo,
                 ...a0
             } = encoding.escolaBase().decode(data);
 
             const consulta = await db.pool.query(`INSERT INTO 
-                Escola (Nome, Sigla, DataCriacao, CodigoINEP, CNPJ, CNPJConselho, VigenciaConselho, NomeEntidadeMantenedora, Email, Telefone)
-                VALUES (  $1,    $2,          $3,         $4,   $5,           $6,               $7,                      $8,    $9,      $10)
+                Escola (Nome, Sigla, DataCriacao, CodigoINEP, CNPJ, CNPJConselho, VigenciaConselho, NomeEntidadeMantenedora, Email, Telefone, TipoSetor, TipoSigla)
+                VALUES (  $1,    $2,          $3,         $4,   $5,           $6,               $7,                      $8,    $9,      $10,       $11,       $12)
                 RETURNING Id`,
-                [nome, sigla, dataCriacao, codigoInep, cnpj, cnpjConselho, vigenciaConselho, nomeEntidadeMantenedora, email, telefone]
+                [nome, sigla, dataCriacao, codigoInep, cnpj, cnpjConselho, vigenciaConselho, nomeEntidadeMantenedora, email, telefone, tipo.setor, tipo.sigla]
             );
 
             const {id} = consulta.rows.pop();
@@ -152,7 +169,7 @@ export namespace escolas {
     export async function consultar(req: express.Request, res: express.Response) {
         const consulta = await db.pool.query(`SELECT * FROM Escola 
             JOIN EnderecoEscola ON Escola.Id = EnderecoEscola.IdEscola
-            WHERE Id = $1`, [req.query.id]);
+            WHERE Escola.Id = $1`, [req.query.id]);
 
         const rows = consulta.rows;
         switch (rows.length) {
@@ -190,47 +207,46 @@ export namespace escolas {
         res.status(200).send(encoder.encode(data));
     }
 
+    export async function autorizadas(req: express.Request, res: express.Response) {
+        const encoder = encoding.lista(encoding.modeloDB(encoding.escolaAutorizada()));
+        const data: ModeloBD<EscolaAutorizada>[] = [];
+        try {
+            const consulta = await db.pool.query(`
+                SELECT 
+                    *,
+                    Escola.Id as EscolaId
+                FROM Escola
+                JOIN EnderecoEscola ON Escola.Id = EnderecoEscola.IdEscola
+                LEFT JOIN TriagemEscola ON Escola.Id = TriagemEscola.IdEscola
+                WHERE TriagemEscola.Id IS NULL;
+                `);
+
+            for (const row of consulta.rows) {
+                data.push(await parseEscolaAutorizada({...row, id: row["escolaid"]}));
+            }
+        } catch (e) {
+            console.error(e);
+            return res.status(401).send({error: e + ""});
+        }
+
+        res.status(200).send(encoder.encode(data));
+    }
+
     export async function responderTriagem(req: express.Request, res: express.Response) {
         try {
             const {id, resposta} = req.body;
+            console.log(id);
+            console.log(resposta);
             await db.pool.query("DELETE FROM TriagemEscola WHERE IdEscola = $1", [id]);
             if (resposta === "refuse") {
+                await db.pool.query("DELETE FROM ServidorEscola WHERE IdEscola = $1", [id]);
+                await db.pool.query("DELETE FROM EnderecoEscola WHERE IdEscola = $1", [id]);
                 await db.pool.query("DELETE FROM Escola WHERE Id = $1", [id]);
             }
         } catch (e) {
+            console.log(e);
             return res.status(401).send({error: e});
         }
         res.status(201).send({});
     }
-
-    //
-    // export async function autorizadas(req: express.Request, res: express.Response) {
-    //     const consulta = await db.pool.query(`SELECT * FROM Escola A
-    //         LEFT JOIN TriagemEscola B
-    //         ON A.Id = B.IdEscola
-    //         WHERE B.IdEscola IS NULL`);
-    //     res.status(200).send(consulta.rows.map(row => {
-    //         const escola: ModeloBD<EscolaAutorizada> = {
-    //             ...dbToModel(row),
-    //             processoAtual: new Processo({
-    //                 nome: "ABC",
-    //                 resolucao: "DEF",
-    //                 duracao: 1,
-    //                 inicio: new Date(2021),
-    //             }),
-    //         };
-    //         return escola;
-    //     }));
-    // }
-    //
-    //
-    // export async function atualizar(req: express.Request, res: express.Response) {
-    //     const idEscola = parseInt(req.params.id);
-    //     console.log(`backend/escolas: Atualizando escola de ID ${idEscola}`)
-    //
-    //     const {nome} = req.body;
-    //
-    //     await db.pool.query("UPDATE escola SET Nome = $1 WHERE Id = $2", [nome, idEscola]);
-    //     res.status(200).send({});
-    // }
 }
