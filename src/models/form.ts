@@ -10,13 +10,11 @@ namespace Forms {
         texto: string,
         erro?: string,
         validador: Validador,
-        mask?: string,
     };
 
     export class Campo implements _Campo {
         readonly nome: string;
         readonly validador: Validador;
-        readonly mask?: string;
         texto: string;
         erro?: string;
 
@@ -25,7 +23,6 @@ namespace Forms {
             this.texto = params?.texto ?? "";
             this.erro = params?.erro;
             this.validador = params?.validador ?? new Validador();
-            this.mask = params?.mask;
         }
 
         consome(evento: EventoCampo) {

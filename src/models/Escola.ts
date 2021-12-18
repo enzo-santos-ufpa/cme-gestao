@@ -1,5 +1,4 @@
 import {FlatEncoded, FlatEncoder, FlatEncoderDecorator, ModeloBD} from "./tipos";
-import distritos = constantes.distritos;
 
 type Escola = {
     nome: string,
@@ -54,7 +53,7 @@ export namespace constantes {
 
 }
 
-export type DistritoAdministrativo = typeof distritos[number];
+export type DistritoAdministrativo = typeof constantes.distritos[number];
 
 export type Servidor = {
     nome: string,

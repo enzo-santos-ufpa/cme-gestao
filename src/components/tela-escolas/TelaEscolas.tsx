@@ -3,7 +3,6 @@ import './TelaEscolas.css';
 import {EscolaBase, DistritoAdministrativo, constantes} from "../../models/Escola";
 import PlanoFundo, {bg} from "../common/PlanoFundo";
 import {ModeloBD} from "../../models/tipos";
-import distritos = constantes.distritos;
 
 type Props<T extends EscolaBase> = {
     titulo: string,
@@ -139,7 +138,7 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
                     });
                 }}>
                 <option value={undefined}>distrito</option>
-                {distritos.map(value => <option>{value}</option>)}
+                {constantes.distritos.map(value => <option>{value}</option>)}
             </select>
             <select
                 className="TelaEscolas-filtro"

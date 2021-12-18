@@ -4,14 +4,12 @@ import '../common/Tela.css';
 import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
 import {constantes, encoding, EscolaBase} from "../../models/Escola";
-import ReactInputMask from "react-input-mask";
 import Validador, {Validadores} from "../../models/Validador";
 import {random} from "../../lib/utils";
 import {Flatten} from "../../models/tipos";
-import distritosAdministrativos = constantes.distritos;
 import isDistrito = constantes.isDistrito;
 import tiposEscola = constantes.tiposEscola;
-import {CampoTexto, PropsCampoTexto} from "../common/forms/CampoTexto";
+import {CampoTexto, PropsCampoTexto} from "../common/forms/Campo";
 
 type FormularioCadastro = Forms.Formulario<Extract<keyof Flatten<EscolaBase>, string>>;
 
@@ -29,25 +27,6 @@ class CampoTextoCadastro extends CampoTexto {
                 erro: {className: "TelaCadastroEscolas-erroCampo"},
             },
         });
-    }
-
-    render() {
-        const campo = this.props.campo;
-        return <label className="TelaCadastroEscolas-campo" style={{flex: this.props.flex}}>
-            <div style={{display: "flex", flexDirection: "row"}}>
-                <p className="TelaCadastroEscolas-nomeCampo">{campo.nome}</p>
-                <div className="TelaCadastroEscolas-divisorCampo"/>
-                <ReactInputMask
-                    mask={campo.mask == null ? [/.*/] : campo.mask}
-                    value={campo.texto}
-                    className="TelaCadastroEscolas-caixaTexto"
-                    onChange={(e) => {
-                        campo.consome(e);
-                        this.props.onChanged();
-                    }}/>
-            </div>
-            <p className="TelaCadastroEscolas-erroCampo">{campo.erro}</p>
-        </label>;
     }
 }
 
@@ -73,19 +52,16 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     nome: "CNPJ",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use(Validadores.cnpj()),
-                    mask: "99.999.999/9999-99",
                 }),
                 "dataCriacao": new Forms.Campo({
                     nome: "Data de fundação",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use(Validadores.date()),
-                    mask: "99/99/9999",
                 }),
                 "codigoInep": new Forms.Campo({
                     nome: "Código INEP",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use((texto) => !texto.match(/^\d{8}$/) ? "O código INEP deve estar no formato XXXXXXXX." : undefined),
-                    mask: "99999999",
                 }),
                 "nomeEntidadeMantenedora": new Forms.Campo({
                     nome: "Nome da entidade mantenedora",
@@ -96,7 +72,6 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     nome: "CNPF/Conselho",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use(Validadores.cnpj()),
-                    mask: "99.999.999/9999-99",
                 }),
                 "vigenciaConselho": new Forms.Campo({
                     nome: "Vigência/Conselho",
@@ -108,7 +83,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use((texto) => {
                         if (!isDistrito(texto))
-                            return `Apenas os seguintes valores são permitidos: ${distritosAdministrativos.join(", ")}`;
+                            return `Apenas os seguintes valores são permitidos: ${constantes.distritos.join(", ")}`;
                     }),
                 }),
                 "cidade": new Forms.Campo({
@@ -128,7 +103,6 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 }),
                 "cep": new Forms.Campo({
                     nome: "CEP",
-                    mask: "999.99-999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use(Validadores.cep()),
                 }),
@@ -144,7 +118,6 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 }),
                 "telefone": new Forms.Campo({
                     nome: "Telefone",
-                    mask: "(99) 99999-9999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
@@ -160,7 +133,6 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 }),
                 "servidores.diretor.telefone": new Forms.Campo({
                     nome: "Telefone",
-                    mask: "(99) 99999-9999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
@@ -176,7 +148,6 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 }),
                 "servidores.secretario.telefone": new Forms.Campo({
                     nome: "Telefone",
-                    mask: "(99) 99999-9999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
@@ -192,7 +163,6 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 }),
                 "servidores.coordenador.telefone": new Forms.Campo({
                     nome: "Telefone",
-                    mask: "(99) 99999-9999",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
@@ -250,14 +220,17 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                                 campo={form.campo("sigla")}
                                                 onChanged={() => this.updateSelf()}/>
                             <CampoTextoCadastro flex={3}
+                                                mask={"99.999.999/9999-99"}
                                                 campo={form.campo("cnpj")}
                                                 onChanged={() => this.updateSelf()}/>
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
                             <CampoTextoCadastro flex={3}
+                                                mask={"99/99/9999"}
                                                 campo={form.campo("dataCriacao")}
                                                 onChanged={() => this.updateSelf()}/>
                             <CampoTextoCadastro flex={3}
+                                                mask={"99999999"}
                                                 campo={form.campo("codigoInep")}
                                                 onChanged={() => this.updateSelf()}/>
                             <CampoTextoCadastro flex={6}
@@ -266,6 +239,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                         </div>
                         <div className="TelaCadastroEscolas-linhaFormulario">
                             <CampoTextoCadastro flex={6}
+                                                mask={"99.999.999/9999-99"}
                                                 campo={form.campo("cnpjConselho")}
                                                 onChanged={() => this.updateSelf()}/>
                             <CampoTextoCadastro flex={6}
@@ -287,6 +261,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                                 campo={form.campo("bairro")}
                                                 onChanged={() => this.updateSelf()}/>
                             <CampoTextoCadastro flex={2}
+                                                mask={"999.99-999"}
                                                 campo={form.campo("cep")}
                                                 onChanged={() => this.updateSelf()}/>
                         </div>
@@ -301,6 +276,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                                 campo={form.campo("email")}
                                                 onChanged={() => this.updateSelf()}/>
                             <CampoTextoCadastro flex={6}
+                                                mask={"(99) 99999-9999"}
                                                 campo={form.campo("telefone")}
                                                 onChanged={() => this.updateSelf()}/>
                         </div>
@@ -315,6 +291,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                                 campo={form.campo("servidores.diretor.email")}
                                                 onChanged={() => this.updateSelf()}/>
                             <CampoTextoCadastro flex={6}
+                                                mask={"(99) 99999-9999"}
                                                 campo={form.campo("servidores.diretor.telefone")}
                                                 onChanged={() => this.updateSelf()}/>
                         </div>
@@ -328,6 +305,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                                 campo={form.campo("servidores.secretario.email")}
                                                 onChanged={() => this.updateSelf()}/>
                             <CampoTextoCadastro flex={6}
+                                                mask={"(99) 99999-9999"}
                                                 campo={form.campo("servidores.secretario.telefone")}
                                                 onChanged={() => this.updateSelf()}/>
                         </div>
@@ -341,6 +319,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                                 campo={form.campo("servidores.coordenador.email")}
                                                 onChanged={() => this.updateSelf()}/>
                             <CampoTextoCadastro flex={6}
+                                                mask={"(99) 99999-9999"}
                                                 campo={form.campo("servidores.coordenador.telefone")}
                                                 onChanged={() => this.updateSelf()}/>
                         </div>

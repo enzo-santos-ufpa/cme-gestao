@@ -11,17 +11,18 @@ type PropsCampo<T extends string> = {
     estilo?: Record<"campo" | T, PropsComponenteCampo | undefined>,
 };
 
-export type PropsCampoTexto = PropsCampo<"nome" | "divisor" | "caixaTexto" | "erro">;
+export type PropsCampoTexto = PropsCampo<"nome" | "divisor" | "caixaTexto" | "erro"> & { mask?: string };
 
 export class CampoTexto extends React.Component<PropsCampoTexto, {}> {
     render() {
+        const mask = this.props.mask;
         const campo = this.props.campo;
         return <label {...this.props.estilo?.campo}>
             <div style={{display: "flex", flexDirection: "row"}}>
                 <p {...this.props.estilo?.nome}>{campo.nome}</p>
                 <div {...this.props.estilo?.divisor}/>
                 <ReactInputMask
-                    mask={campo.mask == null ? [/.*/] : campo.mask}
+                    mask={mask == null ? [/.*/] : mask}
                     value={campo.texto}
                     {...this.props.estilo?.caixaTexto}
                     onChange={(e) => {
@@ -34,7 +35,7 @@ export class CampoTexto extends React.Component<PropsCampoTexto, {}> {
     }
 }
 
-type PropsCampoMultiplaEscolha = PropsCampo<"nome">;
+type PropsCampoMultiplaEscolha = PropsCampo<"nome"> & { nome: string, opcoes: string[] };
 
 export class CampoMultiplaEscolha extends React.Component<PropsCampoMultiplaEscolha, {}> {
     render() {
