@@ -12,7 +12,7 @@ import tiposEscola = constantes.tiposEscola;
 import {CampoUnicaEscolha, CampoTexto, PropsCampoTexto} from "../common/forms/Campo";
 import Aba from "../common/Aba";
 
-type FormularioCadastro = Forms.Formulario<Extract<keyof Flatten<EscolaBase>, string>>;
+type FormularioCadastro = Forms.Formulario<keyof Flatten<EscolaBase>>;
 
 const nomeAbas = ["Identificação", "Ficha técnica"] as const;
 type NomeAba = typeof nomeAbas[number];
@@ -126,47 +126,47 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.diretor.nome": new Forms.Campo({
+                "diretor.nome": new Forms.Campo({
                     nome: "Nome/Diretor",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.diretor.email": new Forms.Campo({
+                "diretor.email": new Forms.Campo({
                     nome: "E-mail institucional",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.diretor.telefone": new Forms.Campo({
+                "diretor.telefone": new Forms.Campo({
                     nome: "Telefone",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.secretario.nome": new Forms.Campo({
+                "secretario.nome": new Forms.Campo({
                     nome: "Nome/Secretário",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.secretario.email": new Forms.Campo({
+                "secretario.email": new Forms.Campo({
                     nome: "E-mail institucional",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.secretario.telefone": new Forms.Campo({
+                "secretario.telefone": new Forms.Campo({
                     nome: "Telefone",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.coordenador.nome": new Forms.Campo({
+                "coordenador.nome": new Forms.Campo({
                     nome: "Nome/Coordenador",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.coordenador.email": new Forms.Campo({
+                "coordenador.email": new Forms.Campo({
                     nome: "E-mail institucional",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
                 }),
-                "servidores.coordenador.telefone": new Forms.Campo({
+                "coordenador.telefone": new Forms.Campo({
                     nome: "Telefone",
                     texto: "",
                     validador: new Validador().use(Validadores.required()),
@@ -342,44 +342,44 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 <p>Dados (servidores)</p>
                 <div className="TelaCadastroEscolas-linhaFormulario">
                     <CampoTextoCadastro flex={12}
-                                        campo={form.campo("servidores.diretor.nome")}
+                                        campo={form.campo("diretor.nome")}
                                         onChanged={() => this.updateSelf()}/>
                 </div>
                 <div className="TelaCadastroEscolas-linhaFormulario">
                     <CampoTextoCadastro flex={6}
-                                        campo={form.campo("servidores.diretor.email")}
+                                        campo={form.campo("diretor.email")}
                                         onChanged={() => this.updateSelf()}/>
                     <CampoTextoCadastro flex={6}
                                         mask={"(99) 99999-9999"}
-                                        campo={form.campo("servidores.diretor.telefone")}
+                                        campo={form.campo("diretor.telefone")}
                                         onChanged={() => this.updateSelf()}/>
                 </div>
                 <div className="TelaCadastroEscolas-linhaFormulario">
                     <CampoTextoCadastro flex={12}
-                                        campo={form.campo("servidores.secretario.nome")}
+                                        campo={form.campo("secretario.nome")}
                                         onChanged={() => this.updateSelf()}/>
                 </div>
                 <div className="TelaCadastroEscolas-linhaFormulario">
                     <CampoTextoCadastro flex={6}
-                                        campo={form.campo("servidores.secretario.email")}
+                                        campo={form.campo("secretario.email")}
                                         onChanged={() => this.updateSelf()}/>
                     <CampoTextoCadastro flex={6}
                                         mask={"(99) 99999-9999"}
-                                        campo={form.campo("servidores.secretario.telefone")}
+                                        campo={form.campo("secretario.telefone")}
                                         onChanged={() => this.updateSelf()}/>
                 </div>
                 <div className="TelaCadastroEscolas-linhaFormulario">
                     <CampoTextoCadastro flex={12}
-                                        campo={form.campo("servidores.coordenador.nome")}
+                                        campo={form.campo("coordenador.nome")}
                                         onChanged={() => this.updateSelf()}/>
                 </div>
                 <div className="TelaCadastroEscolas-linhaFormulario">
                     <CampoTextoCadastro flex={6}
-                                        campo={form.campo("servidores.coordenador.email")}
+                                        campo={form.campo("coordenador.email")}
                                         onChanged={() => this.updateSelf()}/>
                     <CampoTextoCadastro flex={6}
                                         mask={"(99) 99999-9999"}
-                                        campo={form.campo("servidores.coordenador.telefone")}
+                                        campo={form.campo("coordenador.telefone")}
                                         onChanged={() => this.updateSelf()}/>
                 </div>
             </div>
@@ -409,15 +409,15 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 form.campo("endereco").texto = wsrandomf("###################################");
                 form.campo("email").texto = wsrandomf("######@gmail.com");
                 form.campo("telefone").texto = dsrandomf("(91) 98###-####");
-                form.campo("servidores.diretor.telefone").texto = dsrandomf("(91) 98###-####");
-                form.campo("servidores.secretario.telefone").texto = dsrandomf("(91) 98###-####");
-                form.campo("servidores.coordenador.telefone").texto = dsrandomf("(91) 98###-####");
-                form.campo("servidores.diretor.nome").texto = wsrandomf("##########");
-                form.campo("servidores.secretario.nome").texto = wsrandomf("##########");
-                form.campo("servidores.coordenador.nome").texto = wsrandomf("##########");
-                form.campo("servidores.diretor.email").texto = wsrandomf("######@gmail.com");
-                form.campo("servidores.secretario.email").texto = wsrandomf("######@gmail.com");
-                form.campo("servidores.coordenador.email").texto = wsrandomf("######@gmail.com");
+                form.campo("diretor.telefone").texto = dsrandomf("(91) 98###-####");
+                form.campo("secretario.telefone").texto = dsrandomf("(91) 98###-####");
+                form.campo("coordenador.telefone").texto = dsrandomf("(91) 98###-####");
+                form.campo("diretor.nome").texto = wsrandomf("##########");
+                form.campo("secretario.nome").texto = wsrandomf("##########");
+                form.campo("coordenador.nome").texto = wsrandomf("##########");
+                form.campo("diretor.email").texto = wsrandomf("######@gmail.com");
+                form.campo("secretario.email").texto = wsrandomf("######@gmail.com");
+                form.campo("coordenador.email").texto = wsrandomf("######@gmail.com");
                 const tipo = random.choice(tiposEscola);
                 form.campo("tipo.setor").texto = tipo.setor;
                 form.campo("tipo.sigla").texto = random.choice(tipo.siglas);

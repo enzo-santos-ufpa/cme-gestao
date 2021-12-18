@@ -19,11 +19,9 @@ type Escola = {
     email: string,
     telefone: string,
     nomeEntidadeMantenedora: string,
-    servidores: {
-        diretor: Servidor,
-        secretario: Servidor,
-        coordenador: Servidor,
-    },
+    diretor: Servidor,
+    secretario: Servidor,
+    coordenador: Servidor,
     tipo: TipoEscola,
     modalidadeEnsino: ModalidadeEnsino,
     convenioSemec?: ConvenioSEMEC,
@@ -151,37 +149,43 @@ export namespace encoding {
                     setor: value["tipo.setor"] as "Pública" | "Privada",
                     sigla: value["tipo.sigla"],
                 },
-                servidores: {
-                    diretor: {
-                        nome: value["servidores.diretor.nome"],
-                        email: value["servidores.diretor.email"],
-                        telefone: value["servidores.diretor.telefone"],
-                    },
-                    secretario: {
-                        nome: value["servidores.secretario.nome"],
-                        email: value["servidores.secretario.email"],
-                        telefone: value["servidores.secretario.telefone"],
-                    },
-                    coordenador: {
-                        nome: value["servidores.coordenador.nome"],
-                        email: value["servidores.coordenador.email"],
-                        telefone: value["servidores.coordenador.telefone"],
-                    },
-                }
+                convenioSemec: value["convenioSemec.numConvenio"] == null ? undefined : {
+                    numConvenio: parseInt(value["convenioSemec.numConvenio"]!),
+                    objeto: value["convenioSemec.objeto"]!,
+                    vigencia: value["convenioSemec.vigencia"]!,
+                },
+                diretor: {
+                    nome: value["diretor.nome"],
+                    email: value["diretor.email"],
+                    telefone: value["diretor.telefone"],
+                },
+                secretario: {
+                    nome: value["secretario.nome"],
+                    email: value["secretario.email"],
+                    telefone: value["secretario.telefone"],
+                },
+                coordenador: {
+                    nome: value["coordenador.nome"],
+                    email: value["coordenador.email"],
+                    telefone: value["coordenador.telefone"],
+                },
             };
         }
 
         encode(value: EscolaBase): FlatEncoded<EscolaBase> {
             return {
-                "servidores.diretor.email": value.servidores.diretor.email,
-                "servidores.diretor.telefone": value.servidores.diretor.telefone,
-                "servidores.diretor.nome": value.servidores.diretor.nome,
-                "servidores.secretario.email": value.servidores.secretario.email,
-                "servidores.secretario.telefone": value.servidores.secretario.telefone,
-                "servidores.secretario.nome": value.servidores.secretario.nome,
-                "servidores.coordenador.email": value.servidores.coordenador.email,
-                "servidores.coordenador.telefone": value.servidores.coordenador.telefone,
-                "servidores.coordenador.nome": value.servidores.coordenador.nome,
+                "convenioSemec.vigencia": value.convenioSemec?.vigencia,
+                "convenioSemec.numConvenio": value.convenioSemec?.numConvenio?.toString(),
+                "convenioSemec.objeto": value.convenioSemec?.objeto,
+                "diretor.email": value.diretor.email,
+                "diretor.telefone": value.diretor.telefone,
+                "diretor.nome": value.diretor.nome,
+                "secretario.email": value.secretario.email,
+                "secretario.telefone": value.secretario.telefone,
+                "secretario.nome": value.secretario.nome,
+                "coordenador.email": value.coordenador.email,
+                "coordenador.telefone": value.coordenador.telefone,
+                "coordenador.nome": value.coordenador.nome,
                 "tipo.setor": value.tipo.setor,
                 "tipo.sigla": value.tipo.sigla,
                 bairro: value.bairro,

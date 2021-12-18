@@ -1,7 +1,7 @@
 import React from "react";
 import '../common/Tela.css';
 import './TelaEscola.css';
-import {DistritoAdministrativo, EscolaBase, RespostaCadastro} from "../../models/Escola";
+import {EscolaBase, RespostaCadastro} from "../../models/Escola";
 import {escolas} from "../../lib/api";
 import {ModeloBD} from "../../models/tipos";
 import {useSearchParams} from "react-router-dom";
@@ -18,7 +18,6 @@ type EstadoCarregado<T extends EscolaBase> = { escola: ModeloBD<T> };
 function isCarregando<T extends EscolaBase>(estado: Estado<T>): estado is EstadoCarregando {
     return estado.escola == null;
 }
-
 
 abstract class _TelaEscola<T extends EscolaBase> extends React.Component<Props, Estado<EscolaBase>> {
     state: EstadoCarregando = {};
@@ -86,29 +85,29 @@ abstract class _TelaEscola<T extends EscolaBase> extends React.Component<Props, 
                             </div>
                             <p className="TelaEscola-subtitulo">Servidores</p>
                             <div className="row">
-                                <LinhaChaveValor flex={12} chave="Nome/Diretor" valor={escola.servidores.diretor.nome}/>
+                                <LinhaChaveValor flex={12} chave="Nome/Diretor" valor={escola.diretor.nome}/>
                             </div>
                             <div className="row">
-                                <LinhaChaveValor flex={6} chave="E-mail" valor={escola.servidores.diretor.email}/>
-                                <LinhaChaveValor flex={6} chave="Telefone" valor={escola.servidores.diretor.telefone}/>
+                                <LinhaChaveValor flex={6} chave="E-mail" valor={escola.diretor.email}/>
+                                <LinhaChaveValor flex={6} chave="Telefone" valor={escola.diretor.telefone}/>
                             </div>
                             <div className="row">
                                 <LinhaChaveValor flex={12} chave="Nome/Coordenador"
-                                                 valor={escola.servidores.coordenador.nome}/>
+                                                 valor={escola.coordenador.nome}/>
                             </div>
                             <div className="row">
-                                <LinhaChaveValor flex={6} chave="E-mail" valor={escola.servidores.coordenador.email}/>
+                                <LinhaChaveValor flex={6} chave="E-mail" valor={escola.coordenador.email}/>
                                 <LinhaChaveValor flex={6} chave="Telefone"
-                                                 valor={escola.servidores.coordenador.telefone}/>
+                                                 valor={escola.coordenador.telefone}/>
                             </div>
                             <div className="row">
                                 <LinhaChaveValor flex={12} chave="Nome/Secretário"
-                                                 valor={escola.servidores.secretario.nome}/>
+                                                 valor={escola.secretario.nome}/>
                             </div>
                             <div className="row">
-                                <LinhaChaveValor flex={6} chave="E-mail" valor={escola.servidores.secretario.email}/>
+                                <LinhaChaveValor flex={6} chave="E-mail" valor={escola.secretario.email}/>
                                 <LinhaChaveValor flex={6} chave="Telefone"
-                                                 valor={escola.servidores.secretario.telefone}/>
+                                                 valor={escola.secretario.telefone}/>
                             </div>
 
                         </div>

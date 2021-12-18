@@ -59,29 +59,27 @@ export namespace escolas {
                 setor: row["tiposetor"],
                 sigla: row["tiposigla"],
             },
-            servidores: {
-                diretor: ((dadosServidor: any) => {
-                    return {
-                        nome: dadosServidor["nome"],
-                        email: dadosServidor["email"],
-                        telefone: dadosServidor["telefone"],
-                    };
-                })(dadosServidores.diretor),
-                secretario: ((dadosServidor: any) => {
-                    return {
-                        nome: dadosServidor["nome"],
-                        email: dadosServidor["email"],
-                        telefone: dadosServidor["telefone"],
-                    };
-                })(dadosServidores.secretario),
-                coordenador: ((dadosServidor: any) => {
-                    return {
-                        nome: dadosServidor["nome"],
-                        email: dadosServidor["email"],
-                        telefone: dadosServidor["telefone"],
-                    };
-                })(dadosServidores.coordenador),
-            }
+            diretor: ((dadosServidor: any) => {
+                return {
+                    nome: dadosServidor["nome"],
+                    email: dadosServidor["email"],
+                    telefone: dadosServidor["telefone"],
+                };
+            })(dadosServidores.diretor),
+            secretario: ((dadosServidor: any) => {
+                return {
+                    nome: dadosServidor["nome"],
+                    email: dadosServidor["email"],
+                    telefone: dadosServidor["telefone"],
+                };
+            })(dadosServidores.secretario),
+            coordenador: ((dadosServidor: any) => {
+                return {
+                    nome: dadosServidor["nome"],
+                    email: dadosServidor["email"],
+                    telefone: dadosServidor["telefone"],
+                };
+            })(dadosServidores.coordenador),
         };
     }
 
@@ -155,7 +153,10 @@ export namespace escolas {
                 [id, distrito, endereco, cidade, uf, bairro, cep],
             );
 
-            const {servidores, ...a2} = a1;
+            const {diretor, coordenador, secretario, ...a2} = a1;
+            await insereServidor(id, "Diretor", diretor);
+            await insereServidor(id, "Coordenador", coordenador);
+            await insereServidor(id, "Secretario", secretario);
 
             const {convenioSemec, ...a3} = a2;
             if (convenioSemec != null) {
