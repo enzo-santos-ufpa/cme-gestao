@@ -5,7 +5,6 @@ import {escolas} from "../../lib/api";
 import TelaEscolas from "../tela-escolas/TelaEscolas";
 import {ModeloBD} from "../../models/tipos";
 import {EscolaAutorizada} from "../../models/Escola";
-import BarraLateral from "../common/BarraLateral";
 import TelaInterna from "../common/TelaInterna";
 
 function divideElementos(elementos: JSX.Element[], divisor: JSX.Element): JSX.Element[] {

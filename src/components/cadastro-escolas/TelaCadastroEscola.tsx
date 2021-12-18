@@ -3,8 +3,7 @@ import './TelaCadastroEscolas.css';
 import '../common/Tela.css';
 import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
-import PlanoFundo, {bg} from "../common/PlanoFundo";
-import {EscolaBase, DistritoAdministrativo, tiposEscola} from "../../models/Escola";
+import {DistritoAdministrativo, EscolaBase, tiposEscola} from "../../models/Escola";
 import ReactInputMask from "react-input-mask";
 import Validador, {Validadores} from "../../models/Validador";
 import {parseDate, random} from "../../lib/utils";
@@ -379,8 +378,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                             className="TelaCadastroEscolas-nomeCampo"
                             value={form.campo("tipo.setor").texto.length ? form.campo("tipo.setor").texto : "sigla"}
                             onChange={(e) => {
-                                const value = e.target.value === "setor" ? "" : e.target.value;
-                                form.campo("tipo.setor").texto = value;
+                                form.campo("tipo.setor").texto = e.target.value === "setor" ? "" : e.target.value;
                                 this.updateSelf();
                             }}
                         >
@@ -392,8 +390,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                             className="TelaCadastroEscolas-nomeCampo"
                             value={form.campo("tipo.sigla").texto.length ? form.campo("tipo.sigla").texto : "sigla"}
                             onChange={(e) => {
-                                const value = e.target.value === "sigla" ? "" : e.target.value;
-                                form.campo("tipo.sigla").texto = value;
+                                form.campo("tipo.sigla").texto = e.target.value === "sigla" ? "" : e.target.value;
                                 this.updateSelf();
                             }}
                         >
