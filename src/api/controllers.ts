@@ -5,6 +5,7 @@ import {
     EscolaAutorizada,
     EscolaBase,
     EscolaPendente,
+    ModalidadeEnsino,
     Processo,
     Servidor
 } from "../models/Escola";

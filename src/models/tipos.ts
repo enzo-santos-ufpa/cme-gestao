@@ -2,7 +2,7 @@
 type IsFunction<T, R, Fallback = T> = T extends (...args: any[]) => any ? R : Fallback
 
 // Returns R if T is an object, otherwise returns Fallback
-type IsObject<T, R, Fallback = T> = IsFunction<T, Fallback, (T extends (Date | number | string | boolean) ? Fallback : R)>
+type IsObject<T, R, Fallback = T> = IsFunction<T, Fallback, (T extends (Date | number | string | boolean | Array<any>) ? Fallback : R)>
 
 // "a.b.c" => "b.c"
 type Tail<S> = S extends `${string}.${infer T}` ? Tail<T> : S;

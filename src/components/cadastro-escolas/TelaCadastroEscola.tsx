@@ -196,6 +196,8 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     texto: "",
                     validador: new Validador(),
                 }),
+                // TODO support array
+                "modalidadesEnsino": new Forms.Campo(),
             }),
             abaAtual: "Ficha técnica",
         };
@@ -262,6 +264,49 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                        if (setor === tipo.setor) return tipo.siglas;
                                        return [];
                                    })}/>
+            </div>
+            <p>Convênio com a SEMEC</p>
+            <div className="TelaCadastroEscolas-linhaFormulario">
+                <p>Possui?</p>
+                <label className="row">
+                    <input type="radio" name="convenioSemec" value="yes"/>
+                    <p>Sim</p>
+                </label>
+                <label className="row">
+                    <input type="radio" name="convenioSemec" value="no"/>
+                    <p>Não</p>
+                </label>
+            </div>
+            <div className="TelaCadastroEscolas-linhaFormulario">
+                <CampoTextoCadastro flex={4}
+                                    campo={form.campo("convenioSemec.numConvenio")}
+                                    onChanged={() => this.updateSelf()}/>
+                <CampoTextoCadastro flex={4}
+                                    campo={form.campo("convenioSemec.objeto")}
+                                    onChanged={() => this.updateSelf()}/>
+                <CampoTextoCadastro flex={4}
+                                    campo={form.campo("convenioSemec.vigencia")}
+                                    onChanged={() => this.updateSelf()}/>
+
+            </div>
+            <p>Etapas/modalidades da educação básica ofertada</p>
+            <div className="TelaCadastroEscolas-linhaFormulario">
+                <div>
+                    {constantes.modalidadesEnsino.map(item => {
+                        return <div>
+                            <p>{item.titulo}</p>
+                            <p>{item.subtitulo}</p>
+                            <div className="row">
+                                {item.modalidades.map(nome => {
+                                    return <label className="row">
+                                        <input type="checkbox"/>
+                                        <p>{nome}</p>
+                                    </label>
+                                })}
+                            </div>
+                        </div>;
+                    })}
+                </div>
             </div>
         </div>
     }

@@ -23,7 +23,7 @@ type Escola = {
     secretario: Servidor,
     coordenador: Servidor,
     tipo: TipoEscola,
-    modalidadeEnsino: ModalidadeEnsino,
+    modalidadesEnsino: ModalidadeEnsino[],
     convenioSemec?: ConvenioSEMEC,
     filiais: Escola[],
 }
@@ -54,28 +54,25 @@ export namespace constantes {
         return distritos.includes(value as any);
     }
 
-    export const etapasEnsino = ["Educação infantil", "Educação fundamental", "Educação funcdamental (EJA)"] as const;
+    export const etapasEnsino = ["Educação infantil", "Educação fundamental", "Educação fundamental (EJA)"] as const;
     export type EtapaEnsino = typeof etapasEnsino[number];
-    type LegendaEtapaEnsino = { titulo: string, subtitulo: string };
-    export const legendasEtapaEnsino: LegendaEtapaEnsino[] = [
-        {titulo: "Educação infantil", subtitulo: ""},
-        {titulo: "Educação fundamental", subtitulo: "Ciclos de formação (anos iniciais e finais)"},
-        {titulo: "Educação funcdamental (EJA)", subtitulo: "Totalidades do conhecimento (anos iniciais e finais)"},
-    ];
-
-    type ModalidadesEnsino = { etapa: EtapaEnsino, nomes: string[] };
-    export const modalidadesEnsino: ModalidadesEnsino[] = [
+    type LegendaEtapaEnsino = { titulo: EtapaEnsino, subtitulo: string, modalidades: string[] };
+    export const modalidadesEnsino: LegendaEtapaEnsino[] = [
         {
-            etapa: "Educação infantil", nomes: ["Creche", "Pré-escola"],
+            titulo: "Educação infantil",
+            subtitulo: "",
+            modalidades: ["Creche", "Pré-escola"],
         },
         {
-            etapa: "Educação fundamental",
-            nomes: ["CF I (1º, 2º e 3º ano)", "CF II (4º e 5º ano)", "CF III (6º e 7º ano)", "CF IV (8º e 9º ano)"]
+            titulo: "Educação fundamental",
+            subtitulo: "Ciclos de formação (anos iniciais e finais)",
+            modalidades: ["CF I (1º, 2º e 3º ano)", "CF II (4º e 5º ano)", "CF III (6º e 7º ano)", "CF IV (8º e 9º ano)"],
         },
         {
-            etapa: "Educação funcdamental (EJA)",
-            nomes: ["CF I (1º, 2º e 3º ano)", "CF II (4º e 5º ano)", "CF III (6º e 7º ano)", "CF IV (8º e 9º ano)"]
-        }
+            titulo: "Educação fundamental (EJA)",
+            subtitulo: "Totalidades do conhecimento (anos iniciais e finais)",
+            modalidades: ["CF I (1º, 2º e 3º ano)", "CF II (4º e 5º ano)", "CF III (6º e 7º ano)", "CF IV (8º e 9º ano)"],
+        },
     ];
 }
 
@@ -169,6 +166,7 @@ export namespace encoding {
                     email: value["coordenador.email"],
                     telefone: value["coordenador.telefone"],
                 },
+                modalidadesEnsino: JSON.parse(value["modalidadesEnsino"]),
             };
         }
 
@@ -188,6 +186,7 @@ export namespace encoding {
                 "coordenador.nome": value.coordenador.nome,
                 "tipo.setor": value.tipo.setor,
                 "tipo.sigla": value.tipo.sigla,
+                modalidadesEnsino: JSON.stringify(value.modalidadesEnsino),
                 bairro: value.bairro,
                 cep: value.cep,
                 cidade: value.cidade,
