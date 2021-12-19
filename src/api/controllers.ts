@@ -24,20 +24,37 @@ export namespace index {
 }
 
 export namespace escolas {
-    async function parseEscolaBase(row: any): Promise<ModeloBD<EscolaBase>> {
-        const id = row.id;
-        const consultaServidores = await db.pool.query(
+    async function parseServidores(id: number): Promise<Record<"diretor" | "secretario" | "coordenador", Servidor>> {
+        function toServidor<K extends "Diretor" | "Secretario" | "Coordenador">(map: Map<string, any>, key: K): Servidor {
+            const row = map.get(key);
+            return {
+                nome: row["nome"] as string,
+                email: row["email"] as string,
+                telefone: row["telefone"] as string,
+            };
+        }
+
+        const consulta = await db.pool.query(
             `SELECT * FROM ServidorEscola WHERE IdEscola = $1`,
             [id],
         );
-        const mapeamentoServidores = new Map<string, any>();
-        consultaServidores.rows.forEach(row => mapeamentoServidores.set(row["tipo"], row));
-        const dadosServidores = {
-            diretor: mapeamentoServidores.get("Diretor"),
-            secretario: mapeamentoServidores.get("Secretario"),
-            coordenador: mapeamentoServidores.get("Coordenador"),
+        const mapeamento = new Map<string, any>();
+        consulta.rows.forEach(row => mapeamento.set(row["tipo"], row));
+        return {
+            diretor: toServidor(mapeamento, "Diretor"),
+            secretario: toServidor(mapeamento, "Secretario"),
+            coordenador: toServidor(mapeamento, "Coordenador"),
         };
+    }
 
+    async function parseModalidadesEnsino(id: number): Promise<ModalidadeEnsino[]> {
+        return [];
+    }
+
+    async function parseEscolaBase(row: any): Promise<ModeloBD<EscolaBase>> {
+        const id = row.id;
+        const servidores = await parseServidores(id);
+        const modalidades = await parseModalidadesEnsino(id);
         return {
             id: id,
             nome: row.nome,
@@ -60,27 +77,8 @@ export namespace escolas {
                 setor: row["tiposetor"],
                 sigla: row["tiposigla"],
             },
-            diretor: ((dadosServidor: any) => {
-                return {
-                    nome: dadosServidor["nome"],
-                    email: dadosServidor["email"],
-                    telefone: dadosServidor["telefone"],
-                };
-            })(dadosServidores.diretor),
-            secretario: ((dadosServidor: any) => {
-                return {
-                    nome: dadosServidor["nome"],
-                    email: dadosServidor["email"],
-                    telefone: dadosServidor["telefone"],
-                };
-            })(dadosServidores.secretario),
-            coordenador: ((dadosServidor: any) => {
-                return {
-                    nome: dadosServidor["nome"],
-                    email: dadosServidor["email"],
-                    telefone: dadosServidor["telefone"],
-                };
-            })(dadosServidores.coordenador),
+            ...servidores,
+            modalidadesEnsino: modalidades,
         };
     }
 

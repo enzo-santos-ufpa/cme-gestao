@@ -28,12 +28,16 @@ type Escola = {
     filiais: Escola[],
 }
 
-export type EscolaBase = Omit<Escola, "modalidadeEnsino" | "filiais">;
+export type EscolaBase = Omit<Escola, "filiais">;
 
 export type EscolaAutorizada = EscolaBase & { processoAtual: Processo };
 
 export type DadosCadastro = { dataInsercao: Date }
 export type EscolaPendente = EscolaBase & { cadastro: DadosCadastro };
+
+export type Filial =
+    Pick<EscolaBase, "nome" | "sigla" | "dataCriacao" | "codigoInep" | "endereco" | "cep" | "email" | "telefone" | "modalidadesEnsino">
+    & { responsavel: Servidor };
 
 type SetorEscola = "Pública" | "Privada";
 export type TipoEscola = {
