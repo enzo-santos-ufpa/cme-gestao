@@ -7,14 +7,12 @@ import {constantes, encoding, EscolaBase} from "../../models/Escola";
 import Validador, {Validadores} from "../../models/Validador";
 import {random} from "../../lib/utils";
 import {Flatten} from "../../models/tipos";
-import isDistrito = constantes.isDistrito;
-import tiposEscola = constantes.tiposEscola;
 import {CampoUnicaEscolha, CampoTexto, PropsCampoTexto} from "../common/forms/Campo";
 import Aba from "../common/Aba";
 
 type FormularioCadastro = Forms.Formulario<keyof Flatten<EscolaBase>>;
 
-const nomeAbas = ["Identificação", "Ficha técnica"] as const;
+const nomeAbas = ["Identificação", "Ficha técnica", "Filiais", "Documentos"] as const;
 type NomeAba = typeof nomeAbas[number];
 
 type Estado = { form: FormularioCadastro, abaAtual: NomeAba };
@@ -87,7 +85,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     nome: "Distrito",
                     texto: "",
                     validador: new Validador().use(Validadores.required()).use((texto) => {
-                        if (!isDistrito(texto))
+                        if (!constantes.isDistrito(texto))
                             return `Apenas os seguintes valores são permitidos: ${constantes.distritos.join(", ")}`;
                     }),
                 }),
@@ -243,12 +241,12 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                        erro: {className: "TelaCadastroEscolas-erroCampo"}
                                    }}
                                    nome="setor"
-                                   opcoes={tiposEscola.map(tipo => tipo.setor)}/>
+                                   opcoes={constantes.tiposEscola.map(tipo => tipo.setor)}/>
                 <CampoUnicaEscolha campo={form.campo("tipo.sigla")}
                                    onChanged={() => {
                                        const sigla = form.campo("tipo.sigla").texto;
                                        if (sigla) {
-                                           form.campo("tipo.setor").texto = tiposEscola
+                                           form.campo("tipo.setor").texto = constantes.tiposEscola
                                                .find(tipo => tipo.siglas.includes(sigla))!.setor;
                                        }
                                        this.updateSelf();
@@ -258,7 +256,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                                        erro: {className: "TelaCadastroEscolas-erroCampo"}
                                    }}
                                    nome="sigla"
-                                   opcoes={tiposEscola.flatMap(tipo => {
+                                   opcoes={constantes.tiposEscola.flatMap(tipo => {
                                        const setor = form.campo("tipo.setor").texto;
                                        if (!setor) return tipo.siglas;
                                        if (setor === tipo.setor) return tipo.siglas;
@@ -463,7 +461,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                 form.campo("diretor.email").texto = wsrandomf("######@gmail.com");
                 form.campo("secretario.email").texto = wsrandomf("######@gmail.com");
                 form.campo("coordenador.email").texto = wsrandomf("######@gmail.com");
-                const tipo = random.choice(tiposEscola);
+                const tipo = random.choice(constantes.tiposEscola);
                 form.campo("tipo.setor").texto = tipo.setor;
                 form.campo("tipo.sigla").texto = random.choice(tipo.siglas);
                 this.updateSelf();
@@ -473,7 +471,7 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
         </form>;
     }
 
-    private renderAba(): JSX.Element {
+    private renderAba(): JSX.Element | undefined {
         switch (this.state.abaAtual) {
             case "Identificação":
                 return this.renderAbaIdentificacao();
