@@ -40,15 +40,15 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
 
     private static filtra<T extends EscolaBase>(filtro: Filtro, escolas: T[]): T[] {
         let escolasFiltradas = escolas;
-        const sigla = filtro.campo("sigla").texto;
+        const sigla = filtro.campo("sigla").valor;
         if (sigla) {
             escolasFiltradas = escolasFiltradas.filter(escola => escola.tipo.sigla === sigla);
         }
-        const setor = filtro.campo("setor").texto;
+        const setor = filtro.campo("setor").valor;
         if (setor) {
             escolasFiltradas = escolasFiltradas.filter(escola => escola.tipo.setor === setor);
         }
-        const distrito = filtro.campo("distrito").texto;
+        const distrito = filtro.campo("distrito").valor;
         if (distrito) {
             escolasFiltradas = escolasFiltradas.filter(escola => escola.distrito === distrito);
         }
@@ -62,19 +62,19 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
                 escolasAtuais: escolas,
                 paginaAtual: 0,
                 filtro: new Forms.Formulario({
-                    sigla: new Forms.Campo({
+                    sigla: new Forms.CampoTexto({
                         nome: "sigla",
-                        texto: "",
+                        valor: "",
                         validador: new Validador(),
                     }),
-                    setor: new Forms.Campo({
+                    setor: new Forms.CampoTexto({
                         nome: "setor",
-                        texto: "",
+                        valor: "",
                         validador: new Validador(),
                     }),
-                    distrito: new Forms.Campo({
+                    distrito: new Forms.CampoTexto({
                         nome: "distrito",
-                        texto: "",
+                        valor: "",
                         validador: new Validador(),
                     }),
                 }),
@@ -153,14 +153,14 @@ class TelaEscolas<T extends EscolaBase> extends React.Component<Props<T>, Estado
                                opcoes={constantes.tiposEscola.map(tipo => tipo.setor)}
                                estilo={{campo: {className: "TelaEscolas-filtro"}}}
                                onChanged={() => {
-                                   const setor = estado.filtro.campo("setor").texto;
-                                   if (setor) estado.filtro.campo("sigla").texto = "";
+                                   const setor = estado.filtro.campo("setor").valor;
+                                   if (setor) estado.filtro.campo("sigla").valor = "";
                                    this.setState({...estado, paginaAtual: 0});
                                }}/>
             <CampoUnicaEscolha campo={estado.filtro.campo("sigla")}
                                nome="sigla"
                                opcoes={constantes.tiposEscola.flatMap(tipo => {
-                                   const setor = estado.filtro.campo("setor").texto;
+                                   const setor = estado.filtro.campo("setor").valor;
                                    if (!setor) return tipo.siglas;
                                    if (setor === tipo.setor) return tipo.siglas;
                                    return [];

@@ -31,7 +31,7 @@ export default class Autenticador {
         let conta = undefined;
 
         estado.campo("email").erro = (() => {
-            const texto = estado.campo("email").texto;
+            const texto = estado.campo("email").valor;
             if (!texto.trim()) return "Insira seu e-mail.";
 
             conta = Autenticador.contas.find(conta => conta.email === texto);
@@ -39,7 +39,7 @@ export default class Autenticador {
             return undefined;
         })();
         estado.campo("senha").erro = (() => {
-            const texto = estado.campo("senha").texto;
+            const texto = estado.campo("senha").valor;
             if (!texto.trim()) return "Insira sua senha.";
             if (estado.campo("email").erro) return undefined;
             if (conta) return texto === conta.senha ? undefined : "A senha está inválida."

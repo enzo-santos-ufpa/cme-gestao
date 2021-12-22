@@ -1,40 +1,62 @@
-import {ChangeEvent} from "react";
 import Validador from "./Validador";
 
 
 namespace Forms {
-    type EventoCampo = ChangeEvent<HTMLInputElement>;
-
-    type _Campo = {
+    type _Campo<T> = {
         nome: string,
-        texto: string,
+        valor: T,
         erro?: string,
-        validador: Validador,
+        validador: Validador<T>,
     };
 
-    export class Campo implements _Campo {
+    export abstract class Campo<T> implements _Campo<T> {
         readonly nome: string;
-        readonly validador: Validador;
-        texto: string;
+        readonly validador: Validador<T>;
+        valor: T;
         erro?: string;
 
-        constructor(params?: _Campo) {
-            this.nome = params?.nome ?? "";
-            this.texto = params?.texto ?? "";
-            this.erro = params?.erro;
-            this.validador = params?.validador ?? new Validador();
-        }
-
-        consome(evento: EventoCampo) {
-            this.texto = evento.target.value;
+        constructor(params: _Campo<T>) {
+            this.nome = params.nome;
+            this.valor = params.valor;
+            this.erro = params.erro;
+            this.validador = params.validador;
         }
 
         valida() {
-            this.erro = this.validador.validate(this.texto);
+            this.erro = this.validador.validate(this.valor);
+        }
+
+        abstract json(): string;
+    }
+
+    export class CampoTexto extends Campo<string> {
+        constructor(params?: _Campo<string>) {
+            super({
+                nome: params?.nome ?? "",
+                valor: params?.valor ?? "",
+                erro: params?.erro,
+                validador: params?.validador ?? new Validador<string>(),
+            });
+        }
+
+        json(): string {
+            return this.valor;
         }
     }
 
-    type _Formulario<T extends string> = Record<T, Campo>;
+    export class CampoJSON<T> extends Campo<T> {
+        json(): string {
+            return JSON.stringify(this.valor);
+        }
+    }
+
+    export class CampoArray<T> extends CampoJSON<Array<T>> {
+        push(valor: T): void {
+            this.valor.push(valor);
+        }
+    }
+
+    type _Formulario<T extends string> = Record<T, Campo<any>>;
 
     export class Formulario<T extends string> {
         private readonly dados: _Formulario<T>;
@@ -50,11 +72,11 @@ namespace Forms {
 
         json(): Record<T, string> {
             const chaves: T[] = Object.keys(this.dados) as T[];
-            return Object.fromEntries(chaves.map(chave => [chave, this.dados[chave].texto])) as Record<T, string>;
+            return Object.fromEntries(chaves.map(chave => [chave, this.dados[chave].json()])) as Record<T, string>;
         }
 
-        campo<R extends Campo = Campo>(chave: T): R {
-            return this.dados[chave] as R;
+        campo<R = string>(chave: T): Campo<R> {
+            return this.dados[chave] as Campo<R>;
         }
 
         get chaves(): T[] {
@@ -62,7 +84,7 @@ namespace Forms {
         }
 
         get possuiErro(): boolean {
-            const campos: Campo[] = Object.values(this.dados);
+            const campos: Campo<any>[] = Object.values(this.dados);
             return campos.some(campo => campo.erro);
         }
 

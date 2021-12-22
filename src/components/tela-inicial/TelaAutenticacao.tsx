@@ -15,8 +15,8 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, _Estado> {
         super(props);
         this.state = {
             form: new Forms.Formulario({
-                email: new Forms.Campo(),
-                senha: new Forms.Campo()
+                email: new Forms.CampoTexto(),
+                senha: new Forms.CampoTexto()
             }),
         }
     }
@@ -32,9 +32,9 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, _Estado> {
                             <input className="TelaAutenticacao-caixaTexto"
                                    type="text"
                                    placeholder="insira seu e-mail"
-                                   value={form.campo("email").texto}
+                                   value={form.campo("email").valor}
                                    onChange={(e) => {
-                                       form.campo("email").consome(e);
+                                       form.campo("email").valor = e.target.value;
                                        this.setState({form});
                                    }}/>
                             <span
@@ -43,9 +43,9 @@ class TelaAutenticacao extends React.Component<PropsAutenticador, _Estado> {
                             <input className="TelaAutenticacao-caixaTexto"
                                    type="text"
                                    placeholder="insira sua senha"
-                                   value={form.campo("senha").texto}
+                                   value={form.campo("senha").valor}
                                    onChange={(e) => {
-                                       form.campo("senha").consome(e);
+                                       form.campo("senha").valor = e.target.value;
                                        this.setState({form});
                                    }}/>
                             <span
