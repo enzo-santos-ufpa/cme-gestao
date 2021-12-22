@@ -25,12 +25,13 @@ type Escola = {
     tipo: TipoEscola,
     modalidadesEnsino: ModalidadeEnsino[],
     convenioSemec?: ConvenioSEMEC,
-    filiais: Escola[],
+    filiais: Filial[],
+    pendencias: DocumentoCadastro[],
 }
 
-export type EscolaBase = Omit<Escola, "filiais">;
+export type EscolaBase = Omit<Escola, "filiais" | "pendencias">;
 
-export type EscolaAutorizada = EscolaBase & { processoAtual: Processo };
+export type EscolaAutorizada = EscolaBase & { processoAtual?: Processo };
 
 export type DadosCadastro = { dataInsercao: Date }
 export type EscolaPendente = EscolaBase & { cadastro: DadosCadastro };
@@ -39,28 +40,14 @@ export type Filial =
     Pick<EscolaBase, "nome" | "sigla" | "dataCriacao" | "codigoInep" | "endereco" | "cep" | "email" | "telefone" | "modalidadesEnsino">
     & { responsavel: Servidor };
 
-type SetorEscola = "Pública" | "Privada";
-export type TipoEscola = {
-    setor: SetorEscola,
-    sigla: string,
-}
-
 export namespace constantes {
+    export const setoresEscola = ["Pública", "Privada"] as const;
     export const distritos = ["DABEL", "DABEN", "DAGUA", "DAICO", "DAOUT", "DAMOS"] as const;
-
-    type SiglasEscola = { setor: SetorEscola, siglas: string[] };
     export const tiposEscola: SiglasEscola[] = [
         {setor: "Pública", siglas: ["EMEIF", "EMEF", "EMEI", "UEI"]},
         {setor: "Privada", siglas: ["OSC", "Comunitária", "Confessional", "Privada"]},
     ];
-
-    export function isDistrito(value: string): value is DistritoAdministrativo {
-        return distritos.includes(value as any);
-    }
-
     export const etapasEnsino = ["Educação infantil", "Educação fundamental", "Educação fundamental (EJA)"] as const;
-    export type EtapaEnsino = typeof etapasEnsino[number];
-    type LegendaEtapaEnsino = { titulo: EtapaEnsino, subtitulo: string, modalidades: string[] };
     export const modalidadesEnsino: LegendaEtapaEnsino[] = [
         {
             titulo: "Educação infantil",
@@ -78,10 +65,54 @@ export namespace constantes {
             modalidades: ["CF I (1º, 2º e 3º ano)", "CF II (4º e 5º ano)", "CF III (6º e 7º ano)", "CF IV (8º e 9º ano)"],
         },
     ];
+    export const documentosCadastro = [
+        'Requerimento',
+        'Regimento escolar',
+        'Projeto pedagógico',
+        'Quadro demonstrativo',
+        'Cronograma de implantação',
+        'Detalhamento de implantação e desenvolvimento',
+        'Declaração de equipamentos',
+        'Alvará de funcionamento',
+        'Laudo da vigilância sanitária',
+        'Laudo do corpo de bombeiros',
+        'Projeto com promoção e acessibilidade',
+        'Relatório detalhado das condições de oferta dos cursos',
+        'Comprovante de entrega de censo',
+        'Escolas anexas no processo da escola matriz',
+        'Relação dos alunos',
+        'Plano de cursos',
+        'Termo de convênio para prática profissional',
+        'Requerimento dirigido à presidência do CME',
+        'Comprovante dos atos constitutivos',
+        'Comprovante de inscrição',
+        'Comprovante de inscrição no cadastro de contribuição municipal',
+        'Certidões de regularidades fiscais',
+        'Certidões de regularidades FGTS',
+        'Demonstração de patrimônio',
+        'Biblioteca',
+        'Acessibilidade',
+        'Laboratório de informática',
+        'Sala de recursos multifuncionais',
+        'Área esportiva',
+        'Brinquedoteca',
+    ] as const;
 }
 
+export function isDistrito(value: string): value is DistritoAdministrativo {
+    return constantes.distritos.includes(value as any);
+}
+
+type SiglasEscola = { setor: SetorEscola, siglas: string[] };
+
+export type EtapaEnsino = typeof constantes.etapasEnsino[number];
+type LegendaEtapaEnsino = { titulo: EtapaEnsino, subtitulo: string, modalidades: string[] };
+
+export type SetorEscola = typeof constantes.setoresEscola[number];
+export type TipoEscola = { setor: SetorEscola, sigla: string };
+export type DocumentoCadastro = typeof constantes.documentosCadastro[number];
 export type DistritoAdministrativo = typeof constantes.distritos[number];
-export type ModalidadeEnsino = { etapa: constantes.EtapaEnsino, nome: string };
+export type ModalidadeEnsino = { etapa: EtapaEnsino, nome: string };
 export type Servidor = {
     nome: string,
     telefone: string,
@@ -237,11 +268,11 @@ export namespace encoding {
         decode(value: FlatEncoded<EscolaAutorizada>): EscolaAutorizada {
             return {
                 ...this.encoder.decode(value),
-                processoAtual: new Processo({
-                    nome: value["processoAtual.nome"],
-                    resolucao: value["processoAtual.resolucao"],
-                    inicio: new Date(Date.parse(value["processoAtual.inicio"])),
-                    duracao: parseInt(value["processoAtual.duracao"]),
+                processoAtual: value["processoAtual.nome"] == null ? undefined : new Processo({
+                    nome: value["processoAtual.nome"]!,
+                    resolucao: value["processoAtual.resolucao"]!,
+                    inicio: new Date(Date.parse(value["processoAtual.inicio"]!)),
+                    duracao: parseInt(value["processoAtual.duracao"]!),
                 }),
             };
         }
