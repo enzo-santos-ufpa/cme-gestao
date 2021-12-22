@@ -3,7 +3,7 @@ import './TelaCadastroEscolas.css';
 import '../common/Tela.css';
 import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
-import {constantes, encoding, EscolaBase} from "../../models/Escola";
+import {constantes, encoding, EscolaBase, isDistrito, ModalidadeEnsino} from "../../models/Escola";
 import Validador, {Validadores} from "../../models/Validador";
 import {random} from "../../lib/utils";
 import {Flatten} from "../../models/tipos";
@@ -15,7 +15,7 @@ type FormularioCadastro = Forms.Formulario<keyof Flatten<EscolaBase>>;
 const nomeAbas = ["Identificação", "Ficha técnica", "Filiais", "Documentos"] as const;
 type NomeAba = typeof nomeAbas[number];
 
-type Estado = { form: FormularioCadastro, abaAtual: NomeAba };
+type Estado = { form: FormularioCadastro, abaAtual: NomeAba, convenioVisivel: boolean };
 
 type PropsCampoTextoCadastro = Omit<PropsCampoTexto, "estilo"> & { flex?: number };
 
@@ -33,7 +33,7 @@ class CampoTextoCadastro extends React.Component<PropsCampoTextoCadastro, any> {
     }
 }
 
-class TelaCadastroEscola extends React.Component<{}, Estado> {
+export default class TelaCadastroEscola extends React.Component<{}, Estado> {
     state: Estado
 
     constructor(props: {}) {
@@ -41,163 +41,167 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
 
         this.state = {
             form: new Forms.Formulario({
-                "nome": new Forms.Campo({
+                "nome": new Forms.CampoTexto({
                     nome: "Nome da instituição",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "sigla": new Forms.Campo({
+                "sigla": new Forms.CampoTexto({
                     nome: "Sigla",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "cnpj": new Forms.Campo({
+                "cnpj": new Forms.CampoTexto({
                     nome: "CNPJ",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()).use(Validadores.cnpj()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()).use(Validadores.cnpj()),
                 }),
-                "dataCriacao": new Forms.Campo({
+                "dataCriacao": new Forms.CampoTexto({
                     nome: "Data de fundação",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()).use(Validadores.date()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()).use(Validadores.date()),
                 }),
-                "codigoInep": new Forms.Campo({
+                "codigoInep": new Forms.CampoTexto({
                     nome: "Código INEP",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()).use((texto) => !texto.match(/^\d{8}$/) ? "O código INEP deve estar no formato XXXXXXXX." : undefined),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()).use((texto) => !texto.match(/^\d{8}$/) ? "O código INEP deve estar no formato XXXXXXXX." : undefined),
                 }),
-                "nomeEntidadeMantenedora": new Forms.Campo({
+                "nomeEntidadeMantenedora": new Forms.CampoTexto({
                     nome: "Nome da entidade mantenedora",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "cnpjConselho": new Forms.Campo({
+                "cnpjConselho": new Forms.CampoTexto({
                     nome: "CNPJ/Conselho",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()).use(Validadores.cnpj()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()).use(Validadores.cnpj()),
                 }),
-                "vigenciaConselho": new Forms.Campo({
+                "vigenciaConselho": new Forms.CampoTexto({
                     nome: "Vigência/Conselho",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "distrito": new Forms.Campo({
+                "distrito": new Forms.CampoTexto({
                     nome: "Distrito",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()).use((texto) => {
-                        if (!constantes.isDistrito(texto))
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()).use((texto) => {
+                        if (!isDistrito(texto))
                             return `Apenas os seguintes valores são permitidos: ${constantes.distritos.join(", ")}`;
                     }),
                 }),
-                "cidade": new Forms.Campo({
+                "cidade": new Forms.CampoTexto({
                     nome: "Cidade",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "uf": new Forms.Campo({
+                "uf": new Forms.CampoTexto({
                     nome: "UF",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "bairro": new Forms.Campo({
+                "bairro": new Forms.CampoTexto({
                     nome: "Bairro",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "cep": new Forms.Campo({
+                "cep": new Forms.CampoTexto({
                     nome: "CEP",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()).use(Validadores.cep()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()).use(Validadores.cep()),
                 }),
-                "endereco": new Forms.Campo({
+                "endereco": new Forms.CampoTexto({
                     nome: "Endereço",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "email": new Forms.Campo({
+                "email": new Forms.CampoTexto({
                     nome: "E-mail institucional",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "telefone": new Forms.Campo({
+                "telefone": new Forms.CampoTexto({
                     nome: "Telefone",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "diretor.nome": new Forms.Campo({
+                "diretor.nome": new Forms.CampoTexto({
                     nome: "Nome/Diretor",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "diretor.email": new Forms.Campo({
+                "diretor.email": new Forms.CampoTexto({
                     nome: "E-mail institucional",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "diretor.telefone": new Forms.Campo({
+                "diretor.telefone": new Forms.CampoTexto({
                     nome: "Telefone",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "secretario.nome": new Forms.Campo({
+                "secretario.nome": new Forms.CampoTexto({
                     nome: "Nome/Secretário",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "secretario.email": new Forms.Campo({
+                "secretario.email": new Forms.CampoTexto({
                     nome: "E-mail institucional",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "secretario.telefone": new Forms.Campo({
+                "secretario.telefone": new Forms.CampoTexto({
                     nome: "Telefone",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "coordenador.nome": new Forms.Campo({
+                "coordenador.nome": new Forms.CampoTexto({
                     nome: "Nome/Coordenador",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "coordenador.email": new Forms.Campo({
+                "coordenador.email": new Forms.CampoTexto({
                     nome: "E-mail institucional",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "coordenador.telefone": new Forms.Campo({
+                "coordenador.telefone": new Forms.CampoTexto({
                     nome: "Telefone",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "tipo.setor": new Forms.Campo({
+                "tipo.setor": new Forms.CampoTexto({
                     nome: "Setor",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "tipo.sigla": new Forms.Campo({
+                "tipo.sigla": new Forms.CampoTexto({
                     nome: "Sigla",
-                    texto: "",
-                    validador: new Validador().use(Validadores.required()),
+                    valor: "",
+                    validador: Validador.texto().use(Validadores.required()),
                 }),
-                "convenioSemec.vigencia": new Forms.Campo({
+                "convenioSemec.vigencia": new Forms.CampoTexto({
                     nome: "Vigência",
-                    texto: "",
-                    validador: new Validador(),
+                    valor: "",
+                    validador: Validador.texto(),
                 }),
-                "convenioSemec.objeto": new Forms.Campo({
+                "convenioSemec.objeto": new Forms.CampoTexto({
                     nome: "Objeto",
-                    texto: "",
-                    validador: new Validador(),
+                    valor: "",
+                    validador: Validador.texto(),
                 }),
-                "convenioSemec.numConvenio": new Forms.Campo({
+                "convenioSemec.numConvenio": new Forms.CampoTexto({
                     nome: "Nº convênio",
-                    texto: "",
-                    validador: new Validador(),
+                    valor: "",
+                    validador: Validador.texto(),
                 }),
-                // TODO support array
-                "modalidadesEnsino": new Forms.Campo(),
+                "modalidadesEnsino": new Forms.CampoArray<ModalidadeEnsino>({
+                    nome: "Modalidades de ensino",
+                    valor: [],
+                    validador: new Validador<ModalidadeEnsino[]>().use(Validadores.min1()),
+                }),
             }),
             abaAtual: "Ficha técnica",
+            convenioVisivel: true,
         };
         this.onSubmit = this.onSubmit.bind(this);
     }
@@ -225,206 +229,119 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
         this.setState(this.state);
     }
 
-    private renderAbaFichaTecnica() {
-        const form = this.state.form;
-        return <div className="TelaCadastroEscolas-formulario">
-            <div className="TelaCadastroEscolas-linhaFormulario">
-                <p className="TelaCadastroEscolas-nomeCampo">Tipo</p>
-                <CampoUnicaEscolha campo={form.campo("tipo.setor")}
-                                   onChanged={() => {
-                                       const setor = form.campo("tipo.setor").texto;
-                                       if (setor) form.campo("tipo.sigla").texto = "";
-                                       this.updateSelf();
-                                   }}
-                                   estilo={{
-                                       campo: {className: "TelaCadastroEscolas-nomeCampo"},
-                                       erro: {className: "TelaCadastroEscolas-erroCampo"}
-                                   }}
-                                   nome="setor"
-                                   opcoes={constantes.tiposEscola.map(tipo => tipo.setor)}/>
-                <CampoUnicaEscolha campo={form.campo("tipo.sigla")}
-                                   onChanged={() => {
-                                       const sigla = form.campo("tipo.sigla").texto;
-                                       if (sigla) {
-                                           form.campo("tipo.setor").texto = constantes.tiposEscola
-                                               .find(tipo => tipo.siglas.includes(sigla))!.setor;
-                                       }
-                                       this.updateSelf();
-                                   }}
-                                   estilo={{
-                                       campo: {className: "TelaCadastroEscolas-nomeCampo"},
-                                       erro: {className: "TelaCadastroEscolas-erroCampo"}
-                                   }}
-                                   nome="sigla"
-                                   opcoes={constantes.tiposEscola.flatMap(tipo => {
-                                       const setor = form.campo("tipo.setor").texto;
-                                       if (!setor) return tipo.siglas;
-                                       if (setor === tipo.setor) return tipo.siglas;
-                                       return [];
-                                   })}/>
-            </div>
-            <p>Convênio com a SEMEC</p>
-            <div className="TelaCadastroEscolas-linhaFormulario">
-                <p>Possui?</p>
-                <label className="row">
-                    <input type="radio" name="convenioSemec" value="yes"/>
-                    <p>Sim</p>
-                </label>
-                <label className="row">
-                    <input type="radio" name="convenioSemec" value="no"/>
-                    <p>Não</p>
-                </label>
-            </div>
-            <div className="TelaCadastroEscolas-linhaFormulario">
-                <CampoTextoCadastro flex={4}
-                                    campo={form.campo("convenioSemec.numConvenio")}
-                                    onChanged={() => this.updateSelf()}/>
-                <CampoTextoCadastro flex={4}
-                                    campo={form.campo("convenioSemec.objeto")}
-                                    onChanged={() => this.updateSelf()}/>
-                <CampoTextoCadastro flex={4}
-                                    campo={form.campo("convenioSemec.vigencia")}
-                                    onChanged={() => this.updateSelf()}/>
-
-            </div>
-            <p>Etapas/modalidades da educação básica ofertada</p>
-            <div className="TelaCadastroEscolas-linhaFormulario">
-                <div>
-                    {constantes.modalidadesEnsino.map(item => {
-                        return <div>
-                            <p>{item.titulo}</p>
-                            <p>{item.subtitulo}</p>
-                            <div className="row">
-                                {item.modalidades.map(nome => {
-                                    return <label className="row">
-                                        <input type="checkbox"/>
-                                        <p>{nome}</p>
-                                    </label>
-                                })}
-                            </div>
-                        </div>;
-                    })}
-                </div>
-            </div>
-        </div>
-    }
-
     private renderAbaIdentificacao() {
         const form = this.state.form;
         return <form onSubmit={this.onSubmit}>
             <div className="TelaCadastroEscolas-formulario">
                 <p>Dados</p>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={6}
-                                        campo={form.campo("nome")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={3}
-                                        campo={form.campo("sigla")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={3}
-                                        mask={"99.999.999/9999-99"}
-                                        campo={form.campo("cnpj")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={3}
-                                        mask={"99/99/9999"}
-                                        campo={form.campo("dataCriacao")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={3}
-                                        mask={"99999999"}
-                                        campo={form.campo("codigoInep")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={6}
-                                        campo={form.campo("nomeEntidadeMantenedora")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={6}
-                                        mask={"99.999.999/9999-99"}
-                                        campo={form.campo("cnpjConselho")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={6}
-                                        campo={form.campo("vigenciaConselho")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
+                <GrupoCampoTexto
+                    form={form}
+                    grupos={[
+                        {
+                            formato: "111111222333",
+                            campos: {
+                                nome: {},
+                                sigla: {},
+                                cnpj: {mask: "99.999.999/9999-99"},
+                            },
+                        },
+                        {
+                            formato: "111222333333",
+                            campos: {
+                                dataCriacao: {mask: "99/99/9999"},
+                                codigoInep: {mask: "99999999"},
+                                nomeEntidadeMantenedora: {},
+                            },
+                        },
+                        {
+                            formato: "111111222222",
+                            campos: {
+                                cnpjConselho: {mask: "99.999.999/9999-99"},
+                                vigenciaConselho: {},
+                            },
+                        },
+                    ]}
+                    onChanged={() => this.updateSelf()}/>
                 <p>Localização</p>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={2}
-                                        campo={form.campo("distrito")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={3}
-                                        campo={form.campo("cidade")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={1}
-                                        campo={form.campo("uf")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={4}
-                                        campo={form.campo("bairro")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={2}
-                                        mask={"999.99-999"}
-                                        campo={form.campo("cep")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={12}
-                                        campo={form.campo("endereco")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
+                <GrupoCampoTexto
+                    form={form}
+                    grupos={[
+                        {
+                            formato: "112223444455",
+                            campos: {
+                                distrito: {},
+                                cidade: {},
+                                uf: {mask: "aa"},
+                                bairro: {},
+                                cep: {mask: "999.99-999"},
+                            },
+                        },
+                        {
+                            formato: "111111111111",
+                            campos: {
+                                endereco: {},
+                            },
+                        },
+                    ]}
+                    onChanged={() => this.updateSelf()}/>
                 <p>Contato</p>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={6}
-                                        campo={form.campo("email")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={6}
-                                        mask={"(99) 99999-9999"}
-                                        campo={form.campo("telefone")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
+                <GrupoCampoTexto
+                    form={form}
+                    grupos={[
+                        {
+                            formato: "111111222222",
+                            campos: {
+                                email: {},
+                                telefone: {mask: "(99) 99999-9999"}
+                            },
+                        },
+                    ]}
+                    onChanged={() => this.updateSelf()}/>
                 <p>Dados (servidores)</p>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={12}
-                                        campo={form.campo("diretor.nome")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={6}
-                                        campo={form.campo("diretor.email")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={6}
-                                        mask={"(99) 99999-9999"}
-                                        campo={form.campo("diretor.telefone")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={12}
-                                        campo={form.campo("secretario.nome")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={6}
-                                        campo={form.campo("secretario.email")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={6}
-                                        mask={"(99) 99999-9999"}
-                                        campo={form.campo("secretario.telefone")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={12}
-                                        campo={form.campo("coordenador.nome")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
-                <div className="TelaCadastroEscolas-linhaFormulario">
-                    <CampoTextoCadastro flex={6}
-                                        campo={form.campo("coordenador.email")}
-                                        onChanged={() => this.updateSelf()}/>
-                    <CampoTextoCadastro flex={6}
-                                        mask={"(99) 99999-9999"}
-                                        campo={form.campo("coordenador.telefone")}
-                                        onChanged={() => this.updateSelf()}/>
-                </div>
+                <GrupoCampoTexto
+                    form={form}
+                    grupos={[
+                        {
+                            formato: "111111111111",
+                            campos: {
+                                "diretor.nome": {},
+                            },
+                        },
+                        {
+                            formato: "111111222222",
+                            campos: {
+                                "diretor.email": {},
+                                "diretor.telefone": {mask: "(99) 99999-9999"},
+                            },
+                        },
+                        {
+                            formato: "111111111111",
+                            campos: {
+                                "secretario.nome": {},
+                            },
+                        },
+                        {
+                            formato: "111111222222",
+                            campos: {
+                                "secretario.email": {},
+                                "secretario.telefone": {mask: "(99) 99999-9999"},
+                            },
+                        },
+                        {
+                            formato: "111111111111",
+                            campos: {
+                                "coordenador.nome": {},
+                            },
+                        },
+                        {
+                            formato: "111111222222",
+                            campos: {
+                                "coordenador.email": {},
+                                "coordenador.telefone": {mask: "(99) 99999-9999"},
+                            },
+                        },
+                    ]}
+                    onChanged={() => this.updateSelf()}/>
             </div>
             <input className="TelaEscolas-botaoControle" type="submit" value="CADASTRAR"/>
             <button type="button" onClick={(_) => {
@@ -436,39 +353,151 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
                     return format.split("").map((c) => c === "#" ? random.word({size: 1}) : c).join("");
                 }
 
-                form.campo("nome").texto = wsrandomf("##########");
-                form.campo("sigla").texto = wsrandomf("#####");
-                form.campo("cnpj").texto = dsrandomf("##.###.###/####-##");
-                form.campo("dataCriacao").texto = new Date(random.range(1609459200000, 1640908800000)).toLocaleDateString();
-                form.campo("codigoInep").texto = dsrandomf("########");
-                form.campo("nomeEntidadeMantenedora").texto = wsrandomf("##########");
-                form.campo("cnpjConselho").texto = dsrandomf("##.###.###/####-##");
-                form.campo("vigenciaConselho").texto = wsrandomf("##########");
-                form.campo("distrito").texto = random.choice(["DABEL", "DABEN", "DAOUT"]);
-                form.campo("cidade").texto = random.choice(["Belém", "Ananindeua", "Marituba"]);
-                form.campo("uf").texto = "PA";
-                form.campo("bairro").texto = wsrandomf("##########");
-                form.campo("cep").texto = dsrandomf("###.##-###");
-                form.campo("endereco").texto = wsrandomf("###################################");
-                form.campo("email").texto = wsrandomf("######@gmail.com");
-                form.campo("telefone").texto = dsrandomf("(91) 98###-####");
-                form.campo("diretor.telefone").texto = dsrandomf("(91) 98###-####");
-                form.campo("secretario.telefone").texto = dsrandomf("(91) 98###-####");
-                form.campo("coordenador.telefone").texto = dsrandomf("(91) 98###-####");
-                form.campo("diretor.nome").texto = wsrandomf("##########");
-                form.campo("secretario.nome").texto = wsrandomf("##########");
-                form.campo("coordenador.nome").texto = wsrandomf("##########");
-                form.campo("diretor.email").texto = wsrandomf("######@gmail.com");
-                form.campo("secretario.email").texto = wsrandomf("######@gmail.com");
-                form.campo("coordenador.email").texto = wsrandomf("######@gmail.com");
+                form.campo("nome").valor = wsrandomf("##########");
+                form.campo("sigla").valor = wsrandomf("#####");
+                form.campo("cnpj").valor = dsrandomf("##.###.###/####-##");
+                form.campo("dataCriacao").valor = new Date(random.range(1609459200000, 1640908800000)).toLocaleDateString();
+                form.campo("codigoInep").valor = dsrandomf("########");
+                form.campo("nomeEntidadeMantenedora").valor = wsrandomf("##########");
+                form.campo("cnpjConselho").valor = dsrandomf("##.###.###/####-##");
+                form.campo("vigenciaConselho").valor = wsrandomf("##########");
+                form.campo("distrito").valor = random.choice(constantes.distritos);
+                form.campo("cidade").valor = random.choice(["Belém", "Ananindeua", "Marituba"]);
+                form.campo("uf").valor = "PA";
+                form.campo("bairro").valor = wsrandomf("##########");
+                form.campo("cep").valor = dsrandomf("###.##-###");
+                form.campo("endereco").valor = wsrandomf("###################################");
+                form.campo("email").valor = wsrandomf("######@gmail.com");
+                form.campo("telefone").valor = dsrandomf("(91) 98###-####");
+                form.campo("diretor.telefone").valor = dsrandomf("(91) 98###-####");
+                form.campo("secretario.telefone").valor = dsrandomf("(91) 98###-####");
+                form.campo("coordenador.telefone").valor = dsrandomf("(91) 98###-####");
+                form.campo("diretor.nome").valor = wsrandomf("##########");
+                form.campo("secretario.nome").valor = wsrandomf("##########");
+                form.campo("coordenador.nome").valor = wsrandomf("##########");
+                form.campo("diretor.email").valor = wsrandomf("######@gmail.com");
+                form.campo("secretario.email").valor = wsrandomf("######@gmail.com");
+                form.campo("coordenador.email").valor = wsrandomf("######@gmail.com");
                 const tipo = random.choice(constantes.tiposEscola);
-                form.campo("tipo.setor").texto = tipo.setor;
-                form.campo("tipo.sigla").texto = random.choice(tipo.siglas);
+                form.campo("tipo.setor").valor = tipo.setor;
+                form.campo("tipo.sigla").valor = random.choice(tipo.siglas);
+
+                form.campo<ModalidadeEnsino[]>("modalidadesEnsino").valor = [];
                 this.updateSelf();
             }}>
                 Preencher formulário (será removido)
             </button>
         </form>;
+    }
+
+    private renderAbaFichaTecnica() {
+        const form = this.state.form;
+        console.log(form.campo("modalidadesEnsino").valor);
+        return <div className="TelaCadastroEscolas-formulario">
+            <div className="TelaCadastroEscolas-linhaFormulario">
+                <p className="TelaCadastroEscolas-nomeCampo">Tipo</p>
+                <CampoUnicaEscolha campo={form.campo("tipo.setor")}
+                                   onChanged={() => {
+                                       const setor = form.campo("tipo.setor").valor;
+                                       if (setor) form.campo("tipo.sigla").valor = "";
+                                       this.updateSelf();
+                                   }}
+                                   estilo={{
+                                       campo: {className: "TelaCadastroEscolas-nomeCampo"},
+                                       erro: {className: "TelaCadastroEscolas-erroCampo"}
+                                   }}
+                                   nome="setor"
+                                   opcoes={constantes.tiposEscola.map(tipo => tipo.setor)}/>
+                <CampoUnicaEscolha campo={form.campo("tipo.sigla")}
+                                   onChanged={() => {
+                                       const sigla = form.campo("tipo.sigla").valor;
+                                       if (sigla) {
+                                           form.campo("tipo.setor").valor = constantes.tiposEscola
+                                               .find(tipo => tipo.siglas.includes(sigla))!.setor;
+                                       }
+                                       this.updateSelf();
+                                   }}
+                                   estilo={{
+                                       campo: {className: "TelaCadastroEscolas-nomeCampo"},
+                                       erro: {className: "TelaCadastroEscolas-erroCampo"}
+                                   }}
+                                   nome="sigla"
+                                   opcoes={constantes.tiposEscola.flatMap(tipo => {
+                                       const setor = form.campo("tipo.setor").valor;
+                                       if (!setor) return tipo.siglas;
+                                       if (setor === tipo.setor) return tipo.siglas;
+                                       return [];
+                                   })}/>
+            </div>
+            <p>Convênio com a SEMEC</p>
+            <div className="TelaCadastroEscolas-linhaFormulario">
+                <p className="TelaCadastroEscolas-nomeCampo">Possui?</p>
+                <label className="row">
+                    <input
+                        type="radio"
+                        name="convenioSemec"
+                        checked={this.state.convenioVisivel}
+                        onChange={() => this.setState({...this.state, convenioVisivel: true})}/>
+                    <p>Sim</p>
+                </label>
+                <label className="row">
+                    <input
+                        type="radio"
+                        name="convenioSemec"
+                        checked={!this.state.convenioVisivel}
+                        onChange={() => this.setState({...this.state, convenioVisivel: false})}/>
+                    <p>Não</p>
+                </label>
+            </div>
+            {(this.state.convenioVisivel
+                ? <div className="TelaCadastroEscolas-linhaFormulario">
+                    <CampoTextoCadastro flex={4}
+                                        campo={form.campo("convenioSemec.numConvenio")}
+                                        onChanged={() => this.updateSelf()}/>
+                    <CampoTextoCadastro flex={4}
+                                        campo={form.campo("convenioSemec.objeto")}
+                                        onChanged={() => this.updateSelf()}/>
+                    <CampoTextoCadastro flex={4}
+                                        campo={form.campo("convenioSemec.vigencia")}
+                                        onChanged={() => this.updateSelf()}/>
+
+                </div>
+                : null)}
+            <p>Etapas/modalidades da educação básica ofertada</p>
+            <div className="TelaCadastroEscolas-linhaFormulario">
+                <div>
+                    {constantes.modalidadesEnsino.map(item => {
+                        return <div>
+                            <p className="TelaCadastroEscolas-nomeCampo">{item.titulo}</p>
+                            <p className="TelaCadastroEscolas-nomeCampo" style={{fontSize: 13}}>{item.subtitulo}</p>
+                            <div className="row" style={{paddingTop: 15, paddingBottom: 15}}>
+                                {item.modalidades.map(nome => {
+                                    const campo = form.campo<ModalidadeEnsino[]>("modalidadesEnsino");
+                                    const modalidade: ModalidadeEnsino = {etapa: item.titulo, nome: nome};
+                                    const index = campo.valor.findIndex(valor => valor.nome === modalidade.nome && valor.etapa === modalidade.etapa);
+                                    const isChecked = index >= 0;
+                                    return <label className="row" style={{paddingRight: 15}}>
+                                        <input
+                                            className="TelaCadastroEscolas-caixaSelecao"
+                                            type="checkbox"
+                                            checked={isChecked}
+                                            onChange={() => {
+                                                if (isChecked) {
+                                                    campo.valor.splice(index, 1);
+                                                } else {
+                                                    campo.valor.push(modalidade);
+                                                }
+                                                this.updateSelf();
+                                            }}/>
+                                        <p>{nome}</p>
+                                    </label>;
+                                })}
+                            </div>
+                        </div>;
+                    })}
+                </div>
+            </div>
+        </div>
     }
 
     private renderAba(): JSX.Element | undefined {
@@ -493,4 +522,29 @@ class TelaCadastroEscola extends React.Component<{}, Estado> {
     }
 }
 
-export default TelaCadastroEscola;
+type PropsGrupoCampoTexto<T extends string> = {
+    form: Forms.Formulario<T>,
+    grupos: { formato: string, campos: Partial<Record<T, { mask?: string }>> }[],
+    onChanged: () => void,
+};
+
+class GrupoCampoTexto<T extends string> extends React.Component<PropsGrupoCampoTexto<T>, {}> {
+    render() {
+        const regex = /((.)\2*)/gm;
+        return <div>
+            {this.props.grupos.map(grupo => {
+                const campos = Object.entries(grupo.campos) as [T, { mask?: string }][];
+                return <div className="TelaCadastroEscolas-linhaFormulario">
+                    {grupo.formato.match(regex)?.map((match, i) => {
+                        const flex = match.length;
+                        const [chave, valor] = campos[i];
+                        return <CampoTextoCadastro flex={flex}
+                                                   mask={valor.mask}
+                                                   campo={this.props.form.campo(chave)}
+                                                   onChanged={() => this.props.onChanged()}/>;
+                    })}
+                </div>
+            })}
+        </div>
+    }
+}
