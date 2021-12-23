@@ -46,6 +46,19 @@ export namespace random {
         return value[range(0, value.length - 1)];
     }
 
+    export function sample<T>(value: Readonly<T[]>, n?: number): T[] {
+        const size = n == null ? random.range(1, value.length - 1) : n;
+        if (size > value.length) throw Error(`n (=${n}) should not be greater than the size of value (=${value.length})`)
+        const data = [...value];
+        if (size === data.length) return data;
+        return new Array(size).fill(undefined).map(_ => {
+            const i = random.range(0, data.length - 1);
+            const element = data[i];
+            data.splice(i, 1);
+            return element;
+        });
+    }
+
     export function stringchoice(params: { alphabet: string, size: number }): string {
         return new Array(params.size)
             .fill(undefined)
@@ -67,6 +80,10 @@ export namespace random {
             }
         })();
         return stringchoice({alphabet: chars, size: params.size});
+    }
+
+    export function boolean(): boolean {
+        return Math.random() < .5;
     }
 
     export function decimal(params: { size: number }): string {

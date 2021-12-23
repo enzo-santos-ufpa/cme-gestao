@@ -3,7 +3,7 @@ import './TelaCadastroEscolas.css';
 import '../common/Tela.css';
 import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
-import {constantes, encoding, EscolaBase, isDistrito, ModalidadeEnsino} from "../../models/Escola";
+import {constantes, encoding, EscolaBase, EtapaEnsino, isDistrito, ModalidadeEnsino} from "../../models/Escola";
 import Validador, {Validadores} from "../../models/Validador";
 import {random} from "../../lib/utils";
 import {Flatten} from "../../models/tipos";
@@ -382,7 +382,16 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
                 form.campo("tipo.setor").valor = tipo.setor;
                 form.campo("tipo.sigla").valor = random.choice(tipo.siglas);
 
-                form.campo<ModalidadeEnsino[]>("modalidadesEnsino").valor = [];
+                form.campo("convenioSemec.numConvenio").valor = random.decimal({size: 3});
+                form.campo("convenioSemec.objeto").valor = random.word({size: 10});
+                form.campo("convenioSemec.vigencia").valor = new Date(random.range(1609459200000, 1640908800000)).toLocaleDateString();
+
+                const etapas: EtapaEnsino[] = random.sample(constantes.etapasEnsino);
+                form.campo<ModalidadeEnsino[]>("modalidadesEnsino").valor = constantes.modalidadesEnsino
+                    .filter(legenda => etapas.includes(legenda.titulo))
+                    .flatMap(legenda => random.sample(legenda.modalidades)
+                        .map(nome => ({etapa: legenda.titulo, nome: nome})));
+
                 this.updateSelf();
             }}>
                 Preencher formulário (será removido)
@@ -463,7 +472,7 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
 
                 </div>
                 : null)}
-            <p>Etapas/modalidades da educação básica ofertada</p>
+            <p>Etapas/modalidades ofertadas</p>
             <div className="TelaCadastroEscolas-linhaFormulario">
                 <div>
                     {constantes.modalidadesEnsino.map(item => {
