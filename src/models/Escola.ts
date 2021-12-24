@@ -4,7 +4,6 @@ export type RespostaCadastro = "accept" | "refuse";
 
 type Escola = {
     nome: string,
-    sigla: string,
     dataCriacao: Date,
     codigoInep: string,
     cnpj: string,
@@ -29,7 +28,7 @@ type Escola = {
     pendencias: DocumentoCadastro[],
 }
 
-export type EscolaBase = Omit<Escola, "filiais" | "pendencias">;
+export type EscolaBase = Omit<Escola, "pendencias">;
 
 export type EscolaAutorizada = EscolaBase & { processoAtual?: Processo };
 
@@ -37,7 +36,7 @@ export type DadosCadastro = { dataInsercao: Date }
 export type EscolaPendente = EscolaBase & { cadastro: DadosCadastro };
 
 export type Filial =
-    Pick<EscolaBase, "nome" | "sigla" | "dataCriacao" | "codigoInep" | "endereco" | "cep" | "email" | "telefone" | "modalidadesEnsino">
+    Pick<EscolaBase, "nome" | "dataCriacao" | "codigoInep" | "endereco" | "cep" | "email" | "telefone" | "tipo" | "modalidadesEnsino">
     & { responsavel: Servidor };
 
 export namespace constantes {
@@ -171,7 +170,6 @@ export namespace encoding {
                 endereco: value.endereco,
                 distrito: value.distrito as DistritoAdministrativo,
                 telefone: value.telefone,
-                sigla: value.sigla,
                 dataCriacao: new Date(Date.parse(value.dataCriacao)),
                 vigenciaConselho: value.vigenciaConselho,
                 codigoInep: value.codigoInep,
@@ -202,6 +200,7 @@ export namespace encoding {
                     telefone: value["coordenador.telefone"],
                 },
                 modalidadesEnsino: JSON.parse(value["modalidadesEnsino"]),
+                filiais: JSON.parse(value["filiais"]),
             };
         }
 
@@ -221,6 +220,7 @@ export namespace encoding {
                 "coordenador.nome": value.coordenador.nome,
                 "tipo.setor": value.tipo.setor,
                 "tipo.sigla": value.tipo.sigla,
+                filiais: JSON.stringify(value.filiais),
                 modalidadesEnsino: JSON.stringify(value.modalidadesEnsino),
                 bairro: value.bairro,
                 cep: value.cep,
@@ -234,7 +234,6 @@ export namespace encoding {
                 endereco: value.endereco,
                 nome: value.nome,
                 nomeEntidadeMantenedora: value.nomeEntidadeMantenedora,
-                sigla: value.sigla,
                 telefone: value.telefone,
                 uf: value.uf,
                 vigenciaConselho: value.vigenciaConselho,

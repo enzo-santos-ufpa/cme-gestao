@@ -48,7 +48,6 @@ abstract class _TelaEscola<T extends EscolaBase> extends React.Component<Props, 
                             <p className="TelaEscola-subtitulo">Dados</p>
                             <div className="row">
                                 <LinhaChaveValor flex={4} chave="Nome" valor={escola.nome}/>
-                                <LinhaChaveValor flex={2} chave="Sigla" valor={escola.sigla}/>
                                 <LinhaChaveValor flex={6} chave="CNPJ" valor={escola.cnpj}/>
                             </div>
                             <div className="row">

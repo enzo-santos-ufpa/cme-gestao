@@ -44,6 +44,13 @@ namespace Forms {
         }
     }
 
+    export class CampoForm<T extends string> extends  Campo<Forms.Formulario<T>> {
+        json(): string {
+            return JSON.stringify(this.valor.json());
+        }
+
+    }
+
     export class CampoJSON<T> extends Campo<T> {
         json(): string {
             return JSON.stringify(this.valor);

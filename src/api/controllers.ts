@@ -5,6 +5,7 @@ import {
     EscolaAutorizada,
     EscolaBase,
     EscolaPendente,
+    Filial,
     ModalidadeEnsino,
     Processo,
     Servidor
@@ -53,10 +54,15 @@ export namespace escolas {
         return [];
     }
 
+    async function parseFiliais(id: number): Promise<Filial[]> {
+        return [];
+    }
+
     async function parseEscolaBase(row: any): Promise<ModeloBD<EscolaBase>> {
         const id = row.id;
         const servidores = await parseServidores(id);
         const modalidades = await parseModalidadesEnsino(id);
+        const filiais = await parseFiliais(id);
         return {
             id: id,
             nome: row.nome,
@@ -69,7 +75,6 @@ export namespace escolas {
             bairro: row.bairro,
             cnpj: row.cnpj,
             distrito: row.distrito,
-            sigla: row.sigla,
             vigenciaConselho: row.vigenciaconselho,
             cnpjConselho: row.cnpjconselho,
             nomeEntidadeMantenedora: row.nomeentidademantenedora,
@@ -81,6 +86,7 @@ export namespace escolas {
             },
             ...servidores,
             modalidadesEnsino: modalidades,
+            filiais: filiais,
         };
     }
 
@@ -111,9 +117,9 @@ export namespace escolas {
             const data = encoding.escolaBase().decode(req.body as FlatEncoded<EscolaBase>);
 
             // language=SQL format=false
-            consulta = await db.positional(`SELECT Id FROM SiglaEscola WHERE Nome = $1`, [data.sigla]);
+            consulta = await db.positional(`SELECT Id FROM SiglaEscola WHERE Nome = $1`, [data.tipo.sigla]);
             if (!consulta.rows.length) {
-                return res.status(401).send({error: `Sigla inválida: ${data.sigla}`});
+                return res.status(401).send({error: `Sigla inválida: ${data.tipo.sigla}`});
             }
             const idSigla = consulta.rows.pop()["id"];
 

@@ -3,19 +3,26 @@ import './TelaCadastroEscolas.css';
 import '../common/Tela.css';
 import Forms from "../../models/form";
 import {escolas} from "../../lib/api";
-import {constantes, encoding, EscolaBase, EtapaEnsino, isDistrito, ModalidadeEnsino} from "../../models/Escola";
+import {constantes, encoding, EscolaBase, EtapaEnsino, Filial, isDistrito, ModalidadeEnsino} from "../../models/Escola";
 import Validador, {Validadores} from "../../models/Validador";
 import {random} from "../../lib/utils";
 import {Flatten} from "../../models/tipos";
 import {CampoUnicaEscolha, CampoTexto, PropsCampoTexto} from "../common/forms/Campo";
 import Aba from "../common/Aba";
 
-type FormularioCadastro = Forms.Formulario<keyof Flatten<EscolaBase>>;
+type FormularioEscola = Forms.Formulario<keyof Flatten<Omit<EscolaBase, "filiais">>>;
+
+type FormularioFilial = Forms.Formulario<keyof Flatten<Filial>>;
 
 const nomeAbas = ["Identificação", "Ficha técnica", "Filiais", "Documentos"] as const;
 type NomeAba = typeof nomeAbas[number];
 
-type Estado = { form: FormularioCadastro, abaAtual: NomeAba, convenioVisivel: boolean };
+type Estado = {
+    form: FormularioEscola,
+    filiais: { forms: FormularioFilial[], indice?: number },
+    aba: NomeAba,
+    convenioVisivel: boolean,
+};
 
 type PropsCampoTextoCadastro = Omit<PropsCampoTexto, "estilo"> & { flex?: number };
 
@@ -40,14 +47,12 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
         super(props);
 
         this.state = {
+            filiais: {
+                forms: [],
+            },
             form: new Forms.Formulario({
                 "nome": new Forms.CampoTexto({
                     nome: "Nome da instituição",
-                    valor: "",
-                    validador: Validador.texto().use(Validadores.required()),
-                }),
-                "sigla": new Forms.CampoTexto({
-                    nome: "Sigla",
                     valor: "",
                     validador: Validador.texto().use(Validadores.required()),
                 }),
@@ -200,7 +205,7 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
                     validador: new Validador<ModalidadeEnsino[]>().use(Validadores.min1()),
                 }),
             }),
-            abaAtual: "Ficha técnica",
+            aba: "Filiais",
             convenioVisivel: true,
         };
         this.onSubmit = this.onSubmit.bind(this);
@@ -215,7 +220,7 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
         } else {
             const json = form.json();
             try {
-                await escolas.criar(encoding.escolaBase().decode(json));
+                // await escolas.criar(encoding.escolaBase().decode(json));
             } catch (e) {
                 alert("Ocorreu um erro. Tente novamente mais tarde.");
                 return;
@@ -229,7 +234,7 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
         this.setState(this.state);
     }
 
-    private renderAbaIdentificacao() {
+    private renderAbaIdentificacao(): JSX.Element {
         const form = this.state.form;
         return <form onSubmit={this.onSubmit}>
             <div className="TelaCadastroEscolas-formulario">
@@ -238,10 +243,9 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
                     form={form}
                     grupos={[
                         {
-                            formato: "111111222333",
+                            formato: "111111112222",
                             campos: {
                                 nome: {},
-                                sigla: {},
                                 cnpj: {mask: "99.999.999/9999-99"},
                             },
                         },
@@ -354,7 +358,6 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
                 }
 
                 form.campo("nome").valor = wsrandomf("##########");
-                form.campo("sigla").valor = wsrandomf("#####");
                 form.campo("cnpj").valor = dsrandomf("##.###.###/####-##");
                 form.campo("dataCriacao").valor = new Date(random.range(1609459200000, 1640908800000)).toLocaleDateString();
                 form.campo("codigoInep").valor = dsrandomf("########");
@@ -399,7 +402,40 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
         </form>;
     }
 
-    private renderAbaFichaTecnica() {
+    private renderFormModalidades(campo: Forms.Campo<ModalidadeEnsino[]>): JSX.Element {
+        return <div>
+            {constantes.modalidadesEnsino.map(item => {
+                return <div>
+                    <p className="TelaCadastroEscolas-nomeCampo">{item.titulo}</p>
+                    <p className="TelaCadastroEscolas-nomeCampo" style={{fontSize: 13}}>{item.subtitulo}</p>
+                    <div className="row" style={{paddingTop: 15, paddingBottom: 15}}>
+                        {item.modalidades.map(nome => {
+                            const modalidade: ModalidadeEnsino = {etapa: item.titulo, nome: nome};
+                            const index = campo.valor.findIndex(valor => valor.nome === modalidade.nome && valor.etapa === modalidade.etapa);
+                            const isChecked = index >= 0;
+                            return <label className="row" style={{paddingRight: 15}}>
+                                <input
+                                    className="TelaCadastroEscolas-caixaSelecao"
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => {
+                                        if (isChecked) {
+                                            campo.valor.splice(index, 1);
+                                        } else {
+                                            campo.valor.push(modalidade);
+                                        }
+                                        this.updateSelf();
+                                    }}/>
+                                <p>{nome}</p>
+                            </label>;
+                        })}
+                    </div>
+                </div>;
+            })}
+        </div>;
+    }
+
+    private renderAbaFichaTecnica(): JSX.Element {
         const form = this.state.form;
         console.log(form.campo("modalidadesEnsino").valor);
         return <div className="TelaCadastroEscolas-formulario">
@@ -474,47 +510,209 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
                 : null)}
             <p>Etapas/modalidades ofertadas</p>
             <div className="TelaCadastroEscolas-linhaFormulario">
-                <div>
-                    {constantes.modalidadesEnsino.map(item => {
-                        return <div>
-                            <p className="TelaCadastroEscolas-nomeCampo">{item.titulo}</p>
-                            <p className="TelaCadastroEscolas-nomeCampo" style={{fontSize: 13}}>{item.subtitulo}</p>
-                            <div className="row" style={{paddingTop: 15, paddingBottom: 15}}>
-                                {item.modalidades.map(nome => {
-                                    const campo = form.campo<ModalidadeEnsino[]>("modalidadesEnsino");
-                                    const modalidade: ModalidadeEnsino = {etapa: item.titulo, nome: nome};
-                                    const index = campo.valor.findIndex(valor => valor.nome === modalidade.nome && valor.etapa === modalidade.etapa);
-                                    const isChecked = index >= 0;
-                                    return <label className="row" style={{paddingRight: 15}}>
-                                        <input
-                                            className="TelaCadastroEscolas-caixaSelecao"
-                                            type="checkbox"
-                                            checked={isChecked}
-                                            onChange={() => {
-                                                if (isChecked) {
-                                                    campo.valor.splice(index, 1);
-                                                } else {
-                                                    campo.valor.push(modalidade);
-                                                }
-                                                this.updateSelf();
-                                            }}/>
-                                        <p>{nome}</p>
-                                    </label>;
-                                })}
-                            </div>
-                        </div>;
-                    })}
-                </div>
+                {this.renderFormModalidades(form.campo("modalidadesEnsino"))}
             </div>
         </div>
     }
 
+    private criaFormFilial(): FormularioFilial {
+        return new Forms.Formulario({
+            "nome": new Forms.CampoTexto({
+                nome: "Nome da instituição",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()),
+            }),
+            "dataCriacao": new Forms.CampoTexto({
+                nome: "Data de fundação",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()).use(Validadores.date()),
+            }),
+            "codigoInep": new Forms.CampoTexto({
+                nome: "Código INEP",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()).use((texto) => !texto.match(/^\d{8}$/) ? "O código INEP deve estar no formato XXXXXXXX." : undefined),
+            }),
+            "cep": new Forms.CampoTexto({
+                nome: "CEP",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()).use(Validadores.cep()),
+            }),
+            "endereco": new Forms.CampoTexto({
+                nome: "Endereço",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()),
+            }),
+            "email": new Forms.CampoTexto({
+                nome: "E-mail institucional",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()),
+            }),
+            "telefone": new Forms.CampoTexto({
+                nome: "Telefone",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()),
+            }),
+            "responsavel.nome": new Forms.CampoTexto({
+                nome: "Nome/Coordenador",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()),
+            }),
+            "responsavel.email": new Forms.CampoTexto({
+                nome: "E-mail institucional",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()),
+            }),
+            "responsavel.telefone": new Forms.CampoTexto({
+                nome: "Telefone",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()),
+            }),
+            "tipo.setor": new Forms.CampoTexto({
+                nome: "Setor",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()),
+            }),
+            "tipo.sigla": new Forms.CampoTexto({
+                nome: "Sigla",
+                valor: "",
+                validador: Validador.texto().use(Validadores.required()),
+            }),
+            "modalidadesEnsino": new Forms.CampoArray<ModalidadeEnsino>({
+                nome: "Modalidades de ensino",
+                valor: [],
+                validador: new Validador<ModalidadeEnsino[]>().use(Validadores.min1()),
+            }),
+        });
+    }
+
+    private renderizaFormFilial(form: FormularioFilial): JSX.Element {
+        return <div className="TelaCadastroEscolas-formulario">
+            <p>Dados</p>
+            <GrupoCampoTexto
+                form={form}
+                grupos={[
+                    {
+                        formato: "11111111111",
+                        campos: {
+                            nome: {},
+                        },
+                    },
+                    {
+                        formato: "111111222222",
+                        campos: {
+                            dataCriacao: {mask: "99/99/9999"},
+                            codigoInep: {mask: "99999999"},
+                        },
+                    },
+                ]}
+                onChanged={() => this.updateSelf()}/>
+            <p>Localização</p>
+            <GrupoCampoTexto
+                form={form}
+                grupos={[
+                    {
+                        formato: "111122222222",
+                        campos: {
+                            cep: {mask: "999.99-999"},
+                            endereco: {},
+                        },
+                    },
+                ]}
+                onChanged={() => this.updateSelf()}/>
+            <p>Contato</p>
+            <GrupoCampoTexto
+                form={form}
+                grupos={[
+                    {
+                        formato: "111111222222",
+                        campos: {
+                            email: {},
+                            telefone: {mask: "(99) 99999-9999"}
+                        },
+                    },
+                ]}
+                onChanged={() => this.updateSelf()}/>
+            <p>Dados (responsável)</p>
+            <GrupoCampoTexto
+                form={form}
+                grupos={[
+                    {
+                        formato: "111111111111",
+                        campos: {
+                            "responsavel.nome": {},
+                        },
+                    },
+                    {
+                        formato: "111111222222",
+                        campos: {
+                            "responsavel.email": {},
+                            "responsavel.telefone": {mask: "(99) 99999-9999"},
+                        },
+                    },
+                ]}
+                onChanged={() => this.updateSelf()}/>
+            <p>Etapas/modalidades ofertadas</p>
+            {this.renderFormModalidades(form.campo("modalidadesEnsino"))}
+        </div>;
+    }
+
+    private renderAbaFiliais(): JSX.Element {
+        const {forms, indice} = this.state.filiais;
+        const form = indice == null ? null : forms[indice];
+        return <div>
+            <div className="row">
+                {forms.map((_, i) => {
+                    return <div
+                        className="row"
+                        onClick={() => {
+                            this.setState({
+                                ...this.state,
+                                filiais: {...this.state.filiais, indice: i}
+                            });
+                        }}
+                        style={{paddingRight: 20}}
+                    >
+                        <p style={{paddingRight: 5}}>F{`${i + 1}`}</p>
+                        {indice !== i
+                            ? null
+                            : <p
+                                onClick={(e) => {
+                                    // If removed, outer <div>'s onClick will be triggered
+                                    e.stopPropagation();
+                                    forms.splice(i, 1);
+                                    this.setState({
+                                        ...this.state,
+                                        filiais: {
+                                            ...this.state.filiais,
+                                            indice: Math.min(Math.max(0, i), forms.length - 1)
+                                        },
+                                    });
+                                }}
+                            >X</p>}
+                    </div>;
+                })}
+                {<button
+                    type="button"
+                    onClick={() => {
+                        forms.push(this.criaFormFilial());
+                        this.setState({...this.state, filiais: {...this.state.filiais, indice: forms.length - 1}});
+                    }}
+                >+</button>}
+            </div>
+            {form == null
+                ? <p>Clique no + para adicionar uma filial.</p>
+                : this.renderizaFormFilial(form)}
+        </div>;
+    }
+
     private renderAba(): JSX.Element | undefined {
-        switch (this.state.abaAtual) {
+        switch (this.state.aba) {
             case "Identificação":
                 return this.renderAbaIdentificacao();
             case "Ficha técnica":
                 return this.renderAbaFichaTecnica();
+            case "Filiais":
+                return this.renderAbaFiliais();
         }
     }
 
@@ -522,9 +720,9 @@ export default class TelaCadastroEscola extends React.Component<{}, Estado> {
         return <div className="TelaCadastroEscolas">
             <p className="Tela-titulo">Cadastrar escola</p>
             <div className="row" style={{gap: "10px"}}>
-                {nomeAbas.map(nome => <Aba onChanged={() => this.setState({...this.state, abaAtual: nome})}
+                {nomeAbas.map(nome => <Aba onChanged={() => this.setState({...this.state, aba: nome})}
                                            text={nome.toUpperCase()}
-                                           isSelected={nome === this.state.abaAtual}/>)}
+                                           isSelected={nome === this.state.aba}/>)}
             </div>
             {this.renderAba()}
         </div>;
